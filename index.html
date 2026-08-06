@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>LobsterClass — practice your presentation</title>
-<meta name="description" content="LobsterClass — memorize and rehearse your presentation with drills and AI roleplay.">
+<title>LobsterClass — rehearse the conversation that matters</title>
+<meta name="description" content="LobsterClass — know it cold, then survive the pushback. Memorization drills + AI roleplay for pitches, raises, interviews, speeches, and exams.">
 <meta name="theme-color" content="#12101d" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#f6f5fb">
 <link rel="manifest" href="manifest.webmanifest">
@@ -129,7 +129,7 @@
   h3 { font-size: 12px; margin: 18px 0 6px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
   p.hint { color: var(--muted); font-size: 13.5px; margin: 2px 0 14px; }
   label { display: block; font-size: 13.5px; font-weight: 600; color: var(--muted); margin: 14px 0 4px; }
-  textarea, input[type=text], input[type=password], select {
+  textarea, input[type=text], input[type=password], input[type=date], select {
     width: 100%; padding: 10px 13px; border: 1px solid var(--border);
     border-radius: 10px; background: var(--bg); resize: vertical;
   }
@@ -152,6 +152,11 @@
     padding: 7px 15px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted);
   }
   .pill:hover { background: var(--surface2); }
+  .pill.small-pill { padding: 5px 12px; font-size: 12.5px; }
+  .pill.rec::after {
+    content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--grad); margin-left: 7px; vertical-align: 1px;
+  }
   .pill.active { background: color-mix(in srgb, var(--accent) 75%, #000); border-color: transparent; color: #fff; box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 45%, transparent); }
   /* technicolor section chips — each section carries its own hue via --h */
   #sectionList, #masteryList { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
@@ -320,20 +325,28 @@
   <section class="tab active" id="tab-setup">
     <div class="card">
       <h2>Your material</h2>
-      <p class="hint">Paste your presentation script and any background. The Learn tab works fully offline; Roleplay and grading need an API key (⚙ Settings).</p>
-      <div class="steps"><span class="step"><b>1</b> Paste your script</span><span class="step"><b>2</b> Memorize it in Learn</span><span class="step"><b>3</b> Rehearse it in Roleplay</span></div>
-      <label for="inScript">Presentation script — the text you need to learn <b style="color:var(--accent)">*</b></label>
+      <p class="hint">Paste what you need to know cold. The Learn tab works fully offline; Roleplay and grading need an API key (⚙ Settings).</p>
+      <div class="steps"><span class="step"><b>1</b> Paste your material</span><span class="step"><b>2</b> Memorize it in Learn</span><span class="step"><b>3</b> Rehearse it in Roleplay</span></div>
+      <h3>What are you preparing for?</h3>
+      <div class="pillrow" id="categoryPills"></div>
+      <p class="hint" id="catTagline" style="margin-top:-6px"></p>
+      <label for="inScript" id="lblScript">Presentation script — the text you need to learn <b style="color:var(--accent)">*</b></label>
       <textarea id="inScript" rows="12" placeholder="Paste your full script here. Separate sections with a blank line — each becomes its own drill in the Learn tab."></textarea>
-      <label for="inContext">Company / product background (optional — helps the AI play a realistic prospect)</label>
+      <label for="inContext" id="lblContext">Company / product background (optional — helps the AI play a realistic prospect)</label>
       <textarea id="inContext" rows="5" placeholder="What you're selling, who your company is, pricing, key differentiators — paste from your website or docs."></textarea>
-      <label for="inAudience">Who will you be presenting to / calling?</label>
+      <label for="inAudience" id="lblAudience">Who will you be presenting to / calling?</label>
       <input type="text" id="inAudience" placeholder="e.g. Operations manager at a mid-size logistics company, skeptical about switching vendors">
-      <label for="inWorries">Objections or questions you're worried about (optional, one per line)</label>
+      <label for="inEvent">When's the real thing? (optional — tightens your review schedule as the day approaches)</label>
+      <input type="date" id="inEvent">
+      <label for="inWorries" id="lblWorries">Objections or questions you're worried about (optional, one per line)</label>
       <textarea id="inWorries" rows="3" placeholder="e.g. It's too expensive&#10;We already have a supplier&#10;Why should we trust a new company?"></textarea>
       <div style="margin-top:16px">
         <button class="btn" id="saveSetup">Save material</button>
         <span class="statusline" id="setupStatus" aria-live="polite" style="display:inline-block;margin-left:10px"></span>
       </div>
+      <h3>Practice on a walk</h3>
+      <p class="hint">Hands-free rehearsal counts double: saying it aloud while moving is one of the best-evidenced ways to make lines stick. Copy a ready-made voice prompt, paste it into a new chat in the Claude app, and switch to voice mode.</p>
+      <button class="btn secondary small" id="walkPrompt">🎧 Copy walk prompt</button>
       <h3>Move to another device</h3>
       <p class="hint">Your material lives only in this browser. To use it on your phone too: copy a transfer code here, send it to yourself (AirDrop, Notes…), and paste it into the app there. Nothing is uploaded.</p>
       <div style="display:flex; gap:8px; flex-wrap:wrap">
@@ -354,23 +367,33 @@
       <p class="hint">Work through each section. Read it, then squeeze the text away step by step until you can recall it cold. No API key needed here.</p>
       <div id="learnEmpty" class="empty">Nothing to drill yet — open the <b>Setup</b> tab, paste your script, and hit <b>Save material</b>. Your sections will appear here.</div>
       <div id="learnUI" style="display:none">
-        <h3>Sections</h3>
+        <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap">
+          <h3 style="margin-right:auto">Sections</h3>
+          <button class="btn small" id="smartReview" style="display:none">▶ Smart review</button>
+        </div>
         <div class="sectionlist" id="sectionList"></div>
         <h3>Drill mode</h3>
         <div class="pillrow" id="modePills">
           <button class="pill active" data-mode="read" title="Read the section through first">Read</button>
-          <button class="pill" data-mode="blanks" title="Every third word is hidden — tap to reveal">Blanks</button>
+          <button class="pill" data-mode="blanks" title="Words are hidden — recall, then tap to check">Blanks</button>
           <button class="pill" data-mode="letters" title="Only first letters remain as cues">First letters</button>
           <button class="pill" data-mode="type" title="Type the section from memory and get scored">Type it</button>
           <button class="pill" data-mode="say" title="Speak it from memory and get scored">Say it</button>
+          <button class="pill" data-mode="seams" title="Given the end of the previous section, recall how this one starts">Seams</button>
         </div>
-        <p class="hint" style="margin-top:-6px">Work left to right — each mode hides a little more until you can recall it cold.</p>
+        <div class="pillrow" id="densityPills" style="display:none; margin-top:-6px">
+          <button class="pill small-pill active" data-dn="3" title="Every 3rd word hidden">Hide ⅓</button>
+          <button class="pill small-pill" data-dn="2" title="Every 2nd word hidden">Hide ½</button>
+          <button class="pill small-pill" data-dn="1" title="All longer words hidden — short words stay as cues">Hide most</button>
+        </div>
+        <p class="hint" style="margin-top:-6px" id="modeWhy">Read it a couple of times to load it in — then switch right: recalling beats re-reading (the “testing effect”).</p>
         <div class="practicebox" id="practiceBox"></div>
         <div id="recallUI" style="display:none; margin-top:12px">
           <textarea id="recallInput" rows="5" placeholder="Type this section from memory…"></textarea>
           <div style="margin-top:8px; display:flex; gap:8px; align-items:center">
             <button class="btn" id="checkRecall">Check</button>
             <button class="btn secondary" id="sayRecallBtn" style="display:none">🎤 Speak instead</button>
+            <button class="btn secondary" id="nextReviewBtn" style="display:none">Next section →</button>
             <span id="recallScore" class="scorebadge"></span>
           </div>
           <div class="statusline" id="recallStatus" aria-live="polite"></div>
@@ -383,17 +406,12 @@
   <section class="tab" id="tab-roleplay">
     <div class="card" id="rpSetupCard">
       <h2>Roleplay</h2>
-      <p class="hint">The AI plays the other side — out loud. You speak (or type), it pushes back with realistic objections. End the session to get a graded scorecard.</p>
+      <p class="hint">The AI plays the other side — out loud. You speak (or type), it pushes back the way the real person would. End the session to get a graded scorecard.</p>
       <div id="rpNoKey" class="notice" style="display:none">Roleplay needs a Claude API key — add one in ⚙ Settings. (Memorization drills in Learn work without it.)</div>
       <div id="rpNoScript" class="empty" style="display:none">No script yet — open the <b>Setup</b> tab and save your material, then come back to rehearse it.</div>
       <div id="rpConfig">
         <h3>Scenario</h3>
-        <div class="pillrow" id="scenarioPills">
-          <button class="pill active" data-sc="presentation">Presentation run-through</button>
-          <button class="pill" data-sc="coldcall">Cold call</button>
-          <button class="pill" data-sc="qa">Tough Q&amp;A</button>
-          <button class="pill" data-sc="raise">Raise negotiation</button>
-        </div>
+        <div class="pillrow" id="scenarioPills"></div>
         <h3>How tough should they be?</h3>
         <div class="pillrow" id="difficultyPills">
           <button class="pill" data-df="friendly">Friendly</button>
@@ -428,7 +446,9 @@
   <section class="tab" id="tab-progress">
     <div class="card">
       <h2>Memorization progress</h2>
+      <p class="hint" id="reviewSummary" style="display:none"></p>
       <div id="masteryList" class="sectionlist"><div class="empty">Nothing yet — run some drills in Learn.</div></div>
+      <div id="reviewGo" style="display:none; margin-top:12px"><button class="btn small" id="goReview">▶ Review what's due</button></div>
     </div>
     <div class="card">
       <h2>Roleplay sessions</h2>
@@ -489,7 +509,8 @@ function load(k, fallback) {
 }
 function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
 
-let data = load(LS.data, { script: "", context: "", audience: "", worries: "" });
+let data = load(LS.data, { script: "", context: "", audience: "", worries: "", event: "", category: "pitch" });
+if (!data.category) data.category = "pitch"; // silent migration for pre-category saves
 let mastery = load(LS.mastery, {});
 let sessions = load(LS.sessions, []);
 
@@ -511,6 +532,7 @@ $("inScript").value = data.script;
 $("inContext").value = data.context;
 $("inAudience").value = data.audience;
 $("inWorries").value = data.worries;
+$("inEvent").value = data.event || "";
 
 $("saveSetup").addEventListener("click", () => {
   const st = $("setupStatus");
@@ -521,6 +543,8 @@ $("saveSetup").addEventListener("click", () => {
     context: $("inContext").value.trim(),
     audience: $("inAudience").value.trim(),
     worries: $("inWorries").value.trim(),
+    event: $("inEvent").value,
+    category: data.category || "pitch",
   };
   save(LS.data, data);
   // drop mastery entries for sections that no longer exist
@@ -540,6 +564,8 @@ $("exportData").addEventListener("click", async () => {
     context: $("inContext").value,
     audience: $("inAudience").value,
     worries: $("inWorries").value,
+    event: $("inEvent").value,
+    category: data.category || "pitch",
   });
   try {
     await navigator.clipboard.writeText(payload);
@@ -568,8 +594,11 @@ $("importLoad").addEventListener("click", () => {
     $("inContext").value = d.context || "";
     $("inAudience").value = d.audience || "";
     $("inWorries").value = d.worries || "";
+    $("inEvent").value = d.event || "";
+    if (d.category && CATEGORIES[d.category]) data.category = d.category;
     $("importArea").style.display = "none";
     $("saveSetup").click();
+    applyCategory();
   } catch {
     st.textContent = "That doesn't look like a transfer code — copy it again from the other device.";
     st.className = "statusline err";
@@ -593,38 +622,187 @@ function sections() {
   });
 }
 
+/* ---------------- spaced-repetition scheduler ----------------
+   Expanding retrieval intervals (Landauer & Bjork): each clean recall
+   pushes the next review further out. If an event date is set, the whole
+   ladder is compressed to fit the runway, so everything gets reviewed
+   again before the real thing. Old mastery entries were plain numbers —
+   mstat() upgrades them lazily. */
+const DAY = 86400000;
+const BOX_IVL = [DAY / 6, DAY, 2 * DAY, 4 * DAY, 7 * DAY, 14 * DAY];
+function mstat(id) {
+  const m = mastery[id];
+  if (typeof m === "number") return { pct: m, box: 0, streak: 0, last: null, due: null, reps: 0, dayKey: null };
+  return m || { pct: 0, box: 0, streak: 0, last: null, due: null, reps: 0, dayKey: null };
+}
+function daysToEvent() {
+  if (!data.event) return null;
+  const d = (new Date(data.event + "T20:00").getTime() - Date.now()) / DAY;
+  return d > 0 ? d : null;
+}
+let lastRecallSameDay = false; // set by recordRecall, read by the status copy
+function recordRecall(id, pct) {
+  const m = mstat(id);
+  m.pct = Math.max(m.pct, pct);
+  m.reps = (m.reps || 0) + 1;
+  const today = new Date().toDateString();
+  lastRecallSameDay = false;
+  if (pct >= 90) {
+    m.streak++;
+    // spacing beats massing (Mazza 2016): a second clean recall the same day
+    // keeps the streak but doesn't advance the box or push the review out
+    if (m.dayKey === today && m.due && m.due > Date.now()) lastRecallSameDay = true;
+    else { m.box = Math.min(m.box + 1, BOX_IVL.length - 1); m.dayKey = today; }
+  }
+  else if (pct >= 70) { m.streak = 0; }
+  else { m.box = Math.max(0, m.box - 1); m.streak = 0; }
+  m.last = Date.now();
+  if (!lastRecallSameDay) {
+    const left = daysToEvent();
+    const squeeze = left === null ? 1 : Math.min(1, Math.max(0.12, left / 14));
+    let gap = Math.max(DAY / 8, BOX_IVL[m.box] * squeeze);
+    if (left !== null) {
+      // Cepeda et al. 2008: optimal gap ≈ 10-30% of the time remaining
+      gap = Math.min(gap, Math.max(DAY / 8, 0.3 * left * DAY));
+      // final-48h rule: the last review lands the evening before, never the morning of
+      const eve = new Date(data.event + "T18:00").getTime();
+      if (m.last < eve && m.last + gap > eve) gap = eve - m.last;
+    }
+    m.due = m.last + gap;
+  }
+  mastery[id] = m; save(LS.mastery, mastery);
+  return m;
+}
+function dueSections() {
+  const now = Date.now();
+  return sections().filter(s => { const m = mstat(s.id); return m.last && m.due && m.due <= now; });
+}
+function untilStr(ts) {
+  const h = (ts - Date.now()) / 3600000;
+  if (h <= 0) return "now";
+  if (h < 1) return "in under an hour";
+  if (h < 22) return "in ~" + Math.round(h) + "h";
+  const d = Math.round(h / 24);
+  return d <= 1 ? "tomorrow" : "in " + d + " days";
+}
+/* Diminishing-cues ladder (Fiechter & Benjamin 2018): guaranteed-successful
+   retrieval first, progressively fewer cues as scores rise. */
+function recommendedDrill(id) {
+  const m = mstat(id);
+  if (!m.last && !m.pct) return { mode: "read", dn: 3 };
+  if (m.pct < 40) return { mode: "blanks", dn: 3 };
+  if (m.pct < 60) return { mode: "blanks", dn: 2 };
+  if (m.pct < 75) return { mode: "blanks", dn: 1 };
+  if (m.pct < 90) return { mode: "letters", dn: 1 };
+  if (m.streak >= 1) return { mode: "say", dn: 1 };
+  return { mode: "type", dn: 1 };
+}
+function recommendedMode(id) { return recommendedDrill(id).mode; }
+
 /* ---------------- learn tab ---------------- */
 let curSection = 0;
 let curMode = "read";
+let curDensity = 3; // blanks mode: hide every Nth word (1 = most words)
+let reviewQueue = []; // section ids queued by Smart review
 
-function renderLearn() {
+function chipLabel(s) {
+  const m = mstat(s.id);
+  let extra = "";
+  if (m.pct) extra += `<span class="pct">${m.pct}%</span>`;
+  if (m.streak >= 3) extra += `<span class="pct" title="3+ clean recalls in a row — performance-ready">🏆</span>`;
+  if (m.last && m.due && m.due <= Date.now()) extra += `<span class="pct" title="Due for review">⏰</span>`;
+  return esc(s.title) + extra;
+}
+function renderChips() {
   const secs = sections();
-  $("learnEmpty").style.display = secs.length ? "none" : "block";
-  $("learnUI").style.display = secs.length ? "block" : "none";
-  if (!secs.length) return;
-  if (curSection >= secs.length) curSection = 0;
   const list = $("sectionList");
   list.innerHTML = "";
   secs.forEach((s, i) => {
     const chip = document.createElement("button");
     chip.className = "secchip" + (i === curSection ? " active" : "");
     chip.style.setProperty("--h", secHue(i, secs.length));
-    const pct = mastery[s.id];
-    chip.innerHTML = esc(s.title) + (pct ? `<span class="pct">${pct}%</span>` : "");
-    chip.addEventListener("click", () => { curSection = i; renderLearn(); });
+    chip.innerHTML = chipLabel(s);
+    chip.addEventListener("click", () => { curSection = i; reviewQueue = []; renderLearn(); });
     list.appendChild(chip);
   });
+  const due = dueSections();
+  const btn = $("smartReview");
+  btn.style.display = secs.length ? "inline-block" : "none";
+  btn.textContent = due.length ? `▶ Review due (${due.length})` : "▶ Smart review";
+  btn.title = due.length
+    ? "Drill the sections whose review is due, in shuffled order"
+    : "No reviews due — drills your weakest sections, in shuffled order";
+}
+function renderLearn() {
+  const secs = sections();
+  $("learnEmpty").style.display = secs.length ? "none" : "block";
+  $("learnUI").style.display = secs.length ? "block" : "none";
+  if (!secs.length) return;
+  if (curSection >= secs.length) curSection = 0;
+  document.querySelector('#modePills .pill[data-mode="seams"]').style.display = secs.length >= 2 ? "" : "none";
+  renderChips();
+  markRecommendedMode();
   renderPractice();
 }
 
+const MODE_WHY = {
+  read: "Read it a couple of times to load it in — then switch right: recalling beats re-reading (the “testing effect”).",
+  blanks: "Retrieval practice: guess each hidden word before you tap. Cues shrink as you improve — easy retrieval first, harder later, is the one method proven to work on freshly-learned text.",
+  letters: "First letters only — the classic cue actors use to nail lines verbatim. Say the section aloud from the cues.",
+  type: "Free recall, typed and scored. Hardest test, strongest learning — misses show you exactly what to re-drill.",
+  say: "Speaking it aloud adds the “production effect” and rehearses real delivery — practice how you'll perform.",
+  seams: "Blanks happen at the seams: the cue for each section is the end of the one before. Top-to-bottom practice never drills that — this does.",
+};
+function setMode(mode) {
+  curMode = mode;
+  document.querySelectorAll("#modePills .pill").forEach(x => x.classList.toggle("active", x.dataset.mode === mode));
+  $("densityPills").style.display = mode === "blanks" ? "flex" : "none";
+  $("modeWhy").textContent = MODE_WHY[mode];
+  renderPractice();
+}
+function markRecommendedMode() {
+  const secs = sections(); if (!secs.length) return;
+  const rec = recommendedMode(secs[curSection].id);
+  document.querySelectorAll("#modePills .pill").forEach(x => x.classList.toggle("rec", x.dataset.mode === rec && x.dataset.mode !== curMode));
+}
 document.querySelectorAll("#modePills .pill").forEach(p => {
-  p.addEventListener("click", () => {
-    document.querySelectorAll("#modePills .pill").forEach(x => x.classList.remove("active"));
-    p.classList.add("active");
-    curMode = p.dataset.mode;
-    renderPractice();
-  });
+  p.addEventListener("click", () => { setMode(p.dataset.mode); markRecommendedMode(); });
 });
+function setDensity(dn) {
+  curDensity = dn;
+  document.querySelectorAll("#densityPills .pill").forEach(x => x.classList.toggle("active", parseInt(x.dataset.dn, 10) === dn));
+}
+document.querySelectorAll("#densityPills .pill").forEach(p => {
+  p.addEventListener("click", () => { setDensity(parseInt(p.dataset.dn, 10)); renderPractice(); });
+});
+
+/* Smart review: interleaved retrieval over due (or weakest) sections */
+$("smartReview").addEventListener("click", () => {
+  const secs = sections(); if (!secs.length) return;
+  const due = dueSections();
+  const pool = due.length ? due
+    : [...secs].sort((a, b) => mstat(a.id).pct - mstat(b.id).pct).slice(0, Math.min(3, secs.length));
+  reviewQueue = pool.map(s => s.id);
+  for (let i = reviewQueue.length - 1; i > 0; i--) { // shuffle = interleaving
+    const j = Math.floor(Math.random() * (i + 1));
+    [reviewQueue[i], reviewQueue[j]] = [reviewQueue[j], reviewQueue[i]];
+  }
+  nextReviewStep(true);
+});
+function nextReviewStep(first) {
+  const secs = sections();
+  const id = reviewQueue.shift();
+  const idx = secs.findIndex(s => s.id === id);
+  if (idx < 0) { reviewQueue = []; return; }
+  curSection = idx;
+  const rd = recommendedDrill(id);
+  setDensity(rd.dn);
+  setMode(rd.mode === "read" ? "blanks" : rd.mode); // review means retrieval, never re-reading
+  renderChips();
+  markRecommendedMode();
+  if (first) $("recallStatus").textContent = "Shuffled order feels harder — that's the point: interleaved retrieval roughly doubled next-day recall in lab studies.";
+  if (!first) $("practiceBox").scrollIntoView({ behavior: "smooth", block: "center" });
+}
 
 function renderPractice() {
   const secs = sections();
@@ -635,11 +813,16 @@ function renderPractice() {
   $("recallScore").textContent = "";
   $("recallStatus").textContent = "";
   $("recallInput").value = "";
-  recallUI.style.display = (curMode === "type" || curMode === "say") ? "block" : "none";
-  $("sayRecallBtn").style.display = (curMode === "say" && speechSupported()) ? "inline-block" : "none";
+  $("nextReviewBtn").style.display = "none";
+  recallUI.style.display = (curMode === "type" || curMode === "say" || curMode === "seams") ? "block" : "none";
+  $("sayRecallBtn").style.display = ((curMode === "say" || curMode === "seams") && speechSupported()) ? "inline-block" : "none";
 
   if (curMode === "read") {
     box.innerHTML = esc(sec.text);
+  } else if (curMode === "seams") {
+    const prev = curSection > 0 ? secs[curSection - 1] : null;
+    const cue = prev ? "…" + lastSentence(prev.text) : "You're on. Deliver your opening.";
+    box.innerHTML = `<span style="color:var(--muted)">${esc(cue)}</span>\n\n<span style="color:var(--muted);font-style:italic;font-size:13.5px">→ That's your cue. Recall how “${esc(sec.title)}” begins (the first ~20 words), then check.</span>`;
   } else if (curMode === "letters") {
     box.innerHTML = sec.text.split("\n").map(line =>
       line.split(/\s+/).filter(Boolean).map(w => {
@@ -649,11 +832,17 @@ function renderPractice() {
     ).join("\n");
   } else if (curMode === "blanks") {
     const words = sec.text.split(/(\s+)/);
+    // rotate which words hide as reps accumulate, so the blank positions
+    // themselves can't be memorized (seeded by section + attempt count)
+    const phase = (hashStr(sec.id).charCodeAt(0) + (mstat(sec.id).reps || 0)) % curDensity;
     let wi = 0;
     box.innerHTML = words.map(tok => {
       if (/^\s+$/.test(tok) || !tok) return esc(tok);
       wi++;
-      if (wi % 3 === 0 && /\w/.test(tok)) {
+      const hide = curDensity === 1
+        ? tok.replace(/[^\p{L}\p{N}]/gu, "").length >= 4 // keep short function words as cues
+        : (wi + phase) % curDensity === 0;
+      if (hide && /\w/.test(tok)) {
         return `<span class="blank" data-w="${esc(tok)}">${esc(tok)}</span>`;
       }
       return esc(tok);
@@ -662,6 +851,14 @@ function renderPractice() {
   } else {
     box.innerHTML = `<span style="color:var(--muted);font-style:italic">“${esc(sec.title)}” — recall it from memory below, then check.</span>`;
   }
+}
+
+function lastSentence(text) {
+  const flat = text.replace(/\s+/g, " ").trim();
+  const parts = flat.match(/[^.!?…]+[.!?…]+/g);
+  const last = parts && parts.length ? parts[parts.length - 1].trim() : flat;
+  const words = last.split(" ");
+  return words.length > 25 ? "…" + words.slice(-25).join(" ") : last;
 }
 
 /* word-level diff via LCS */
@@ -710,25 +907,36 @@ $("checkRecall").addEventListener("click", () => {
   const sec = secs[curSection];
   const attempt = $("recallInput").value.trim();
   if (!attempt) { $("recallStatus").textContent = "Type (or speak) your attempt first."; return; }
+  if (curMode === "seams") {
+    // seam drill: recall the section's opening from the previous section's tail.
+    // Deliberately not recorded into mastery — it grades ~20 words, not the section.
+    const target = { text: sec.text.split(/\s+/).slice(0, 20).join(" "), title: sec.title };
+    const { pct, html } = gradeRecall(target, attempt);
+    $("practiceBox").innerHTML = html;
+    $("recallScore").textContent = pct + "%";
+    $("recallStatus").textContent = pct >= 90 ? "Seam nailed — this transition won't drop you." :
+      "Red words show how the section actually starts — glue them to the cue and go again.";
+    $("nextReviewBtn").style.display = reviewQueue.length ? "inline-block" : "none";
+    return;
+  }
   const { pct, html } = gradeRecall(sec, attempt);
   $("practiceBox").innerHTML = html;
   $("recallScore").textContent = pct + "%";
-  if (pct > (mastery[sec.id] || 0)) {
-    mastery[sec.id] = pct; save(LS.mastery, mastery);
-    const chip = $("sectionList").children[curSection];
-    if (chip) {
-      let pctEl = chip.querySelector(".pct");
-      if (!pctEl) {
-        pctEl = document.createElement("span");
-        pctEl.className = "pct";
-        chip.appendChild(pctEl);
-      }
-      pctEl.textContent = pct + "%";
-    }
-  }
-  $("recallStatus").textContent = pct >= 90 ? "Excellent — basically word-perfect." :
-    pct >= 70 ? "Good — red words are the ones you missed." :
+  const m = recordRecall(sec.id, pct);
+  renderChips(); // update pct/⏰/🏆 badges without touching the diff view
+  markRecommendedMode();
+  let msg = pct >= 90 ? (m.streak >= 3 ? `Word-perfect — ${m.streak} clean recalls in a row. This one's performance-ready. 🏆` :
+      `Excellent — clean recall${m.streak > 1 ? " #" + m.streak : ""}. Next review ${untilStr(m.due)}.`) :
+    pct >= 70 ? "Good — red words are the ones you missed. One more pass, then come back " + untilStr(m.due) + "." :
     "Keep going — red words are the ones you missed. Re-read, then try again.";
+  if (lastRecallSameDay) msg = `Nailed it again (${m.streak} in a row) — but a second pass today adds little. Due again ${untilStr(m.due)}: the gap, and tonight's sleep, are what make it stick.`;
+  if (reviewQueue.length) msg += ` · ${reviewQueue.length} section(s) left in this review.`;
+  $("recallStatus").textContent = msg;
+  $("nextReviewBtn").style.display = reviewQueue.length ? "inline-block" : "none";
+});
+$("nextReviewBtn").addEventListener("click", () => {
+  $("nextReviewBtn").style.display = "none";
+  nextReviewStep(false);
 });
 
 /* speak-your-recall */
@@ -900,27 +1108,199 @@ async function callClaude({ system, messages, maxTokens, effort, schema }) {
   return text;
 }
 
-/* ---------------- roleplay ---------------- */
-let rp = null; // active session state
-
-const SCENARIOS = {
-  presentation: {
-    label: "Presentation run-through",
-    persona: (d) => `You are the audience for a sales presentation${d.audience ? ": " + d.audience : ""}. The presenter (the user) is delivering their pitch to you. Let them present in stretches, but interrupt occasionally the way a real prospect would — clarifying questions, skeptical pushback, "hang on, what does that cost?" moments. React to what they actually say.`,
+/* ---------------- categories ----------------
+   Everything that differs between "sell a product", "ask for a raise",
+   "defend a thesis"… lives in this one config object: Setup copy,
+   Roleplay scenarios/personas, and how the grader judges the session. */
+const AUD = (d, fallback) => d.audience ? d.audience : fallback;
+const CATEGORIES = {
+  pitch: {
+    emoji: "🎯", name: "Sales pitch",
+    tagline: "A pitch, demo, or sales call you need to deliver without notes.",
+    fields: {
+      script:   { label: "Presentation script — the text you need to learn", ph: "Paste your full script here. Separate sections with a blank line — each becomes its own drill in the Learn tab." },
+      context:  { label: "Company / product background (optional — helps the AI play a realistic prospect)", ph: "What you're selling, who your company is, pricing, key differentiators — paste from your website or docs." },
+      audience: { label: "Who will you be presenting to / calling?", ph: "e.g. Operations manager at a mid-size logistics company, skeptical about switching vendors" },
+      worries:  { label: "Objections or questions you're worried about (optional, one per line)", ph: "e.g. It's too expensive\nWe already have a supplier\nWhy should we trust a new company?" },
+    },
+    scenarios: {
+      presentation: { label: "Presentation run-through", open: "greet them and invite them to start",
+        persona: (d) => `You are the audience for a sales presentation${d.audience ? ": " + d.audience : ""}. The presenter (the user) is delivering their pitch to you. Let them present in stretches, but interrupt occasionally the way a real prospect would — clarifying questions, skeptical pushback, "hang on, what does that cost?" moments. React to what they actually say.` },
+      coldcall: { label: "Cold call", open: "answer the phone, busy and guarded",
+        persona: (d) => `You are a busy prospect${d.audience ? ": " + d.audience : ""} who just picked up an unexpected sales call from the user. You were in the middle of something. Open guarded ("Hello? Who is this?"-level energy). Make them earn every extra minute; if they're good, warm up gradually and realistically.` },
+      qa: { label: "Tough Q&A", open: "open with your first pointed question",
+        persona: (d) => `You are ${AUD(d, "a sharp, skeptical decision-maker")} in the Q&A after the user's presentation. You've heard the pitch; now you grill them. Ask pointed questions about price, competitors, proof, risk, and implementation — one at a time, following up when answers are vague.` },
+      pricing: { label: "Pricing pushback", open: "open by saying the price is the sticking point",
+        persona: (d) => `You are ${AUD(d, "the budget owner")} in a follow-up call about price. You like the product but you negotiate hard: anchor low, quote a cheaper competitor, ask what happens if you sign for less, push on contract terms. Concede only against real justification, never against repetition.` },
+    },
+    grader: { coach: "sales coach", labels: ["Script adherence", "Objection handling", "Confidence"],
+      emphasis: "Judge how much of the script's key content was delivered, how objections were handled, and composure." },
+    counterpart: "a skeptical prospect",
   },
-  coldcall: {
-    label: "Cold call",
-    persona: (d) => `You are a busy prospect${d.audience ? ": " + d.audience : ""} who just picked up an unexpected sales call from the user. You were in the middle of something. Open guarded ("Hello? Who is this?"-level energy). Make them earn every extra minute; if they're good, warm up gradually and realistically.`,
-  },
-  qa: {
-    label: "Tough Q&A",
-    persona: (d) => `You are ${d.audience ? d.audience : "a sharp, skeptical decision-maker"} in the Q&A after the user's presentation. You've heard the pitch; now you grill them. Ask pointed questions about price, competitors, proof, risk, and implementation — one at a time, following up when answers are vague.`,
+  product: {
+    emoji: "🚗", name: "Product knowledge",
+    tagline: "Showroom or counter sales — know every spec, trim, and price cold.",
+    fields: {
+      script:   { label: "Product knowledge — the specs, prices, and talk tracks you must know cold", ph: "Paste the spec sheet: models, trims, packages, prices, financing options. Separate topics with a blank line — each becomes its own drill." },
+      context:  { label: "Store / brand background (optional)", ph: "Your dealership or store, current offers, what you can and can't discount, competitor products people cross-shop." },
+      audience: { label: "Who walks in?", ph: "e.g. Young family cross-shopping the BMW X3, cares about safety and the monthly payment" },
+      worries:  { label: "Questions or objections you dread (optional, one per line)", ph: "e.g. The competitor has more power for the same price\nCan you do better on the payment?\nWhat's the real invoice price?" },
+    },
+    scenarios: {
+      browser: { label: "Walk-in browser", open: "wander in, say you're just looking",
+        persona: (d) => `You are a walk-in customer${d.audience ? ": " + d.audience : ""} who is "just looking". You have a real need you won't volunteer — make the user earn it with good discovery questions. Warm up if they listen and connect features to what you actually care about; go cold if they lecture specs at you.` },
+      crossshop: { label: "Cross-shopper", open: "mention the competitor's product straight away",
+        persona: (d) => `You are a well-researched customer${d.audience ? ": " + d.audience : ""} who has already test-driven or priced the main competitor. Quote the competitor's specs and price accurately and make the user beat them point by point. If they get a fact wrong or vague, call it out — you've done your homework.` },
+      payment: { label: "Payment negotiator", open: "ask straight away what the monthly payment would be",
+        persona: (d) => `You are a buyer${d.audience ? ": " + d.audience : ""} who only thinks in monthly payment. Push for discounts, trade-in value, lower APR, longer terms. Try to get numbers out of the user fast and pit them against another offer. Only respect firm, clear answers about what's possible.` },
+      expert: { label: "Spec expert", open: "open with a genuinely technical question",
+        persona: (d) => `You are an enthusiast${d.audience ? ": " + d.audience : ""} who knows this product line deeply and is testing whether the user really knows their stuff. Ask precise questions — engine options, package contents, exact figures. Correct them if they're wrong. You buy from people who know more than you.` },
+    },
+    grader: { coach: "retail sales trainer", labels: ["Fact accuracy", "Objection handling", "Confidence"],
+      emphasis: "Check every claim against the pasted product material — flag ANY invented or wrong spec, price, or number as a miss. Reward needs-discovery questions, translating features into benefits the customer cares about, and asking for the sale." },
+    counterpart: "a showroom customer",
   },
   raise: {
-    label: "Raise negotiation",
-    persona: (d) => `You are the user's manager in a meeting they requested to discuss a raise. Be professionally warm but budget-conscious: ask what they've accomplished, push back with typical manager objections (budget cycles, "let's revisit at review time", comparisons to peers), and only concede ground when they make a strong, evidence-based case.`,
+    emoji: "💰", name: "Raise & negotiation",
+    tagline: "Asking for a raise, a promotion, or negotiating an offer.",
+    fields: {
+      script:   { label: "Your case — accomplishments, numbers, market data, and the ask", ph: "Paste your wins (with numbers), your market-rate data, and the exact number you're asking for. Separate points with a blank line — each becomes its own drill." },
+      context:  { label: "Company situation (optional)", ph: "Budget cycle, recent wins or layoffs, how raises usually happen here, what your manager can and can't decide alone." },
+      audience: { label: "Who are you asking?", ph: "e.g. My manager Sam — supportive but cautious, hates surprises, answers to a VP who owns the budget" },
+      worries:  { label: "Pushback you expect (optional, one per line)", ph: "e.g. There's no budget this cycle\nLet's revisit at review time\nEveryone got the same percentage" },
+    },
+    scenarios: {
+      supportive: { label: "Supportive manager", open: "welcome them in and ask what they wanted to talk about",
+        persona: (d) => `You are ${AUD(d, "the user's manager")} in a meeting they requested. You genuinely like their work but you are budget-conscious and answer to your own boss. Ask what they've accomplished, probe their numbers, and concede ground only when they make a strong, evidence-based case with a clear number.` },
+      deflect: { label: "Deflecting manager", open: "be friendly but immediately try to keep the meeting light",
+        persona: (d) => `You are ${AUD(d, "the user's manager")}, conflict-avoidant and deflecting. Use every classic dodge: "this isn't the right time", "let's revisit at review season", "I'll have to check with HR", change the subject, offer vague praise instead of money. Only a persistent, specific, evidence-backed ask — repeated calmly past your deflections — moves you.` },
+      freeze: { label: "Budget freeze", open: "open by mentioning times are tight this quarter",
+        persona: (d) => `You are ${AUD(d, "the user's manager")} operating under a real budget freeze. You cannot easily say yes to base salary, but alternatives exist (bonus, title, scope, equity, a dated review commitment) that you only offer if the user negotiates well instead of accepting the first no. Reward creative, calm negotiation; punish instant surrender or ultimatums.` },
+      offer: { label: "Job-offer counter", open: "call them, excited, with the offer — anchored low",
+        persona: (d) => `You are a recruiter calling the user with a job offer, anchored 10-15% below what the role can pay. Sound thrilled, create urgency ("we'd love an answer by Friday"), ask what their current salary is, and push back on counters — but you have real room and will move for a candidate who negotiates with market data and stays likable.` },
+    },
+    grader: { coach: "negotiation coach", labels: ["Case made", "Pushback handling", "Confidence"],
+      emphasis: "Judge whether the user stated a specific number, cited their evidence (instead of leaving it on the table), resisted the first no, avoided apologetic or hedging language, and never negotiated against themselves." },
+    counterpart: "your manager",
+  },
+  interview: {
+    emoji: "💼", name: "Job interview",
+    tagline: "Behavioral answers, your story, and the questions you fear.",
+    fields: {
+      script:   { label: "Your answers — 'tell me about yourself', STAR stories, key answers", ph: "Paste your 'tell me about yourself', your STAR stories, and the answers you want to nail. Separate answers with a blank line — each becomes its own drill." },
+      context:  { label: "Role & company (optional)", ph: "Job description highlights, company facts, your why-this-company notes." },
+      audience: { label: "Who's interviewing you?", ph: "e.g. Hiring manager for the senior PM role, ex-consultant, known for drilling into metrics" },
+      worries:  { label: "Questions you fear (optional, one per line)", ph: "e.g. Why did you leave after 8 months?\nWhat's your biggest weakness?\nWhat are your salary expectations?" },
+    },
+    scenarios: {
+      screen: { label: "Phone screen", open: "call them, friendly, and ask them to tell you about themselves",
+        persona: (d) => `You are a friendly recruiter doing a 20-minute phone screen${d.audience ? " for: " + d.audience : ""}. Cover the classics: tell me about yourself, why this role, salary expectations, timeline. Warm but evaluating — note rambling, vagueness, or red flags and probe them lightly.` },
+      behavioral: { label: "Behavioral deep-dive", open: "open with your first behavioral question",
+        persona: (d) => `You are ${AUD(d, "a structured behavioral interviewer")}. Ask "tell me about a time…" questions one at a time, then probe: "what was YOUR role exactly?", "what would you do differently?", "what was the measurable result?". Politely refuse to accept hypotheticals or team-credit answers — you want their specific actions.` },
+      skeptical: { label: "Skeptical hiring manager", open: "be cordial but open with the toughest question about their background",
+        persona: (d) => `You are ${AUD(d, "a skeptical hiring manager")} who has doubts about this candidate. Challenge gaps, short stints, and thin metrics directly but professionally. You've been burned by good talkers before — push past polish to substance, and warm up only when answers carry specifics.` },
+      tmay: { label: "'Tell me about yourself' reps", open: "ask them to tell you about themselves",
+        persona: (d) => `You are an interviewer drilling one thing: the user's opening answer. Ask "tell me about yourself". After their answer, give one sharp observation (too long, buried the lead, no thread to this role) in character as a thoughtful interviewer, then ask it again fresh or ask the natural follow-up ("so why here?"). Build them toward a tight ~2-minute answer.` },
+    },
+    grader: { coach: "interview coach", labels: ["Answer quality", "Follow-up handling", "Confidence"],
+      emphasis: "Judge story completeness (situation, task, action, result all present), answer-length discipline (~2 minutes, no rambling), consistency with their pasted material, and how they handled follow-up probes." },
+    counterpart: "an interviewer",
+  },
+  speech: {
+    emoji: "🎤", name: "Speech & talk",
+    tagline: "A toast, keynote, eulogy, or conference talk — delivered, not read.",
+    fields: {
+      script:   { label: "Your speech — word for word", ph: "Paste the full toast, keynote, or talk. Separate sections with a blank line — and know the first 30 seconds cold: that's when nerves peak." },
+      context:  { label: "The occasion (optional)", ph: "Whose wedding / which conference, how long you have, the tone you're going for." },
+      audience: { label: "Who's in the room?", ph: "e.g. 120 wedding guests, mixed ages, half already know the groom's stories" },
+      worries:  { label: "What could throw you off? (optional, one per line)", ph: "e.g. Blanking on the middle section\nA joke landing flat\nQ&A: how is this different from X?" },
+    },
+    scenarios: {
+      run: { label: "Full run-through", open: "welcome them warmly and hand them the floor",
+        persona: (d) => `You are the audience${d.audience ? ": " + d.audience : ""} for the user's speech. Mostly listen — react briefly and naturally between sections ("[laughs]", a murmur, applause) so it feels live. If they stop or blank, wait a beat, then prompt with the smallest possible cue from their script, like a discreet MC. At natural end, react as the room would.` },
+      qa: { label: "Post-talk Q&A", open: "thank them for the talk and ask your first question",
+        persona: (d) => `You are ${AUD(d, "an engaged but sharp audience member")} in the Q&A after the user's talk. Ask real questions: the hard one they hoped nobody would ask, the off-topic one, the two-part one, the "more of a comment" one. One at a time; follow up when answers dodge.` },
+      tough: { label: "Tough crowd", open: "let them start, but be a hard room from the first line",
+        persona: (d) => `You are a distracted, hard-to-win room${d.audience ? ": " + d.audience : ""}. Interject realistic disruptions: a phone goes off, side chatter, "can you speak up?", mild heckling if it's that kind of event. Reward composure and recovery — settle down and engage when the user handles it well and keeps going.` },
+    },
+    grader: { coach: "speaking coach", labels: ["Speech fidelity", "Q&A handling", "Delivery"],
+      emphasis: "Judge fidelity to the speech's beats and key lines (word-perfect where it matters: names, punchlines, numbers), pacing, recovery after skips or interruptions, and how questions were handled." },
+    counterpart: "your audience",
+  },
+  vc: {
+    emoji: "🚀", name: "Fundraising",
+    tagline: "Pitching investors — narrative plus every number, cold.",
+    fields: {
+      script:   { label: "Pitch narrative + every number they could ask", ph: "Paste your pitch and your metrics: MRR, growth, churn, CAC/LTV, TAM math, round size, use of funds. Separate sections with a blank line — each becomes its own drill." },
+      context:  { label: "Company background (optional)", ph: "Product, traction story, team, competitive landscape — what a prepared investor would already know." },
+      audience: { label: "Which investor?", ph: "e.g. Seed partner at a fintech-focused fund, famous for interrupting, passed on our competitor last year" },
+      worries:  { label: "Questions you dread (optional, one per line)", ph: "e.g. What if Google does this?\nYour CAC math doesn't work\nWhy hasn't this worked for others who tried?" },
+    },
+    scenarios: {
+      rapid: { label: "Rapid-fire interview", open: "start the clock and fire the first question — no pleasantries",
+        persona: (d) => `You are a YC-style rapid-fire interviewer${d.audience ? ": " + d.audience : ""}. Ten minutes, no slides. Short, sharp questions; interrupt any answer over ~30 seconds; jump topics without warning (users, growth, why you, why now, unit economics). You respect crisp numbers and directness, and you visibly lose interest at buzzwords.` },
+      partner: { label: "Partner meeting", open: "welcome them and ask them to walk you through it",
+        persona: (d) => `You are ${AUD(d, "a general partner at a venture fund")} in a full partner meeting. Let them pitch in stretches, then go deep where it hurts: market size math, competition ("what if the incumbent ships this?"), defensibility, team gaps. Skeptical by default, genuinely persuadable by evidence.` },
+      demo: { label: "Demo-day Q&A", open: "the pitch just ended — ask your first question from the crowd",
+        persona: (d) => `You are investors in a demo-day Q&A right after the user's pitch. Rotate personas question to question: the metrics hawk, the friendly angel, the skeptic who arrived mid-pitch and asks something already covered. Fast pace, short questions, occasional follow-up.` },
+      diligence: { label: "Diligence grilling", open: "open your notebook and start with the numbers",
+        persona: (d) => `You are ${AUD(d, "an associate running diligence")} who has studied the user's numbers and is stress-testing them. Recompute things out loud ("so if CAC is X and churn is Y…"), hunt inconsistencies between their claims, and press until each number is defended or admitted soft. Courteous, relentless.` },
+      journalist: { label: "Journalist interview", open: "thank them for making time and ask your first question — friendly, then sharper",
+        persona: (d) => `You are ${AUD(d, "a tech journalist on deadline")} interviewing the user about their company. Mix fair questions with harder ones: a gotcha, a leading question, an interruption, an off-record bait. See whether they land their key messages anyway — and quote-worthy answers earn follow-ups.` },
+    },
+    grader: { coach: "pitch coach", labels: ["Metric accuracy", "Grilling handling", "Composure"],
+      emphasis: "Check every number stated against the pasted material — flag ANY fudged, invented, or inconsistent metric. Reward brevity under interruption, direct answers to direct questions, composure, and whether the user made their ask." },
+    counterpart: "a skeptical investor",
+  },
+  exam: {
+    emoji: "🎓", name: "Defense & exam",
+    tagline: "Thesis viva, quals, OSCE stations — your own material, examined.",
+    fields: {
+      script:   { label: "Your material — the answers, checklist, or summary to learn", ph: "Paste your abstract + methods + key findings, or the OSCE checklist / counseling script. Separate topics with a blank line — each becomes its own drill." },
+      context:  { label: "Exam background (optional)", ph: "Your discipline, the exam format and timing, the mark scheme if you have it, known weak spots." },
+      audience: { label: "Who's examining you?", ph: "e.g. Committee: a methods hardliner, a big-picture prof from an adjacent field, a friendly chair" },
+      worries:  { label: "Questions you fear (optional, one per line)", ph: "e.g. Why this method and not X?\nHow does this generalize?\nYour sample size is small" },
+    },
+    scenarios: {
+      committee: { label: "Full committee", open: "convene the committee and invite their opening summary",
+        persona: (d) => `You are a thesis committee${d.audience ? ": " + d.audience : ""}, taking turns as distinct questioners with different styles. Probe methodology, contribution, and limitations; follow up on weak answers; occasionally hand off between committee-member voices ("I'd like to pick up on that…").` },
+      hardliner: { label: "Methods hardliner", open: "skip pleasantries and question their first design choice",
+        persona: (d) => `You are a methodological hardliner examining the user's work. Question every design choice — "why this method and not X?", "what about confounds?", "justify this statistic" — and do not accept appeals to convention or authority. Respect only reasoned, honest answers, including honest "that's a limitation".` },
+      station: { label: "Patient / practical station", open: "be the patient — present your complaint only when greeted",
+        persona: (d) => `You are a standardized patient (or practical-station counterpart) in a timed exam station${d.audience ? " — " + d.audience : ""}. Never volunteer information unasked; answer only what the user actually asks; show a realistic emotional state. If they miss a critical question a real examiner would expect, let the consequence surface naturally.` },
+      warmup: { label: "Friendly examiner", open: "welcome them kindly and start with the classic first question",
+        persona: (d) => `You are a supportive examiner doing a warm-up mock. Ask the standard questions in a kind tone, give the user room to think, and gently flag — in character — when an answer dodged the question.` },
+    },
+    grader: { coach: "academic examiner-turned-coach", labels: ["Content accuracy", "Probe handling", "Clarity"],
+      emphasis: "Judge consistency with the pasted material (flag contradictions), whether questions were answered directly, honesty about limitations versus bluffing, and — if a checklist was provided — which required items were hit or missed." },
+    counterpart: "your examiner",
+  },
+  custom: {
+    emoji: "✨", name: "Custom",
+    tagline: "Any other conversation you need to walk in ready for.",
+    fields: {
+      script:   { label: "The material you need to know cold", ph: "Paste whatever you must internalize — a script, facts, answers, arguments. Separate chunks with a blank line — each becomes its own drill." },
+      context:  { label: "Background (optional)", ph: "Anything the AI should know to play its part realistically." },
+      audience: { label: "Who's on the other side?", ph: "e.g. A thesis committee member / an upset customer / a border-control officer / my future in-laws" },
+      worries:  { label: "The hard questions (optional, one per line)", ph: "One per line — the AI will weave them in." },
+    },
+    scenarios: {
+      convo: { label: "The conversation", open: "open the conversation naturally for whoever you are playing",
+        persona: (d) => `You are ${AUD(d, "the counterpart in the conversation the user is preparing for")}. Play the role implied by the user's material and description, realistically: have your own goals, moods, and constraints; push back where your character would; reward what would genuinely work on them.` },
+      qa: { label: "Tough Q&A", open: "open with your hardest question",
+        persona: (d) => `You are ${AUD(d, "a sharp, skeptical questioner")} interrogating the user on their material. Pointed questions, one at a time, follow-ups when answers are vague, and no letting go of an unanswered question.` },
+      spar: { label: "Sparring partner", open: "ask what they want to work on, then start",
+        persona: (d) => `You are a tough-but-fair sparring partner. Ask the user what they want to practice from their material, then play the most useful counterpart for it, escalating difficulty as they improve. Between exchanges you may briefly note (in character) what landed and what didn't.` },
+    },
+    grader: { coach: "communication coach", labels: ["Material covered", "Pushback handling", "Confidence"],
+      emphasis: "Judge how much of their key material the user actually used, how they handled pushback, and composure." },
+    counterpart: "the other side of your conversation",
   },
 };
+function cat() { return CATEGORIES[data.category] || CATEGORIES.pitch; }
+
+/* ---------------- roleplay ---------------- */
+let rp = null; // active session state
 const DIFFICULTY = {
   friendly:  "Be receptive and encouraging — raise mild objections, accept good answers easily. Good for a warm-up run.",
   realistic: "Be a realistic counterpart: neither hostile nor easy. Raise the objections a real person in your role would, and only accept answers that would actually convince them.",
@@ -928,10 +1308,46 @@ const DIFFICULTY = {
 };
 
 let curScenario = "presentation", curDifficulty = "realistic";
-document.querySelectorAll("#scenarioPills .pill").forEach(p => p.addEventListener("click", () => {
-  document.querySelectorAll("#scenarioPills .pill").forEach(x => x.classList.remove("active"));
-  p.classList.add("active"); curScenario = p.dataset.sc;
-}));
+function renderCategoryPills() {
+  const row = $("categoryPills");
+  row.innerHTML = "";
+  const active = CATEGORIES[data.category] ? data.category : "pitch";
+  Object.entries(CATEGORIES).forEach(([id, c]) => {
+    const b = document.createElement("button");
+    b.className = "pill" + (active === id ? " active" : "");
+    b.textContent = c.emoji + " " + c.name;
+    b.title = c.tagline;
+    b.addEventListener("click", () => { data.category = id; save(LS.data, data); applyCategory(); });
+    row.appendChild(b);
+  });
+}
+function applyCategory() {
+  const c = cat();
+  renderCategoryPills();
+  $("catTagline").textContent = c.tagline;
+  $("lblScript").innerHTML = esc(c.fields.script.label) + ' <b style="color:var(--accent)">*</b>';
+  $("inScript").placeholder = c.fields.script.ph;
+  $("lblContext").textContent = c.fields.context.label;
+  $("inContext").placeholder = c.fields.context.ph;
+  $("lblAudience").textContent = c.fields.audience.label;
+  $("inAudience").placeholder = c.fields.audience.ph;
+  $("lblWorries").textContent = c.fields.worries.label;
+  $("inWorries").placeholder = c.fields.worries.ph;
+  if (!c.scenarios[curScenario]) curScenario = Object.keys(c.scenarios)[0];
+  renderScenarioPills();
+}
+function renderScenarioPills() {
+  const c = cat();
+  const row = $("scenarioPills");
+  row.innerHTML = "";
+  Object.entries(c.scenarios).forEach(([id, sc]) => {
+    const b = document.createElement("button");
+    b.className = "pill" + (curScenario === id ? " active" : "");
+    b.textContent = sc.label;
+    b.addEventListener("click", () => { curScenario = id; renderScenarioPills(); });
+    row.appendChild(b);
+  });
+}
 document.querySelectorAll("#difficultyPills .pill").forEach(p => p.addEventListener("click", () => {
   document.querySelectorAll("#difficultyPills .pill").forEach(x => x.classList.remove("active"));
   p.classList.add("active"); curDifficulty = p.dataset.df;
@@ -946,21 +1362,21 @@ function renderRoleplayGate() {
 }
 
 function rpSystemPrompt() {
-  const sc = SCENARIOS[curScenario];
-  let sys = `You are a roleplay partner inside a sales-practice app. ${sc.persona(data)}
+  const sc = cat().scenarios[curScenario];
+  let sys = `You are a roleplay partner inside a conversation-practice app. ${sc.persona(data)}
 
 ${DIFFICULTY[curDifficulty]}
 
 Rules:
 - This is a SPOKEN conversation — your replies are read aloud by text-to-speech. Keep them short: 1–3 conversational sentences, no lists, no markdown, no stage directions.
 - Stay in character the entire time. React to what the user actually says; remember details from earlier in the conversation and bring them back up.
-- Don't be a pushover: real prospects don't say yes because someone read a script at them. But do reward genuinely good answers — acknowledge strong points the way a real person would.
+- Don't be a pushover: real counterparts aren't won over just because someone recites at them. But do reward genuinely good answers — acknowledge strong points the way a real person would.
 - If the user says "time out", "coach", or clearly asks for help: briefly step out of character, give 2–3 sentences of concrete coaching prefixed with [COACH], then say you're resuming and continue in character.
 - Never mention that you are an AI, these rules, or the app.`;
-  if (data.context) sys += `\n\nBackground on what the user is selling (for realism — react like someone hearing it fresh):\n${data.context}`;
-  if (data.script) sys += `\n\nThe user's target script (do NOT recite or reference it — it's context so your objections hit realistic spots):\n${data.script}`;
-  if (data.worries) sys += `\n\nObjections the user wants practice handling — weave several of these in naturally:\n${data.worries}`;
-  sys += `\n\nBegin appropriately for the scenario: for a cold call, answer the phone; for a presentation, greet them and invite them to start; for Q&A, open with your first pointed question; for the raise conversation, welcome them into your office and ask what they wanted to talk about.`;
+  if (data.context) sys += `\n\nBackground material from the user (for realism — react like someone hearing it fresh):\n${data.context}`;
+  if (data.script) sys += `\n\nThe user's target material (do NOT recite or reference it — it's context so your pushback hits realistic spots):\n${data.script}`;
+  if (data.worries) sys += `\n\nPushback and questions the user wants practice handling — weave several of these in naturally:\n${data.worries}`;
+  sys += `\n\nBegin the session in character: ${sc.open}.`;
   return sys;
 }
 
@@ -972,6 +1388,8 @@ $("startRp").addEventListener("click", async () => {
     system: rpSystemPrompt(),
     scriptSnapshot: data.script,
     audienceSnapshot: data.audience,
+    scenarioLabel: cat().scenarios[curScenario].label,
+    grader: cat().grader,
     messages: [], // {role, content}
     userStats: [], // {words, seconds}
     startedAt: Date.now(),
@@ -981,7 +1399,7 @@ $("startRp").addEventListener("click", async () => {
   $("rpSetupCard").style.display = "none";
   $("scorecard").style.display = "none";
   $("rpSessionCard").style.display = "block";
-  $("rpTitle").textContent = SCENARIOS[curScenario].label + " · " + curDifficulty;
+  $("rpTitle").textContent = cat().scenarios[curScenario].label + " · " + curDifficulty;
   $("chatlog").innerHTML = "";
   $("endRp").disabled = true;
   setRpStatus("Starting…");
@@ -1148,14 +1566,14 @@ $("endRp").addEventListener("click", async () => {
   setRpStatus("Grading…");
   $("endRp").disabled = true;
   const transcript = rp.messages.slice(1).map(m =>
-    (m.role === "user" ? "PRESENTER: " : "COUNTERPART: ") + m.content
+    (m.role === "user" ? "SPEAKER: " : "COUNTERPART: ") + m.content
   ).join("\n");
   try {
     const raw = await callClaude({
-      system: "You are a supportive but honest sales coach. Grade the practice session below. The PRESENTER is your student; the COUNTERPART was an AI roleplay partner. Judge only the presenter. Be specific — quote their actual words where useful. Scores: 90+ exceptional, 70-89 solid, 50-69 needs work, below 50 significant gaps.",
+      system: `You are a supportive but honest ${rp.grader.coach}. Grade the practice session below. The SPEAKER is your student; the COUNTERPART was an AI roleplay partner. Judge only the speaker. ${rp.grader.emphasis} Be specific — quote their actual words where useful. Scores: 90+ exceptional, 70-89 solid, 50-69 needs work, below 50 significant gaps.`,
       messages: [{
         role: "user",
-        content: `TARGET SCRIPT the presenter was trying to deliver:\n---\n${rp.scriptSnapshot}\n---\n\nSCENARIO: ${SCENARIOS[rp.scenario].label} (difficulty: ${rp.difficulty})\n${rp.audienceSnapshot ? "AUDIENCE: " + rp.audienceSnapshot + "\n" : ""}\nSESSION TRANSCRIPT:\n---\n${transcript}\n---\n\nGrade the presenter.`
+        content: `TARGET MATERIAL the speaker was trying to deliver:\n---\n${rp.scriptSnapshot}\n---\n\nSCENARIO: ${rp.scenarioLabel} (difficulty: ${rp.difficulty})\n${rp.audienceSnapshot ? "COUNTERPART: " + rp.audienceSnapshot + "\n" : ""}\nSESSION TRANSCRIPT:\n---\n${transcript}\n---\n\nGrade the speaker on: ${rp.grader.labels.join(", ")}.`
       }],
       maxTokens: 16000, effort: "high",
       schema: GRADE_SCHEMA,
@@ -1164,9 +1582,10 @@ $("endRp").addEventListener("click", async () => {
     const d = localDelivery();
     const sess = {
       when: new Date().toISOString(),
-      scenario: SCENARIOS[rp.scenario].label,
+      scenario: rp.scenarioLabel,
       difficulty: rp.difficulty,
       turns: userTurns,
+      labels: rp.grader.labels,
       adherence: g.adherence_score,
       objection: g.objection_score,
       confidence: g.confidence_score,
@@ -1187,6 +1606,7 @@ function scoreColor(v) { return v >= 70 ? "var(--good)" : v >= 50 ? "var(--warn)
 function renderScorecard(g, d) {
   $("rpSessionCard").style.display = "none";
   $("rpSetupCard").style.display = "block";
+  const L = rp.grader.labels;
   const card = $("scorecard");
   card.style.display = "block";
   const deliveryBits = [];
@@ -1195,16 +1615,16 @@ function renderScorecard(g, d) {
   card.innerHTML = `
     <h2>Scorecard</h2>
     <div class="scoregrid">
-      <div class="scoretile"><div class="big" style="color:${scoreColor(g.adherence_score)}">${g.adherence_score}</div><div class="lbl">Script adherence</div></div>
-      <div class="scoretile"><div class="big" style="color:${scoreColor(g.objection_score)}">${g.objection_score}</div><div class="lbl">Objection handling</div></div>
-      <div class="scoretile"><div class="big" style="color:${scoreColor(g.confidence_score)}">${g.confidence_score}</div><div class="lbl">Confidence</div></div>
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.adherence_score)}">${g.adherence_score}</div><div class="lbl">${esc(L[0])}</div></div>
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.objection_score)}">${g.objection_score}</div><div class="lbl">${esc(L[1])}</div></div>
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.confidence_score)}">${g.confidence_score}</div><div class="lbl">${esc(L[2])}</div></div>
       ${deliveryBits.join("")}
     </div>
     <p>${esc(g.overall)}</p>
     ${g.covered_points.length ? `<h3 class="tag-good">✓ You covered</h3><ul class="points">${g.covered_points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
     ${g.missed_points.length ? `<h3 class="tag-bad">✗ You missed</h3><ul class="points">${g.missed_points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
-    <h3>Objection handling</h3><p style="font-size:14.5px">${esc(g.objection_notes)}</p>
-    <h3>Confidence</h3><p style="font-size:14.5px">${esc(g.confidence_notes)}</p>
+    <h3>${esc(L[1])}</h3><p style="font-size:14.5px">${esc(g.objection_notes)}</p>
+    <h3>${esc(L[2])}</h3><p style="font-size:14.5px">${esc(g.confidence_notes)}</p>
     <h3>Top fixes for next round</h3>
     <ul class="points">${g.top_fixes.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
     <button class="btn" id="againBtn" style="margin-top:8px">Run it again</button>
@@ -1218,40 +1638,91 @@ function renderScorecard(g, d) {
 function renderProgress() {
   const secs = sections();
   const ml = $("masteryList");
-  if (!secs.length) { ml.innerHTML = '<div class="empty">Save a script in Setup first.</div>'; }
+  const summary = $("reviewSummary");
+  if (!secs.length) { ml.innerHTML = '<div class="empty">Save a script in Setup first.</div>'; summary.style.display = "none"; $("reviewGo").style.display = "none"; }
   else {
     ml.innerHTML = "";
     secs.forEach((s, i) => {
-      const pct = mastery[s.id];
+      const m = mstat(s.id);
       const chip = document.createElement("button");
       chip.className = "secchip";
       chip.style.setProperty("--h", secHue(i, secs.length));
-      chip.title = "Drill this section";
-      chip.innerHTML = esc(s.title) + `<span class="pct">${pct ? pct + "%" : "–"}</span>`;
+      chip.title = m.last && m.due ? (m.due <= Date.now() ? "Due for review — tap to drill" : "Next review " + untilStr(m.due)) : "Drill this section";
+      chip.innerHTML = m.pct ? chipLabel(s) : esc(s.title) + '<span class="pct">–</span>';
       chip.addEventListener("click", () => {
         curSection = i;
         document.querySelector('nav button[data-tab="learn"]').click();
       });
       ml.appendChild(chip);
     });
+    const due = dueSections();
+    const ready = secs.filter(s => mstat(s.id).streak >= 3).length;
+    const left = daysToEvent();
+    const bits = [];
+    if (left !== null) bits.push(`🗓 <b>${Math.ceil(left)} day${Math.ceil(left) === 1 ? "" : "s"}</b> until the real thing`);
+    bits.push(due.length ? `⏰ <b>${due.length}</b> section${due.length === 1 ? "" : "s"} due for review` : "✓ nothing due right now");
+    if (ready) bits.push(`🏆 <b>${ready}</b> performance-ready`);
+    summary.innerHTML = bits.join(" · ");
+    summary.style.display = "block";
+    $("reviewGo").style.display = due.length ? "block" : "none";
   }
   const sl = $("sessionList");
   if (!sessions.length) { sl.innerHTML = '<div class="empty">No graded sessions yet.</div>'; return; }
   sl.innerHTML = sessions.map(s => {
     const dt = new Date(s.when);
     const stamp = dt.toLocaleDateString() + " " + dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const L = (s.labels || ["Script", "Objections", "Confidence"]).map(l => l.split(" ")[0].toLowerCase());
     return `<div class="sessionrow">
       <span style="color:var(--muted);flex:none">${esc(stamp)}</span>
       <span style="flex:1">${esc(s.scenario)} · ${esc(s.difficulty)} · ${s.turns} turns</span>
-      <span>script <b style="color:${scoreColor(s.adherence)}">${s.adherence}</b></span>
-      <span>objections <b style="color:${scoreColor(s.objection)}">${s.objection}</b></span>
-      <span>confidence <b style="color:${scoreColor(s.confidence)}">${s.confidence}</b></span>
+      <span>${esc(L[0])} <b style="color:${scoreColor(s.adherence)}">${s.adherence}</b></span>
+      <span>${esc(L[1])} <b style="color:${scoreColor(s.objection)}">${s.objection}</b></span>
+      <span>${esc(L[2])} <b style="color:${scoreColor(s.confidence)}">${s.confidence}</b></span>
     </div>`;
   }).join("");
 }
 
+$("goReview").addEventListener("click", () => {
+  document.querySelector('nav button[data-tab="learn"]').click();
+  $("smartReview").click();
+});
+
+/* ---------------- walk-practice prompt ---------------- */
+$("walkPrompt").addEventListener("click", async () => {
+  const st = $("setupStatus");
+  const c = cat();
+  const script = $("inScript").value.trim();
+  if (!script) { st.textContent = "Paste your material first — the walk prompt is built from it."; st.className = "statusline err"; return; }
+  const worries = $("inWorries").value.trim();
+  const context = $("inContext").value.trim();
+  const lines = [
+    "Copy everything below this line into a new chat in the Claude mobile app, then switch to voice mode and practice hands-free on your walk.",
+    "------------------------------------------------------------", "",
+    "You are my practice partner. I'm on a walk, practicing out loud by voice. Keep every reply SHORT and conversational — one to three sentences — because everything you say is spoken aloud. No lists, no markdown.",
+    "", "Start by asking me which mode I want. Two modes:", "",
+    'MODE 1 — RECITE AND CHECK. I say "check me on [section name]", then recite that section from memory. Compare it to the material below and tell me briefly what I missed or got wrong — key points and numbers first, wording second. All numbers must be exact. Then have me redo only the parts I missed.',
+    "",
+    `MODE 2 — ROLEPLAY. You play ${$("inAudience").value.trim() || c.counterpart}. I practice; you push back the way the real person would${worries ? ", using the pushback list below plus your own" : ""}. Don't be a pushover — only accept what would genuinely convince them — but acknowledge strong moments. If I say "time out", step out of character, coach me in two or three sentences, then resume. When I say "how did I do", grade me honestly: what I covered, what I missed, how I handled pushback, and my top three fixes.`,
+  ];
+  if (worries) lines.push("", "PUSHBACK TO USE:", ...worries.split("\n").map(w => w.trim()).filter(Boolean).map(w => "- " + w));
+  if (context) lines.push("", "BACKGROUND:", context);
+  lines.push("", "THE MATERIAL I'M LEARNING:", "", script);
+  try {
+    await navigator.clipboard.writeText(lines.join("\n"));
+    st.textContent = "Walk prompt copied — paste it into a new Claude chat and switch to voice mode.";
+    st.className = "statusline";
+  } catch {
+    $("importArea").style.display = "block";
+    $("importBox").value = lines.join("\n");
+    $("importBox").select();
+    st.textContent = "Clipboard was blocked — copy the prompt below manually.";
+    st.className = "statusline";
+  }
+});
+
 /* ---------------- init ---------------- */
 renderRoleplayGate();
+applyCategory();
 
 // First run in a fresh browser: pull saved material from seed.json (served
 // alongside the app) so the user doesn't have to re-paste per browser.
@@ -1267,12 +1738,16 @@ renderRoleplayGate();
       context: seed.context || "",
       audience: seed.audience || "",
       worries: seed.worries || "",
+      event: seed.event || "",
+      category: (seed.category && CATEGORIES[seed.category]) ? seed.category : "pitch",
     };
     save(LS.data, data);
     $("inScript").value = data.script;
     $("inContext").value = data.context;
     $("inAudience").value = data.audience;
     $("inWorries").value = data.worries;
+    $("inEvent").value = data.event;
+    applyCategory();
     $("setupStatus").textContent = "Loaded your saved material — " + sections().length + " sections ready in Learn.";
     $("setupStatus").className = "statusline";
     renderRoleplayGate();
