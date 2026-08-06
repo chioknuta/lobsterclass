@@ -474,7 +474,7 @@
 
     <div class="card" id="odCard">
       <h2>⚡ Objection drill <span style="font-size:12px; font-weight:600; color:var(--muted)">no API key needed</span></h2>
-      <p class="hint">The app fires the hard questions at you — out loud — and you answer out loud, cold. Your own worry list is in the deck. Answering under a little pressure is what inoculates against freezing at the real thing.</p>
+      <p class="hint">The app fires the hard questions at you — out loud — and you answer out loud, cold. Your own worry list is in the deck. Answering under a little pressure is what inoculates against freezing at the real thing. Answer first, <em>then</em> hit 💡 to compare against a strong answer — checking before you've tried is the one thing that kills the benefit.</p>
       <div id="odSetup">
         <p class="hint" id="odDone" style="display:none"></p>
         <button class="btn secondary" id="odStart">Start drilling</button>
@@ -484,8 +484,25 @@
         <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:center">
           <button class="btn" id="odNext">Answered — next</button>
           <button class="btn secondary small" id="odRepeat">🔊 Say it again</button>
+          <button class="btn secondary small" id="odReveal">💡 Show a strong answer</button>
           <button class="btn ghost" id="odStop">End</button>
           <span class="statusline" id="odCount"></span>
+        </div>
+        <div id="odAnswer" style="display:none" aria-live="polite">
+          <div class="practicebox" id="odAnswerBody" style="font-size:15.5px; line-height:1.75"></div>
+          <p class="hint" id="odAnswerNote" style="display:none; margin-top:8px"></p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:center">
+            <button class="btn secondary small" id="odAnswerSpeak">🔊 Read it to me</button>
+            <button class="btn ghost small" id="odAnswerEdit">✏️ Write my own</button>
+            <span class="statusline" id="odAnswerStatus"></span>
+          </div>
+          <div id="odAnswerEditor" style="display:none; margin-top:10px">
+            <textarea id="odAnswerBox" rows="6" placeholder="Write the answer you wish you'd just given — in your own words, the way you'd actually say it."></textarea>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+              <button class="btn small" id="odAnswerSave">Save answer</button>
+              <button class="btn ghost small" id="odAnswerCancel">Cancel</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -593,8 +610,9 @@ function load(k, fallback) {
 }
 function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
 
-let data = load(LS.data, { script: "", context: "", audience: "", worries: "", event: "", category: "pitch" });
+let data = load(LS.data, { script: "", context: "", audience: "", worries: "", event: "", category: "pitch", answers: {} });
 if (!data.category) data.category = "pitch"; // silent migration for pre-category saves
+if (!data.answers || typeof data.answers !== "object") data.answers = {}; // ditto for pre-answer-bank saves
 let mastery = load(LS.mastery, {});
 let sessions = load(LS.sessions, []);
 
@@ -629,6 +647,8 @@ $("saveSetup").addEventListener("click", () => {
     worries: $("inWorries").value.trim(),
     event: $("inEvent").value,
     category: data.category || "pitch",
+    answers: data.answers || {}, // keep the answer bank across a Setup re-save
+    answersVersion: data.answersVersion || 0,
   };
   save(LS.data, data);
   // drop mastery entries for sections that no longer exist
@@ -651,6 +671,8 @@ $("exportData").addEventListener("click", async () => {
     worries: $("inWorries").value,
     event: $("inEvent").value,
     category: data.category || "pitch",
+    answers: data.answers || {},
+    answersVersion: data.answersVersion || 0,
   });
   try {
     await navigator.clipboard.writeText(payload);
@@ -681,6 +703,8 @@ $("importLoad").addEventListener("click", () => {
     $("inWorries").value = d.worries || "";
     $("inEvent").value = d.event || "";
     if (d.category && CATEGORIES[d.category]) data.category = d.category;
+    if (d.answers && typeof d.answers === "object") data.answers = d.answers;
+    if (typeof d.answersVersion === "number") data.answersVersion = d.answersVersion;
     $("importArea").style.display = "none";
     $("saveSetup").click();
     applyCategory();
@@ -1814,12 +1838,46 @@ function odDeck() {
   }
   return pool;
 }
+/* Answer bank. Keyed by a normalised form of the objection text so small edits
+   to punctuation or casing in Setup don't orphan an answer. Must stay in sync
+   with ans_key() in tools/build_seed.py. */
+function ansKey(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+function ansGet(q) {
+  const v = (data.answers || {})[ansKey(q)];
+  if (!v) return null;
+  return typeof v === "string" ? { a: v, note: "" } : { a: v.a || "", note: v.note || "" };
+}
+function ansSet(q, text) {
+  if (!data.answers) data.answers = {};
+  const k = ansKey(q), prev = ansGet(q);
+  if (!text.trim()) delete data.answers[k];
+  else data.answers[k] = { a: text.trim(), note: (prev && prev.note) || "", own: true };
+  save(LS.data, data);
+}
+function odResetAnswer() {
+  $("odAnswer").style.display = "none";
+  $("odAnswerEditor").style.display = "none";
+  $("odAnswerStatus").textContent = "";
+  $("odReveal").style.display = "";
+}
+function odRenderAnswer() {
+  const q = od.deck[od.pos], got = ansGet(q);
+  $("odAnswer").style.display = "block";
+  $("odReveal").style.display = "none";
+  $("odAnswerBody").textContent = got ? got.a
+    : "Nothing saved for this one yet — and that's the most useful kind. Write the answer you wish you'd just given, in your own words.";
+  $("odAnswerNote").textContent = got ? got.note : "";
+  $("odAnswerNote").style.display = (got && got.note) ? "block" : "none";
+  $("odAnswerSpeak").style.display = got ? "" : "none";
+  $("odAnswerEdit").textContent = got ? "✏️ Write my own" : "✏️ Write one now";
+}
 function odShow() {
   if (!od.deck.length) { od.deck = odDeck(); od.pos = 0; }
   if (od.pos >= od.deck.length) { od.deck = odDeck(); od.pos = 0; } // reshuffle when exhausted
   const q = od.deck[od.pos];
   $("odQuestion").textContent = "“" + q + "”";
   $("odCount").textContent = od.n ? od.n + " answered" : "";
+  odResetAnswer();
   speak(q);
 }
 $("odStart").addEventListener("click", () => {
@@ -1832,15 +1890,42 @@ $("odStart").addEventListener("click", () => {
 });
 $("odNext").addEventListener("click", () => { if (!od) return; od.n++; od.pos++; odShow(); });
 $("odRepeat").addEventListener("click", () => { if (od) speak(od.deck[od.pos]); });
+$("odReveal").addEventListener("click", () => {
+  if (!od) return;
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  odRenderAnswer();
+  if (!ansGet(od.deck[od.pos])) $("odAnswerEdit").click(); // no answer yet — go straight to writing one
+});
+$("odAnswerSpeak").addEventListener("click", () => {
+  if (!od) return;
+  const got = ansGet(od.deck[od.pos]);
+  if (got) speak(got.a);
+});
+$("odAnswerEdit").addEventListener("click", () => {
+  if (!od) return;
+  const got = ansGet(od.deck[od.pos]);
+  $("odAnswerEditor").style.display = "block";
+  $("odAnswerBox").value = got ? got.a : "";
+  $("odAnswerBox").focus();
+});
+$("odAnswerCancel").addEventListener("click", () => { $("odAnswerEditor").style.display = "none"; });
+$("odAnswerSave").addEventListener("click", () => {
+  if (!od) return;
+  ansSet(od.deck[od.pos], $("odAnswerBox").value);
+  $("odAnswerEditor").style.display = "none";
+  odRenderAnswer();
+  $("odAnswerStatus").textContent = "Saved — say it out loud once before you move on.";
+});
 $("odStop").addEventListener("click", () => {
   if (window.speechSynthesis) speechSynthesis.cancel();
+  odResetAnswer();
   $("odQuestion").textContent = "";
   $("odSetup").style.display = "block";
   $("odLive").style.display = "none";
   const n = od ? od.n : 0;
   od = null;
   $("odDone").style.display = n ? "block" : "none";
-  $("odDone").textContent = n ? `${n} objection${n === 1 ? "" : "s"} answered cold. The ones that made you pause — write your best answer into your material, then drill it.` : "";
+  $("odDone").textContent = n ? `${n} objection${n === 1 ? "" : "s"} answered cold. The ones that made you pause — hit 💡 next time and write your own answer in, then drill until it comes out without thinking.` : "";
   $("odStart").textContent = n ? "Drill again" : "Start drilling";
 });
 
@@ -2324,7 +2409,14 @@ $("walkPrompt").addEventListener("click", async () => {
     "",
     `MODE 2 — ROLEPLAY. You play ${$("inAudience").value.trim() || c.counterpart}. I practice; you push back the way the real person would${worries ? ", using the pushback list below plus your own" : ""}. Don't be a pushover — only accept what would genuinely convince them — but acknowledge strong moments. If I say "time out", step out of character, coach me in two or three sentences, then resume. When I say "how did I do", grade me honestly: what I covered, what I missed, how I handled pushback, and my top three fixes.`,
   ];
-  if (worries) lines.push("", "PUSHBACK TO USE:", ...worries.split("\n").map(w => w.trim()).filter(Boolean).map(w => "- " + w));
+  const worryList = worries.split("\n").map(w => w.trim()).filter(Boolean);
+  if (worries) lines.push("", "PUSHBACK TO USE:", ...worryList.map(w => "- " + w));
+  const prepared = worryList.map(w => [w, ansGet(w)]).filter(([, a]) => a && a.a);
+  if (prepared.length) {
+    lines.push("",
+      "MY PREPARED ANSWERS — these are what I'm trying to be able to say from memory. Do NOT read them to me during a roleplay. Afterwards, tell me how close I got to my own prepared answer and what I dropped.",
+      ...prepared.map(([w, a]) => `- THEY SAY: ${w}\n  I SHOULD SAY: ${a.a}`));
+  }
   if (context) lines.push("", "BACKGROUND:", context);
   lines.push("", "THE MATERIAL I'M LEARNING:", "", script);
   try {
@@ -2348,12 +2440,25 @@ applyCategory();
 // First run in a fresh browser: pull saved material from seed.json (served
 // alongside the app) so the user doesn't have to re-paste per browser.
 (async function importSeed() {
-  if (data.script) return;
   try {
     const r = await fetch("seed.json", { cache: "no-store" });
     if (!r.ok) return;
     const seed = await r.json();
     if (!seed || !seed.script) return;
+    // Material was already loaded by an earlier version of the app. Top up the
+    // answer bank if the seed's is newer, but never clobber an answer the user
+    // wrote themselves (ansSet marks those `own`).
+    if (data.script) {
+      const sv = seed.answersVersion || 0;
+      if (!seed.answers || typeof seed.answers !== "object") return;
+      if (sv <= (data.answersVersion || 0)) return;
+      const merged = Object.assign({}, seed.answers);
+      for (const [k, v] of Object.entries(data.answers || {})) if (v && v.own) merged[k] = v;
+      data.answers = merged;
+      data.answersVersion = sv;
+      save(LS.data, data);
+      return;
+    }
     data = {
       script: seed.script,
       context: seed.context || "",
@@ -2361,6 +2466,8 @@ applyCategory();
       worries: seed.worries || "",
       event: seed.event || "",
       category: (seed.category && CATEGORIES[seed.category]) ? seed.category : "pitch",
+      answers: (seed.answers && typeof seed.answers === "object") ? seed.answers : {},
+      answersVersion: seed.answersVersion || 0,
     };
     save(LS.data, data);
     $("inScript").value = data.script;
