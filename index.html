@@ -334,6 +334,16 @@
         <button class="btn" id="saveSetup">Save material</button>
         <span class="statusline" id="setupStatus" aria-live="polite" style="display:inline-block;margin-left:10px"></span>
       </div>
+      <h3>Move to another device</h3>
+      <p class="hint">Your material lives only in this browser. To use it on your phone too: copy a transfer code here, send it to yourself (AirDrop, Notes…), and paste it into the app there. Nothing is uploaded.</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn secondary small" id="exportData">Copy transfer code</button>
+        <button class="btn secondary small" id="importBtn">Paste transfer code…</button>
+      </div>
+      <div id="importArea" style="display:none; margin-top:10px">
+        <textarea id="importBox" rows="4" placeholder="Paste the transfer code here…"></textarea>
+        <div style="margin-top:8px"><button class="btn small" id="importLoad">Load it</button></div>
+      </div>
     </div>
   </section>
 
@@ -519,6 +529,51 @@ $("saveSetup").addEventListener("click", () => {
   save(LS.mastery, mastery);
   renderRoleplayGate();
   st.textContent = "Saved — " + sections().length + " section(s) ready in Learn."; st.className = "statusline";
+});
+
+/* ---------------- device transfer ---------------- */
+$("exportData").addEventListener("click", async () => {
+  const st = $("setupStatus");
+  const payload = JSON.stringify({
+    lobsterclass: 1,
+    script: $("inScript").value,
+    context: $("inContext").value,
+    audience: $("inAudience").value,
+    worries: $("inWorries").value,
+  });
+  try {
+    await navigator.clipboard.writeText(payload);
+    st.textContent = "Transfer code copied — paste it into the app on your other device.";
+    st.className = "statusline";
+  } catch {
+    $("importArea").style.display = "block";
+    $("importBox").value = payload;
+    $("importBox").select();
+    st.textContent = "Clipboard was blocked — copy the code below manually.";
+    st.className = "statusline";
+  }
+});
+$("importBtn").addEventListener("click", () => {
+  const area = $("importArea");
+  const opening = area.style.display === "none";
+  area.style.display = opening ? "block" : "none";
+  if (opening) { $("importBox").value = ""; $("importBox").focus(); }
+});
+$("importLoad").addEventListener("click", () => {
+  const st = $("setupStatus");
+  try {
+    const d = JSON.parse($("importBox").value.trim());
+    if (!d || d.lobsterclass !== 1 || typeof d.script !== "string") throw new Error("bad code");
+    $("inScript").value = d.script;
+    $("inContext").value = d.context || "";
+    $("inAudience").value = d.audience || "";
+    $("inWorries").value = d.worries || "";
+    $("importArea").style.display = "none";
+    $("saveSetup").click();
+  } catch {
+    st.textContent = "That doesn't look like a transfer code — copy it again from the other device.";
+    st.className = "statusline err";
+  }
 });
 
 /* ---------------- sections ---------------- */
