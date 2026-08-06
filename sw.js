@@ -1,5 +1,5 @@
 /* LobsterClass service worker — offline support + install */
-const CACHE = "lobsterclass-v2";
+const CACHE = "lobsterclass-v3";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", (e) => {
