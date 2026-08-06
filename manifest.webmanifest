@@ -2,7 +2,7 @@
   "name": "LobsterClass",
   "short_name": "LobsterClass",
   "description": "Memorize and rehearse your presentation with drills and AI roleplay.",
-  "start_url": "./",
+  "start_url": "app.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#12101d",

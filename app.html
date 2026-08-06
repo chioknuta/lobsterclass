@@ -1,0 +1,2525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>LobsterClass — rehearse the conversation that matters</title>
+<meta name="description" content="LobsterClass — know it cold, then survive the pushback. Memorization drills + AI roleplay for pitches, raises, interviews, speeches, and exams.">
+<meta name="theme-color" content="#12101d" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f5fb">
+<link rel="canonical" href="https://lobsterclass.com/app.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LobsterClass">
+<meta property="og:title" content="LobsterClass — rehearse the conversation that matters">
+<meta property="og:description" content="Memorization drills + AI roleplay for pitches, raises, interviews, speeches and exams. Free, no signup, works offline.">
+<meta property="og:url" content="https://lobsterclass.com/app.html">
+<meta property="og:image" content="https://lobsterclass.com/icon-512.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LobsterClass — rehearse the conversation that matters">
+<meta name="twitter:description" content="Memorization drills + AI roleplay for pitches, raises, interviews, speeches and exams. Free, no signup, works offline.">
+<meta name="twitter:image" content="https://lobsterclass.com/icon-512.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LobsterClass">
+<style>
+  :root {
+    --bg: #f6f5fb;
+    --surface: #ffffff;
+    --surface2: #eeecf7;
+    --text: #191531;
+    --muted: #6d6790;
+    --accent: #e02e8a;
+    --accent2: #7c3aed;
+    --accent3: #06b6d4;
+    --accent-soft: #fbe3f1;
+    --good: #0ea371;
+    --good-soft: #d9f3e8;
+    --bad: #e11d48;
+    --bad-soft: #fbdde5;
+    --warn: #d97706;
+    --border: #e2def0;
+    --grad: linear-gradient(115deg, #ff3d8f, #8b5cf6 52%, #22d3ee);
+    --glow1: rgba(139, 92, 246, .10);
+    --glow2: rgba(34, 211, 238, .10);
+    --radius: 14px;
+    --shadow: 0 2px 6px rgba(38, 22, 68, .06), 0 10px 30px rgba(38, 22, 68, .07);
+    --grad-text: linear-gradient(115deg, #d6217f, #6d28d9 52%, #0e7490);
+    --accent-ink: #c21d75;
+    --shadow-cta: 0 3px 12px color-mix(in srgb, var(--accent2) 40%, transparent);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12101d;
+      --surface: #1b1830;
+      --surface2: #262143;
+      --text: #f0eefb;
+      --muted: #a09ac2;
+      --accent: #ff4d9d;
+      --accent2: #a78bfa;
+      --accent3: #22d3ee;
+      --accent-soft: #3b1f42;
+      --good: #34d399;
+      --good-soft: #14352a;
+      --bad: #fb7185;
+      --bad-soft: #41202b;
+      --warn: #fbbf24;
+      --border: #322c52;
+      --grad: linear-gradient(115deg, #ff4d9d, #a78bfa 52%, #22d3ee);
+      --glow1: rgba(167, 139, 250, .14);
+      --glow2: rgba(34, 211, 238, .12);
+      --shadow: 0 2px 6px rgba(0, 0, 0, .5), 0 12px 32px rgba(0, 0, 0, .35);
+      --grad-text: var(--grad);
+      --accent-ink: var(--accent);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Avenir Next", "Avenir", "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 15.5px; line-height: 1.55;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(900px 500px at 85% -10%, var(--glow1), transparent 60%),
+      radial-gradient(700px 420px at -10% 25%, var(--glow2), transparent 60%);
+  }
+  button, input, textarea, select { font-family: inherit; color: inherit; }
+  button { font-size: 15px; }
+  textarea, input, select { font-size: 16px; }
+  header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 22px; border-bottom: none;
+    padding-top: max(13px, env(safe-area-inset-top));
+    padding-left: max(22px, env(safe-area-inset-left));
+    padding-right: max(22px, env(safe-area-inset-right));
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    position: sticky; top: 0; z-index: 20;
+  }
+  header::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+    background: var(--grad);
+  }
+  header h1 { font-size: 21px; margin: 0; font-weight: 800; letter-spacing: -.02em; display: flex; align-items: center; gap: 9px; }
+  header h1 .mark { width: 1.5em; height: 1.5em; border-radius: 22%; }
+  header h1 em {
+    font-style: normal;
+    background: var(--grad-text);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  nav { display: flex; gap: 4px; margin-left: 18px; flex-wrap: wrap; }
+  nav button {
+    border: none; background: none; padding: 8px 15px; border-radius: 999px;
+    cursor: pointer; color: var(--muted); font-size: 14.5px; font-weight: 600;
+    position: relative;
+  }
+  nav button.active::after {
+    content: ""; position: absolute; left: 14px; right: 14px; bottom: 3px; height: 2px;
+    border-radius: 2px; background: var(--grad);
+  }
+  nav button.active { background: var(--accent-soft); color: var(--accent-ink); }
+  nav button:hover:not(.active) { background: var(--surface2); }
+  #settingsBtn {
+    margin-left: auto; border: 1px solid var(--border); background: var(--surface);
+    border-radius: 999px; padding: 7px 14px; cursor: pointer; color: var(--muted); font-weight: 600;
+  }
+  main { max-width: 880px; margin: 0 auto; padding: 26px 20px 80px; padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+  .tab { display: none; }
+  .tab.active { display: block; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px; margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  h2 { font-size: 20px; margin: 0 0 6px; font-weight: 800; letter-spacing: -.015em; }
+  h3 { font-size: 12px; margin: 18px 0 6px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  p.hint { color: var(--muted); font-size: 13.5px; margin: 2px 0 14px; }
+  label { display: block; font-size: 13.5px; font-weight: 600; color: var(--muted); margin: 14px 0 4px; }
+  textarea, input[type=text], input[type=password], input[type=date], select {
+    width: 100%; padding: 10px 13px; border: 1px solid var(--border);
+    border-radius: 10px; background: var(--bg); resize: vertical;
+  }
+  textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent2); outline-offset: 1px; border-color: transparent; }
+  .btn {
+    display: inline-block; border: none;
+    background: linear-gradient(rgba(20, 8, 36, .16), rgba(20, 8, 36, .16)), var(--grad);
+    color: #fff;
+    padding: 10px 20px; border-radius: 999px; cursor: pointer; font-size: 15px; font-weight: 700;
+    box-shadow: var(--shadow-cta);
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+  .btn.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); font-weight: 600; box-shadow: none; }
+  .btn.small { padding: 6px 14px; font-size: 13px; }
+  .btn.danger { background: var(--bad); box-shadow: 0 3px 12px rgba(225, 29, 72, .3); }
+  .pillrow { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 14px; }
+  .pill {
+    border: 1px solid var(--border); background: var(--surface); border-radius: 999px;
+    padding: 7px 15px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted);
+  }
+  .pill:hover { background: var(--surface2); }
+  .pill.small-pill { padding: 5px 12px; font-size: 12.5px; }
+  .pill.rec::after {
+    content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--grad); margin-left: 7px; vertical-align: 1px;
+  }
+  .pill.active { background: color-mix(in srgb, var(--accent) 75%, #000); border-color: transparent; color: #fff; box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 45%, transparent); }
+  /* technicolor section chips — each section carries its own hue via --h */
+  #sectionList, #masteryList { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+  .secchip {
+    border: 1px solid hsl(var(--h, 320) 70% 55% / .45);
+    background: hsl(var(--h, 320) 80% 55% / .10);
+    border-radius: 999px; padding: 7px 15px; cursor: pointer;
+    font-size: 13.5px; font-weight: 700; color: var(--text);
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .secchip:hover { background: hsl(var(--h, 320) 80% 55% / .22); }
+  .secchip.active {
+    background: hsl(var(--h, 320) 85% 90%);
+    border-color: hsl(var(--h, 320) 75% 42%);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px hsl(var(--h, 320) 75% 42%), 0 2px 12px hsl(var(--h, 320) 75% 45% / .35);
+  }
+  .secchip .pct { font-size: 11.5px; opacity: .85; font-weight: 700; }
+  .secchip { position: relative; overflow: hidden; }
+  .secchip .decay {
+    position: absolute; left: 8px; right: 8px; bottom: 2.5px; height: 3px;
+    border-radius: 2px; background: hsl(var(--h, 320) 70% 50% / .18);
+  }
+  .secchip .decay i { display: block; height: 100%; border-radius: 2px; background: hsl(var(--h, 320) 80% 55%); }
+  .practicebox {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; margin-top: 12px; font-size: 16px; line-height: 1.85; white-space: pre-wrap;
+  }
+  .blank {
+    display: inline-block; min-width: 3ch; border-bottom: 2px solid var(--accent);
+    color: transparent; cursor: pointer; border-radius: 4px; background: var(--accent-soft);
+    user-select: none; text-align: center;
+  }
+  .blank.revealed { color: var(--text); background: none; border-bottom-color: transparent; cursor: default; }
+  .w-hit { color: var(--good); }
+  .w-miss { color: var(--bad); background: var(--bad-soft); border-radius: 4px; padding: 0 2px; }
+  .scorebadge {
+    font-size: 30px; font-weight: 800;
+    background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  /* chat */
+  #chatlog { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; max-height: 46vh; max-height: 46dvh; overflow-y: auto; padding-right: 4px; }
+  .msg { max-width: 82%; padding: 10px 15px; border-radius: 16px; font-size: 14.5px; }
+  .msg.user { align-self: flex-end; background: var(--accent-soft); border-bottom-right-radius: 5px; }
+  .msg.ai { align-self: flex-start; background: var(--surface2); border-bottom-left-radius: 5px; }
+  .msg.coach { align-self: center; background: var(--good-soft); font-size: 13.5px; font-style: italic; }
+  .chatcontrols { display: flex; gap: 8px; align-items: flex-end; }
+  .chatcontrols textarea { flex: 1; min-height: 44px; max-height: 120px; }
+  #micBtn {
+    width: 52px; height: 52px; border-radius: 50%; border: none;
+    background: var(--grad); color: #fff; box-shadow: var(--shadow-cta);
+    cursor: pointer; font-size: 22px; flex: none;
+  }
+  #micBtn.listening { background: var(--bad); border-color: var(--bad); animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(225,29,72,.4);} 50% { box-shadow: 0 0 0 12px rgba(225,29,72,0);} }
+  .statusline { font-size: 13px; color: var(--muted); min-height: 18px; margin-top: 6px; }
+  .statusline.err { color: var(--bad); }
+  /* scorecard */
+  .scoregrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(126px, 1fr)); gap: 12px; margin: 14px 0; }
+  .scoretile { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .scoretile .big { font-size: 27px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .scoretile .lbl { font-size: 12px; font-weight: 600; color: var(--muted); }
+  ul.points { margin: 4px 0 10px; padding-left: 20px; font-size: 14px; }
+  ul.points li { margin: 3px 0; }
+  .tag-good { color: var(--good); }
+  .tag-bad { color: var(--bad); }
+  /* modal */
+  #modalBack {
+    display: none; position: fixed; inset: 0; background: rgba(15, 10, 30, .55); z-index: 50;
+    align-items: flex-start; justify-content: center; padding: 60px 16px;
+  }
+  #modalBack.open { display: flex; }
+  #modal { background: var(--surface); border-radius: var(--radius); max-width: 520px; width: 100%; padding: 22px 24px; box-shadow: var(--shadow); max-height: calc(100vh - 90px); max-height: calc(100dvh - 90px); overflow-y: auto; }
+  .keyrow { display: flex; gap: 8px; }
+  .keyrow input { flex: 1; }
+  .notice { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin: 10px 0; }
+  .sessionrow { border-bottom: 1px solid var(--border); padding: 10px 2px; display: flex; flex-wrap: wrap; row-gap: 2px; gap: 12px; align-items: baseline; font-size: 14px; }
+  .sessionrow b { font-variant-numeric: tabular-nums; }
+  .sessionrow:last-child { border-bottom: none; }
+  .empty { display: block; padding: 26px 18px; text-align: center; font-style: normal; font-size: 14.5px; color: var(--muted); border: 1.5px dashed var(--border); border-radius: 12px; background: var(--surface2); }
+  footer.note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+  /* ---- design pass: first-run steps strip ---- */
+  .steps { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 16px; }
+  .step {
+    display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 600;
+    color: var(--muted); border: 1px solid var(--border); border-radius: 999px;
+    padding: 6px 13px; background: var(--surface2);
+  }
+  .step b {
+    background: var(--grad-text); -webkit-background-clip: text; background-clip: text;
+    color: transparent; font-size: 15px;
+  }
+  /* ---- design pass: status feedback ---- */
+  #setupStatus:not(.err):not(:empty) { color: var(--good); font-weight: 600; }
+  #setupStatus:not(.err):not(:empty)::before { content: "✓ "; }
+  #setupStatus.err, #settingsStatus.err { font-weight: 600; }
+  #settingsStatus:not(.err):not(:empty) { font-weight: 600; }
+  /* ---- design pass: blanks-drill affordance ---- */
+  #practiceBox:has(.blank:not(.revealed))::before {
+    content: "Tap a blank to reveal the word"; display: block;
+    font-size: 12.5px; color: var(--muted); font-style: italic; margin-bottom: 10px;
+  }
+  .blank { position: relative; }
+  .blank:not(.revealed)::after { content: ""; position: absolute; inset: -10px -4px; }
+  .blank:not(.revealed):active { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+  /* ---- design pass: ghost button + roleplay header ---- */
+  .btn.ghost { background: none; border: none; color: var(--muted); box-shadow: none; font-weight: 600; }
+  #rpTitle { min-width: 0; font-size: 17px; overflow-wrap: anywhere; }
+  #rpSessionCard .btn.small { flex: none; }
+  /* ---- design pass: dark-theme active chip (must follow the light rule) ---- */
+  @media (prefers-color-scheme: dark) {
+    .secchip.active {
+      background: hsl(var(--h, 320) 55% 24%);
+      border-color: hsl(var(--h, 320) 80% 62%);
+      color: var(--text);
+      box-shadow: inset 0 0 0 1px hsl(var(--h, 320) 80% 62%), 0 2px 12px hsl(var(--h, 320) 60% 40% / .4);
+    }
+  }
+  /* ---- design pass: motion polish ---- */
+  nav button, .btn, .pill, .secchip, #settingsBtn, #micBtn {
+    transition: background-color .15s ease, color .15s ease, border-color .15s ease,
+      box-shadow .15s ease, transform .12s ease, filter .15s ease;
+  }
+  .btn:active { transform: translateY(1px); filter: brightness(.96); }
+  .pill:active, .secchip:active { transform: scale(.97); }
+  #modalBack { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+  #modalBack.open #modal { animation: modalIn .18s ease; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(8px) scale(.98); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+  /* ---- design pass: touch targets ---- */
+  @media (pointer: coarse) {
+    nav button, .pill, .secchip, #settingsBtn, .btn.small { min-height: 44px; }
+    .pill, .secchip { padding: 10px 16px; }
+    nav button { padding: 10px 15px; }
+  }
+  /* ---- design pass: mobile layout ---- */
+  @media (max-width: 640px) {
+    header { flex-wrap: wrap; row-gap: 4px; gap: 10px; padding: 10px 14px; padding-top: max(10px, env(safe-area-inset-top)); padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
+    header h1 { font-size: 18px; }
+    nav {
+      order: 3; flex: 1 0 100%; margin-left: 0; flex-wrap: nowrap;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav button { flex: none; }
+    main { padding: 18px 14px 72px; padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+    .card { padding: 16px 16px; }
+    .scoretile { padding: 10px 12px; }
+    .scoretile .big { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><img src="icon.svg" alt="" class="mark"><span>Lobster<em>Class</em></span></h1>
+  <nav aria-label="App sections">
+    <button data-tab="setup" class="active">Setup</button>
+    <button data-tab="learn">Learn</button>
+    <button data-tab="roleplay">Roleplay</button>
+    <button data-tab="progress">Progress</button>
+  </nav>
+  <button id="settingsBtn">⚙ Settings</button>
+</header>
+
+<main>
+
+  <!-- ============ SETUP ============ -->
+  <section class="tab active" id="tab-setup">
+    <div class="card">
+      <h2>Your material</h2>
+      <p class="hint">Paste what you need to know cold. The Learn tab works fully offline; Roleplay and grading need an API key (⚙ Settings).</p>
+      <div class="steps"><span class="step"><b>1</b> Paste your material</span><span class="step"><b>2</b> Memorize it in Learn</span><span class="step"><b>3</b> Rehearse it in Roleplay</span></div>
+      <h3>What are you preparing for?</h3>
+      <div class="pillrow" id="categoryPills"></div>
+      <p class="hint" id="catTagline" style="margin-top:-6px"></p>
+      <label for="inScript" id="lblScript">Presentation script — the text you need to learn <b style="color:var(--accent)">*</b></label>
+      <textarea id="inScript" rows="12" placeholder="Paste your full script here. Separate sections with a blank line — each becomes its own drill in the Learn tab."></textarea>
+      <label for="inContext" id="lblContext">Company / product background (optional — helps the AI play a realistic prospect)</label>
+      <textarea id="inContext" rows="5" placeholder="What you're selling, who your company is, pricing, key differentiators — paste from your website or docs."></textarea>
+      <label for="inAudience" id="lblAudience">Who will you be presenting to / calling?</label>
+      <input type="text" id="inAudience" placeholder="e.g. Operations manager at a mid-size logistics company, skeptical about switching vendors">
+      <label for="inEvent">When's the real thing? (optional — tightens your review schedule as the day approaches)</label>
+      <input type="date" id="inEvent">
+      <label for="inWorries" id="lblWorries">Objections or questions you're worried about (optional, one per line)</label>
+      <textarea id="inWorries" rows="3" placeholder="e.g. It's too expensive&#10;We already have a supplier&#10;Why should we trust a new company?"></textarea>
+      <div style="margin-top:16px; display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+        <button class="btn" id="saveSetup">Save material</button>
+        <button class="btn secondary" id="loadExample" title="Fill the form with sample material for this category so you can feel the drills — swap in your own any time">✨ Try an example</button>
+        <span class="statusline" id="setupStatus" aria-live="polite"></span>
+      </div>
+      <h3>Practice on a walk</h3>
+      <p class="hint">Hands-free rehearsal counts double: saying it aloud while moving is one of the best-evidenced ways to make lines stick. Copy a ready-made voice prompt, paste it into a new chat in the Claude app, and switch to voice mode.</p>
+      <button class="btn secondary small" id="walkPrompt">🎧 Copy walk prompt</button>
+      <h3>Move to another device</h3>
+      <p class="hint">Your material lives only in this browser. To use it on your phone too: copy a transfer code here, send it to yourself (AirDrop, Notes…), and paste it into the app there. Nothing is uploaded.</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <button class="btn secondary small" id="exportData">Copy transfer code</button>
+        <button class="btn secondary small" id="importBtn">Paste transfer code…</button>
+      </div>
+      <div id="importArea" style="display:none; margin-top:10px">
+        <textarea id="importBox" rows="4" placeholder="Paste the transfer code here…"></textarea>
+        <div style="margin-top:8px"><button class="btn small" id="importLoad">Load it</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEARN ============ -->
+  <section class="tab" id="tab-learn">
+    <div class="card">
+      <h2>Memorize it</h2>
+      <p class="hint">Work through each section. Read it, then squeeze the text away step by step until you can recall it cold. No API key needed here.</p>
+      <div id="learnEmpty" class="empty">Nothing to drill yet — open the <b>Setup</b> tab, paste your script, and hit <b>Save material</b>. Your sections will appear here.</div>
+      <div id="learnUI" style="display:none">
+        <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap">
+          <h3 style="margin-right:auto">Sections</h3>
+          <button class="btn small secondary" id="fullRunBtn" style="display:none">⏱ Full run</button>
+          <button class="btn small" id="smartReview" style="display:none">▶ Smart review</button>
+        </div>
+        <div class="sectionlist" id="sectionList"></div>
+        <h3>Drill mode</h3>
+        <div class="pillrow" id="modePills">
+          <button class="pill active" data-mode="read" title="Read the section through first">Read</button>
+          <button class="pill" data-mode="blanks" title="Words are hidden — recall, then tap to check">Blanks</button>
+          <button class="pill" data-mode="letters" title="Only first letters remain as cues">First letters</button>
+          <button class="pill" data-mode="type" title="Type the section from memory and get scored">Type it</button>
+          <button class="pill" data-mode="say" title="Speak it from memory and get scored">Say it</button>
+          <button class="pill" data-mode="seams" title="Given the end of the previous section, recall how this one starts">Seams</button>
+        </div>
+        <div class="pillrow" id="densityPills" style="display:none; margin-top:-6px">
+          <button class="pill small-pill active" data-dn="3" title="Every 3rd word hidden">Hide ⅓</button>
+          <button class="pill small-pill" data-dn="2" title="Every 2nd word hidden">Hide ½</button>
+          <button class="pill small-pill" data-dn="1" title="All longer words hidden — short words stay as cues">Hide most</button>
+        </div>
+        <p class="hint" style="margin-top:-6px" id="modeWhy">Read it a couple of times to load it in — then switch right: recalling beats re-reading (the “testing effect”).</p>
+        <div class="practicebox" id="practiceBox"></div>
+        <div id="recallUI" style="display:none; margin-top:12px">
+          <textarea id="recallInput" rows="5" placeholder="Type this section from memory…"></textarea>
+          <div style="margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+            <select id="predictSel" style="width:auto; padding:8px 10px" title="Guess before you check — learners' predictions are famously off, and seeing yours drift teaches you when you're actually ready">
+              <option value="">Predict…</option>
+              <option value="40">&lt;50%</option>
+              <option value="60">50–70%</option>
+              <option value="80">70–90%</option>
+              <option value="95">90%+</option>
+            </select>
+            <button class="btn" id="checkRecall">Check</button>
+            <button class="btn secondary" id="sayRecallBtn" style="display:none">🎤 Speak instead</button>
+            <button class="btn secondary" id="nextReviewBtn" style="display:none">Next section →</button>
+            <span id="recallScore" class="scorebadge"></span>
+          </div>
+          <div class="statusline" id="recallStatus" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="runCard" style="display:none">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+        <h2 style="flex:1; margin:0" id="runTitle">Full run</h2>
+        <span class="scorebadge" id="runClock" style="font-variant-numeric:tabular-nums">0:00</span>
+      </div>
+      <p class="hint" id="runMeta"></p>
+      <div id="runSetup">
+        <p class="hint">Deliver the whole thing out loud, standing if you can. Tap <b>Next section</b> as you finish each part — you'll get split times at the end. The real thing is free recall: no reading, only emergency cues.</p>
+        <div class="pillrow">
+          <button class="pill active" data-cb="off" id="cbOff">No curveballs</button>
+          <button class="pill" data-cb="on" id="cbOn" title="The app will interrupt you out loud at random moments — practicing under mild stress inoculates against choking">😈 Curveballs</button>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn" id="runStart">Start from the top</button>
+          <button class="btn secondary" id="runStartRandom" title="Middles fail first — practice recovering from anywhere">🎲 Random start</button>
+          <button class="btn ghost" id="runCancel">Back</button>
+        </div>
+      </div>
+      <div id="runLive" style="display:none">
+        <div class="practicebox" style="min-height:120px">
+          <div id="runSection" style="font-weight:800; font-size:19px"></div>
+          <div id="runCue" style="display:none; margin-top:10px; line-height:1.9"></div>
+          <div id="runCurve" style="display:none; margin-top:10px; color:var(--warn); font-weight:600"></div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px">
+          <button class="btn" id="runNext">Next section →</button>
+          <button class="btn secondary" id="runPeek">👀 Peek cues</button>
+          <button class="btn ghost" id="runEnd">End run</button>
+        </div>
+        <p class="hint" id="runProgress" style="margin-top:10px"></p>
+      </div>
+      <div id="runDone" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- ============ ROLEPLAY ============ -->
+  <section class="tab" id="tab-roleplay">
+    <div class="card" id="rpSetupCard">
+      <h2>Roleplay</h2>
+      <p class="hint">The AI plays the other side — out loud. You speak (or type), it pushes back the way the real person would. End the session to get a graded scorecard.</p>
+      <div id="rpNoKey" class="notice" style="display:none">Roleplay needs a Claude API key — add one in ⚙ Settings. (Memorization drills in Learn work without it.)</div>
+      <div id="rpNoScript" class="empty" style="display:none">No script yet — open the <b>Setup</b> tab and save your material, then come back to rehearse it.</div>
+      <div id="rpConfig">
+        <h3>Scenario</h3>
+        <div class="pillrow" id="scenarioPills"></div>
+        <h3>How tough should they be?</h3>
+        <div class="pillrow" id="difficultyPills">
+          <button class="pill" data-df="friendly">Friendly</button>
+          <button class="pill active" data-df="realistic">Realistic</button>
+          <button class="pill" data-df="tough">Tough</button>
+        </div>
+        <button class="btn" id="startRp">Start session</button>
+        <div class="statusline" id="rpStartStatus" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="card" id="odCard">
+      <h2>⚡ Objection drill <span style="font-size:12px; font-weight:600; color:var(--muted)">no API key needed</span></h2>
+      <p class="hint">The app fires the hard questions at you — out loud — and you answer out loud, cold. Your own worry list is in the deck. Answering under a little pressure is what inoculates against freezing at the real thing. Answer first, <em>then</em> hit 💡 to compare against a strong answer — checking before you've tried is the one thing that kills the benefit.</p>
+      <div id="odSetup">
+        <p class="hint" id="odDone" style="display:none"></p>
+        <button class="btn secondary" id="odStart">Start drilling</button>
+      </div>
+      <div id="odLive" style="display:none">
+        <div class="practicebox" style="min-height:90px; font-size:18px; font-weight:600" id="odQuestion"></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:center">
+          <button class="btn" id="odNext">Answered — next</button>
+          <button class="btn secondary small" id="odRepeat">🔊 Say it again</button>
+          <button class="btn secondary small" id="odReveal">💡 Show a strong answer</button>
+          <button class="btn ghost" id="odStop">End</button>
+          <span class="statusline" id="odCount"></span>
+        </div>
+        <div id="odAnswer" style="display:none" aria-live="polite">
+          <div class="practicebox" id="odAnswerBody" style="font-size:15.5px; line-height:1.75"></div>
+          <p class="hint" id="odAnswerNote" style="display:none; margin-top:8px"></p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:center">
+            <button class="btn secondary small" id="odAnswerSpeak">🔊 Read it to me</button>
+            <button class="btn ghost small" id="odAnswerEdit">✏️ Write my own</button>
+            <span class="statusline" id="odAnswerStatus"></span>
+          </div>
+          <div id="odAnswerEditor" style="display:none; margin-top:10px">
+            <textarea id="odAnswerBox" rows="6" placeholder="Write the answer you wish you'd just given — in your own words, the way you'd actually say it."></textarea>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+              <button class="btn small" id="odAnswerSave">Save answer</button>
+              <button class="btn ghost small" id="odAnswerCancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="rpSessionCard" style="display:none">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <h2 id="rpTitle" style="flex:1">Session</h2>
+        <button class="btn small secondary" id="rpStopSpeech">🔇 Stop voice</button>
+        <button class="btn small" id="endRp">End &amp; grade</button>
+      </div>
+      <div id="chatlog" role="log" aria-live="polite"></div>
+      <div class="chatcontrols">
+        <button id="micBtn" title="Click to speak" aria-label="Speak your reply — tap again to stop">🎤</button>
+        <textarea id="chatInput" placeholder="Speak with the mic, or type here…"></textarea>
+        <button class="btn" id="sendBtn">Send</button>
+      </div>
+      <div class="statusline" id="rpStatus" aria-live="polite"></div>
+      <p class="hint" style="margin-top:8px">Say “time out” for quick coaching without ending the session.</p>
+    </div>
+
+    <div class="card" id="scorecard" style="display:none"></div>
+  </section>
+
+  <!-- ============ PROGRESS ============ -->
+  <section class="tab" id="tab-progress">
+    <div class="card">
+      <h2>Memorization progress</h2>
+      <p class="hint" id="reviewSummary" style="display:none"></p>
+      <div id="masteryList" class="sectionlist"><div class="empty">Nothing yet — run some drills in Learn.</div></div>
+      <p class="hint" id="decayHint" style="display:none">The bar under each section estimates what you'd recall if the real thing were <i>right now</i> — it fades between reviews. Fading isn't failure: recalling at the dip is exactly what makes it stick.</p>
+      <div id="reviewGo" style="display:none; margin-top:12px"><button class="btn small" id="goReview">▶ Review what's due</button></div>
+    </div>
+    <div class="card">
+      <h2>Roleplay sessions</h2>
+      <div id="sessionList"><div class="empty">No graded sessions yet.</div></div>
+    </div>
+  </section>
+
+  <footer class="note">
+    <div id="installRow" style="display:none; margin-bottom:10px"><button class="btn small secondary" id="installBtn">📱 Install as an app</button></div>
+    Everything is stored locally in your browser. Your script and API key never leave this machine except in direct calls to the Claude API.
+    <div id="siteLinks" style="display:none; margin-top:10px">
+      <a href="/">Home</a> · <a href="/#guides">Guides</a> · <a href="/#pricing">Pricing</a>
+    </div>
+  </footer>
+</main>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div id="modalBack">
+  <div id="modal" role="dialog" aria-modal="true" aria-label="Settings">
+    <h2>Settings</h2>
+    <label for="inKey">Claude API key</label>
+    <div class="keyrow">
+      <input type="password" id="inKey" placeholder="sk-ant-…" autocomplete="off">
+      <button class="btn secondary small" id="toggleKey">Show</button>
+    </div>
+    <p class="hint" style="margin-top:6px">Get one at console.anthropic.com → API keys. Stored only in this browser's localStorage. Needed for Roleplay + grading; Learn drills work without it.</p>
+    <div id="passRow" style="display:none">
+      <label for="inPass">LobsterClass Pass — hosted roleplay, no API key needed</label>
+      <div class="keyrow">
+        <input type="text" id="inPass" placeholder="LC-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
+        <button class="btn secondary small" id="testPass">Check</button>
+      </div>
+      <p class="hint" style="margin-top:6px">Your API key (if set) is used first; the pass covers you when you don't have one.</p>
+    </div>
+    <label for="inModel">Model</label>
+    <select id="inModel">
+      <option value="claude-opus-5">Claude Opus 5 — best roleplay (default)</option>
+      <option value="claude-sonnet-5">Claude Sonnet 5 — faster, cheaper</option>
+      <option value="claude-haiku-4-5">Claude Haiku 4.5 — fastest, cheapest</option>
+    </select>
+    <label for="inVoice">AI voice</label>
+    <select id="inVoice"></select>
+    <label for="inRate">Speech speed: <span id="rateVal">1.0×</span></label>
+    <input type="range" id="inRate" min="0.7" max="1.4" step="0.05" value="1.0" style="width:100%">
+    <div style="margin-top:18px; display:flex; gap:8px;">
+      <button class="btn secondary" id="testKey">Test key</button>
+      <button class="btn ghost" id="closeModal" style="margin-left:auto">Close</button>
+      <button class="btn" id="saveSettings">Save</button>
+    </div>
+    <div class="statusline" id="settingsStatus" aria-live="polite"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   LobsterClass — single-file practice app (lobsterclass.com).
+   Learn tab: fully offline memorization drills.
+   Roleplay tab: Claude API (user-supplied key) + browser speech.
+   ============================================================ */
+
+const LS = {
+  data: "pp_data", key: "pp_key", model: "pp_model",
+  voice: "pp_voice", rate: "pp_rate", mastery: "pp_mastery", sessions: "pp_sessions",
+  calib: "pp_calib", pass: "pp_pass", proxy: "pp_proxy",
+};
+// Hosted passes: set to the deployed Worker URL (e.g. "https://lobsterclass-proxy.<you>.workers.dev")
+// to enable the pass-code path. Empty = feature hidden, app behaves as before.
+const PROXY_URL = "";
+function proxyUrl() { return load(LS.proxy, "") || PROXY_URL; }
+const $ = (id) => document.getElementById(id);
+const esc = (s) => s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+function load(k, fallback) {
+  try { const v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); }
+  catch { return fallback; }
+}
+function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+let data = load(LS.data, { script: "", context: "", audience: "", worries: "", event: "", category: "pitch", answers: {} });
+if (!data.category) data.category = "pitch"; // silent migration for pre-category saves
+if (!data.answers || typeof data.answers !== "object") data.answers = {}; // ditto for pre-answer-bank saves
+let mastery = load(LS.mastery, {});
+let sessions = load(LS.sessions, []);
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll("nav button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    $("tab-" + b.dataset.tab).classList.add("active");
+    if (b.dataset.tab === "learn") renderLearn();
+    if (b.dataset.tab === "roleplay") renderRoleplayGate();
+    if (b.dataset.tab === "progress") renderProgress();
+  });
+});
+
+/* ---------------- setup ---------------- */
+$("inScript").value = data.script;
+$("inContext").value = data.context;
+$("inAudience").value = data.audience;
+$("inWorries").value = data.worries;
+$("inEvent").value = data.event || "";
+
+$("saveSetup").addEventListener("click", () => {
+  const st = $("setupStatus");
+  const script = $("inScript").value.trim();
+  if (!script) { st.textContent = "Add your script text first — nothing was saved."; st.className = "statusline err"; return; }
+  data = {
+    script,
+    context: $("inContext").value.trim(),
+    audience: $("inAudience").value.trim(),
+    worries: $("inWorries").value.trim(),
+    event: $("inEvent").value,
+    category: data.category || "pitch",
+    answers: data.answers || {}, // keep the answer bank across a Setup re-save
+    answersVersion: data.answersVersion || 0,
+  };
+  save(LS.data, data);
+  // drop mastery entries for sections that no longer exist
+  const valid = new Set(sections().map(s => s.id));
+  for (const k of Object.keys(mastery)) if (!valid.has(k)) delete mastery[k];
+  save(LS.mastery, mastery);
+  renderRoleplayGate();
+  track("material_saved");
+  st.textContent = "Saved — " + sections().length + " section(s) ready in Learn."; st.className = "statusline";
+});
+
+/* ---------------- device transfer ---------------- */
+$("exportData").addEventListener("click", async () => {
+  const st = $("setupStatus");
+  const payload = JSON.stringify({
+    lobsterclass: 1,
+    script: $("inScript").value,
+    context: $("inContext").value,
+    audience: $("inAudience").value,
+    worries: $("inWorries").value,
+    event: $("inEvent").value,
+    category: data.category || "pitch",
+    answers: data.answers || {},
+    answersVersion: data.answersVersion || 0,
+  });
+  try {
+    await navigator.clipboard.writeText(payload);
+    st.textContent = "Transfer code copied — paste it into the app on your other device.";
+    st.className = "statusline";
+  } catch {
+    $("importArea").style.display = "block";
+    $("importBox").value = payload;
+    $("importBox").select();
+    st.textContent = "Clipboard was blocked — copy the code below manually.";
+    st.className = "statusline";
+  }
+});
+$("importBtn").addEventListener("click", () => {
+  const area = $("importArea");
+  const opening = area.style.display === "none";
+  area.style.display = opening ? "block" : "none";
+  if (opening) { $("importBox").value = ""; $("importBox").focus(); }
+});
+$("importLoad").addEventListener("click", () => {
+  const st = $("setupStatus");
+  try {
+    const d = JSON.parse($("importBox").value.trim());
+    if (!d || d.lobsterclass !== 1 || typeof d.script !== "string") throw new Error("bad code");
+    $("inScript").value = d.script;
+    $("inContext").value = d.context || "";
+    $("inAudience").value = d.audience || "";
+    $("inWorries").value = d.worries || "";
+    $("inEvent").value = d.event || "";
+    if (d.category && CATEGORIES[d.category]) data.category = d.category;
+    if (d.answers && typeof d.answers === "object") data.answers = d.answers;
+    if (typeof d.answersVersion === "number") data.answersVersion = d.answersVersion;
+    $("importArea").style.display = "none";
+    $("saveSetup").click();
+    applyCategory();
+  } catch {
+    st.textContent = "That doesn't look like a transfer code — copy it again from the other device.";
+    st.className = "statusline err";
+  }
+});
+
+/* ---------------- sections ---------------- */
+function hashStr(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function secHue(i, n) { return Math.round(320 + i * 360 / n) % 360; }
+function sections() {
+  if (!data.script) return [];
+  return data.script.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean).map((text, i) => {
+    const firstLine = text.split("\n")[0].trim();
+    const title = firstLine.length <= 60 ? firstLine : "Section " + (i + 1);
+    // id is a content hash so mastery survives script edits that keep a section unchanged
+    return { id: "h" + hashStr(text), title, text };
+  });
+}
+
+/* ---------------- spaced-repetition scheduler ----------------
+   Expanding retrieval intervals (Landauer & Bjork): each clean recall
+   pushes the next review further out. If an event date is set, the whole
+   ladder is compressed to fit the runway, so everything gets reviewed
+   again before the real thing. Old mastery entries were plain numbers —
+   mstat() upgrades them lazily. */
+const DAY = 86400000;
+const BOX_IVL = [DAY / 6, DAY, 2 * DAY, 4 * DAY, 7 * DAY, 14 * DAY];
+function mstat(id) {
+  const m = mastery[id];
+  if (typeof m === "number") return { pct: m, box: 0, streak: 0, last: null, due: null, reps: 0, dayKey: null };
+  return m || { pct: 0, box: 0, streak: 0, last: null, due: null, reps: 0, dayKey: null };
+}
+function daysToEvent() {
+  if (!data.event) return null;
+  const d = (new Date(data.event + "T20:00").getTime() - Date.now()) / DAY;
+  return d > 0 ? d : null;
+}
+let lastRecallSameDay = false; // set by recordRecall, read by the status copy
+function recordRecall(id, pct) {
+  const m = mstat(id);
+  m.pct = Math.max(m.pct, pct);
+  m.reps = (m.reps || 0) + 1;
+  const today = new Date().toDateString();
+  lastRecallSameDay = false;
+  if (pct >= 90) {
+    m.streak++;
+    // spacing beats massing (Mazza 2016): a second clean recall the same day
+    // keeps the streak but doesn't advance the box or push the review out
+    if (m.dayKey === today && m.due && m.due > Date.now()) lastRecallSameDay = true;
+    else { m.box = Math.min(m.box + 1, BOX_IVL.length - 1); m.dayKey = today; }
+  }
+  else if (pct >= 70) { m.streak = 0; }
+  else { m.box = Math.max(0, m.box - 1); m.streak = 0; }
+  m.last = Date.now();
+  if (!lastRecallSameDay) {
+    const left = daysToEvent();
+    const squeeze = left === null ? 1 : Math.min(1, Math.max(0.12, left / 14));
+    let gap = Math.max(DAY / 8, BOX_IVL[m.box] * squeeze);
+    if (left !== null) {
+      // Cepeda et al. 2008: optimal gap ≈ 10-30% of the time remaining
+      gap = Math.min(gap, Math.max(DAY / 8, 0.3 * left * DAY));
+      // final-48h rule: the last review lands the evening before, never the morning of
+      const eve = new Date(data.event + "T18:00").getTime();
+      if (m.last < eve && m.last + gap > eve) gap = eve - m.last;
+    }
+    m.due = m.last + gap;
+  }
+  mastery[id] = m; save(LS.mastery, mastery);
+  return m;
+}
+function dueSections() {
+  const now = Date.now();
+  return sections().filter(s => { const m = mstat(s.id); return m.last && m.due && m.due <= now; });
+}
+/* Estimated retention right now: exponential decay (Ebbinghaus) with
+   stability growing by box, scaled by the best score actually reached. */
+const BOX_STABILITY = [0.5, 1, 2.5, 5, 9, 16]; // days
+function retentionNow(id) {
+  const m = mstat(id);
+  if (!m.last || !m.pct) return null;
+  const S = BOX_STABILITY[m.box] * DAY;
+  return Math.round(m.pct * Math.exp(-(Date.now() - m.last) / S));
+}
+function untilStr(ts) {
+  const h = (ts - Date.now()) / 3600000;
+  if (h <= 0) return "now";
+  if (h < 1) return "in under an hour";
+  if (h < 22) return "in ~" + Math.round(h) + "h";
+  const d = Math.round(h / 24);
+  return d <= 1 ? "tomorrow" : "in " + d + " days";
+}
+/* Diminishing-cues ladder (Fiechter & Benjamin 2018): guaranteed-successful
+   retrieval first, progressively fewer cues as scores rise. */
+function recommendedDrill(id) {
+  const m = mstat(id);
+  if (!m.last && !m.pct) return { mode: "read", dn: 3 };
+  if (m.pct < 40) return { mode: "blanks", dn: 3 };
+  if (m.pct < 60) return { mode: "blanks", dn: 2 };
+  if (m.pct < 75) return { mode: "blanks", dn: 1 };
+  if (m.pct < 90) return { mode: "letters", dn: 1 };
+  if (m.streak >= 1) return { mode: "say", dn: 1 };
+  return { mode: "type", dn: 1 };
+}
+function recommendedMode(id) { return recommendedDrill(id).mode; }
+
+/* ---------------- learn tab ---------------- */
+let curSection = 0;
+let curMode = "read";
+let curDensity = 3; // blanks mode: hide every Nth word (1 = most words)
+let reviewQueue = []; // section ids queued by Smart review
+
+function chipLabel(s) {
+  const m = mstat(s.id);
+  let extra = "";
+  if (m.pct) extra += `<span class="pct">${m.pct}%</span>`;
+  if (m.streak >= 3) extra += `<span class="pct" title="3+ clean recalls in a row — performance-ready">🏆</span>`;
+  if (m.last && m.due && m.due <= Date.now()) extra += `<span class="pct" title="Due for review">⏰</span>`;
+  return esc(s.title) + extra;
+}
+function renderChips() {
+  const secs = sections();
+  const list = $("sectionList");
+  list.innerHTML = "";
+  secs.forEach((s, i) => {
+    const chip = document.createElement("button");
+    chip.className = "secchip" + (i === curSection ? " active" : "");
+    chip.style.setProperty("--h", secHue(i, secs.length));
+    chip.innerHTML = chipLabel(s);
+    chip.addEventListener("click", () => { curSection = i; reviewQueue = []; renderLearn(); });
+    list.appendChild(chip);
+  });
+  const due = dueSections();
+  $("fullRunBtn").style.display = secs.length >= 2 ? "inline-block" : "none";
+  const btn = $("smartReview");
+  btn.style.display = secs.length ? "inline-block" : "none";
+  btn.textContent = due.length ? `▶ Review due (${due.length})` : "▶ Smart review";
+  btn.title = due.length
+    ? "Drill the sections whose review is due, in shuffled order"
+    : "No reviews due — drills your weakest sections, in shuffled order";
+}
+function renderLearn() {
+  const secs = sections();
+  $("learnEmpty").style.display = secs.length ? "none" : "block";
+  $("learnUI").style.display = secs.length ? "block" : "none";
+  if (!secs.length) return;
+  if (curSection >= secs.length) curSection = 0;
+  document.querySelector('#modePills .pill[data-mode="seams"]').style.display = secs.length >= 2 ? "" : "none";
+  renderChips();
+  markRecommendedMode();
+  renderPractice();
+}
+
+const MODE_WHY = {
+  read: "Read it a couple of times to load it in — then switch right: recalling beats re-reading (the “testing effect”).",
+  blanks: "Retrieval practice: guess each hidden word before you tap. Cues shrink as you improve — easy retrieval first, harder later, is the one method proven to work on freshly-learned text.",
+  letters: "First letters only — the classic cue actors use to nail lines verbatim. Say the section aloud from the cues.",
+  type: "Free recall, typed and scored. Hardest test, strongest learning — misses show you exactly what to re-drill.",
+  say: "Speaking it aloud adds the “production effect” and rehearses real delivery — practice how you'll perform.",
+  seams: "Blanks happen at the seams: the cue for each section is the end of the one before. Top-to-bottom practice never drills that — this does.",
+};
+function setMode(mode) {
+  curMode = mode;
+  document.querySelectorAll("#modePills .pill").forEach(x => x.classList.toggle("active", x.dataset.mode === mode));
+  $("densityPills").style.display = mode === "blanks" ? "flex" : "none";
+  $("modeWhy").textContent = MODE_WHY[mode];
+  renderPractice();
+}
+function markRecommendedMode() {
+  const secs = sections(); if (!secs.length) return;
+  const rec = recommendedMode(secs[curSection].id);
+  document.querySelectorAll("#modePills .pill").forEach(x => x.classList.toggle("rec", x.dataset.mode === rec && x.dataset.mode !== curMode));
+}
+document.querySelectorAll("#modePills .pill").forEach(p => {
+  p.addEventListener("click", () => { setMode(p.dataset.mode); markRecommendedMode(); });
+});
+function setDensity(dn) {
+  curDensity = dn;
+  document.querySelectorAll("#densityPills .pill").forEach(x => x.classList.toggle("active", parseInt(x.dataset.dn, 10) === dn));
+}
+document.querySelectorAll("#densityPills .pill").forEach(p => {
+  p.addEventListener("click", () => { setDensity(parseInt(p.dataset.dn, 10)); renderPractice(); });
+});
+
+/* Smart review: interleaved retrieval over due (or weakest) sections */
+$("smartReview").addEventListener("click", () => {
+  const secs = sections(); if (!secs.length) return;
+  const due = dueSections();
+  const pool = due.length ? due
+    : [...secs].sort((a, b) => mstat(a.id).pct - mstat(b.id).pct).slice(0, Math.min(3, secs.length));
+  reviewQueue = pool.map(s => s.id);
+  for (let i = reviewQueue.length - 1; i > 0; i--) { // shuffle = interleaving
+    const j = Math.floor(Math.random() * (i + 1));
+    [reviewQueue[i], reviewQueue[j]] = [reviewQueue[j], reviewQueue[i]];
+  }
+  nextReviewStep(true);
+});
+function nextReviewStep(first) {
+  const secs = sections();
+  const id = reviewQueue.shift();
+  const idx = secs.findIndex(s => s.id === id);
+  if (idx < 0) { reviewQueue = []; return; }
+  curSection = idx;
+  const rd = recommendedDrill(id);
+  setDensity(rd.dn);
+  setMode(rd.mode === "read" ? "blanks" : rd.mode); // review means retrieval, never re-reading
+  renderChips();
+  markRecommendedMode();
+  if (first) $("recallStatus").textContent = "Shuffled order feels harder — that's the point: interleaved retrieval roughly doubled next-day recall in lab studies.";
+  if (!first) $("practiceBox").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function renderPractice() {
+  const secs = sections();
+  if (!secs.length) return;
+  const sec = secs[curSection];
+  const box = $("practiceBox");
+  const recallUI = $("recallUI");
+  $("recallScore").textContent = "";
+  $("recallStatus").textContent = "";
+  $("recallInput").value = "";
+  $("nextReviewBtn").style.display = "none";
+  $("predictSel").value = "";
+  $("predictSel").style.display = curMode === "seams" ? "none" : "";
+  recallUI.style.display = (curMode === "type" || curMode === "say" || curMode === "seams") ? "block" : "none";
+  $("sayRecallBtn").style.display = ((curMode === "say" || curMode === "seams") && speechSupported()) ? "inline-block" : "none";
+
+  if (curMode === "read") {
+    box.innerHTML = esc(sec.text);
+  } else if (curMode === "seams") {
+    const prev = curSection > 0 ? secs[curSection - 1] : null;
+    const cue = prev ? "…" + lastSentence(prev.text) : "You're on. Deliver your opening.";
+    box.innerHTML = `<span style="color:var(--muted)">${esc(cue)}</span>\n\n<span style="color:var(--muted);font-style:italic;font-size:13.5px">→ That's your cue. Recall how “${esc(sec.title)}” begins (the first ~20 words), then check.</span>`;
+  } else if (curMode === "letters") {
+    box.innerHTML = lettersHtml(sec.text);
+  } else if (curMode === "blanks") {
+    const words = sec.text.split(/(\s+)/);
+    // rotate which words hide as reps accumulate, so the blank positions
+    // themselves can't be memorized (seeded by section + attempt count)
+    const phase = (hashStr(sec.id).charCodeAt(0) + (mstat(sec.id).reps || 0)) % curDensity;
+    let wi = 0;
+    box.innerHTML = words.map(tok => {
+      if (/^\s+$/.test(tok) || !tok) return esc(tok);
+      wi++;
+      const hide = curDensity === 1
+        ? tok.replace(/[^\p{L}\p{N}]/gu, "").length >= 4 // keep short function words as cues
+        : (wi + phase) % curDensity === 0;
+      if (hide && /\w/.test(tok)) {
+        return `<span class="blank" data-w="${esc(tok)}">${esc(tok)}</span>`;
+      }
+      return esc(tok);
+    }).join("");
+    box.querySelectorAll(".blank").forEach(b => b.addEventListener("click", () => b.classList.add("revealed")));
+  } else {
+    box.innerHTML = `<span style="color:var(--muted);font-style:italic">“${esc(sec.title)}” — recall it from memory below, then check.</span>`;
+  }
+}
+
+function lettersHtml(text) {
+  return text.split("\n").map(line =>
+    line.split(/\s+/).filter(Boolean).map(w => {
+      const m = w.match(/^([^\p{L}\p{N}]*)([\p{L}\p{N}])(.*)$/u);
+      return m ? esc(m[1] + m[2]) + "·" : esc(w);
+    }).join("  ")
+  ).join("\n");
+}
+
+function lastSentence(text) {
+  const flat = text.replace(/\s+/g, " ").trim();
+  const parts = flat.match(/[^.!?…]+[.!?…]+/g);
+  const last = parts && parts.length ? parts[parts.length - 1].trim() : flat;
+  const words = last.split(" ");
+  return words.length > 25 ? "…" + words.slice(-25).join(" ") : last;
+}
+
+/* word-level diff via LCS */
+function normWords(text) {
+  return text.toLowerCase().replace(/[’‘]/g, "'")
+    .replace(/[^\p{L}\p{N}\s']/gu, " ").split(/\s+/).filter(Boolean);
+}
+function lcsMatchFlags(target, attempt) {
+  const n = target.length, m = attempt.length;
+  if (n === 0) return { flags: [], matched: 0 };
+  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--)
+    for (let j = m - 1; j >= 0; j--)
+      dp[i][j] = target[i] === attempt[j] ? dp[i+1][j+1] + 1 : Math.max(dp[i+1][j], dp[i][j+1]);
+  const flags = new Array(n).fill(false);
+  let i = 0, j = 0, matched = 0;
+  while (i < n && j < m) {
+    if (target[i] === attempt[j]) { flags[i] = true; matched++; i++; j++; }
+    else if (dp[i+1][j] >= dp[i][j+1]) i++;
+    else j++;
+  }
+  return { flags, matched };
+}
+function gradeRecall(sec, attemptText) {
+  const target = normWords(sec.text);
+  const attempt = normWords(attemptText);
+  const { flags, matched } = lcsMatchFlags(target, attempt);
+  const pct = target.length ? Math.round(100 * matched / target.length) : 0;
+  // render original with hits/misses — consume one flag per *normalized* sub-word
+  // so hyphenated or apostrophe words stay aligned with the grading tokenization
+  const words = sec.text.split(/(\s+)/);
+  let fi = 0;
+  const html = words.map(tok => {
+    if (/^\s+$/.test(tok) || !tok) return esc(tok);
+    const sub = normWords(tok);
+    if (!sub.length) return esc(tok);
+    const ok = flags.slice(fi, fi + sub.length).every(Boolean);
+    fi += sub.length;
+    return `<span class="${ok ? "w-hit" : "w-miss"}">${esc(tok)}</span>`;
+  }).join("");
+  return { pct, html };
+}
+
+$("checkRecall").addEventListener("click", () => {
+  const secs = sections(); if (!secs.length) return;
+  const sec = secs[curSection];
+  const attempt = $("recallInput").value.trim();
+  if (!attempt) { $("recallStatus").textContent = "Type (or speak) your attempt first."; return; }
+  if (curMode === "seams") {
+    // seam drill: recall the section's opening from the previous section's tail.
+    // Deliberately not recorded into mastery — it grades ~20 words, not the section.
+    const target = { text: sec.text.split(/\s+/).slice(0, 20).join(" "), title: sec.title };
+    const { pct, html } = gradeRecall(target, attempt);
+    $("practiceBox").innerHTML = html;
+    $("recallScore").textContent = pct + "%";
+    $("recallStatus").textContent = pct >= 90 ? "Seam nailed — this transition won't drop you." :
+      "Red words show how the section actually starts — glue them to the cue and go again.";
+    $("nextReviewBtn").style.display = reviewQueue.length ? "inline-block" : "none";
+    return;
+  }
+  const { pct, html } = gradeRecall(sec, attempt);
+  $("practiceBox").innerHTML = html;
+  $("recallScore").textContent = pct + "%";
+  const m = recordRecall(sec.id, pct);
+  track("drill_checked");
+  renderChips(); // update pct/⏰/🏆 badges without touching the diff view
+  markRecommendedMode();
+  let calibNote = "";
+  if ($("predictSel").value) {
+    const pred = parseInt($("predictSel").value, 10);
+    const diff = pct - pred;
+    calibNote = diff > 12 ? `Predicted ~${pred}%, got ${pct}% — better than you felt. ` :
+      diff < -12 ? `Predicted ~${pred}%, got ${pct}% — fluency isn't recall; the gap is normal. ` :
+      `Predicted ~${pred}%, got ${pct}% — well calibrated. `;
+    const cal = load(LS.calib, { n: 0, pred: 0, act: 0 });
+    cal.n++; cal.pred += pred; cal.act += pct;
+    save(LS.calib, cal);
+  }
+  let msg = pct >= 90 ? (m.streak >= 3 ? `Word-perfect — ${m.streak} clean recalls in a row. This one's performance-ready. 🏆` :
+      `Excellent — clean recall${m.streak > 1 ? " #" + m.streak : ""}. Next review ${untilStr(m.due)}.`) :
+    pct >= 70 ? "Good — red words are the ones you missed. One more pass, then come back " + untilStr(m.due) + "." :
+    "Keep going — red words are the ones you missed. Re-read, then try again.";
+  if (lastRecallSameDay) msg = `Nailed it again (${m.streak} in a row) — but a second pass today adds little. Due again ${untilStr(m.due)}: the gap, and tonight's sleep, are what make it stick.`;
+  msg = calibNote + msg;
+  if (reviewQueue.length) msg += ` · ${reviewQueue.length} section(s) left in this review.`;
+  $("recallStatus").textContent = msg;
+  $("nextReviewBtn").style.display = reviewQueue.length ? "inline-block" : "none";
+});
+$("nextReviewBtn").addEventListener("click", () => {
+  $("nextReviewBtn").style.display = "none";
+  nextReviewStep(false);
+});
+
+/* speak-your-recall */
+let recallRec = null;
+$("sayRecallBtn").addEventListener("click", () => {
+  if (recallRec) { recallRec.stop(); return; }
+  recallRec = makeRecognition(
+    (interim) => { $("recallStatus").textContent = "Listening… " + interim; },
+    (finalText) => {
+      $("recallInput").value = ($("recallInput").value + " " + finalText).trim();
+      $("recallStatus").textContent = "Captured. Press Check (or speak again to add more).";
+    },
+    () => { recallRec = null; $("sayRecallBtn").textContent = "🎤 Speak instead"; },
+    (err) => { $("recallStatus").textContent = "Mic error: " + err; }
+  );
+  if (recallRec) { recallRec.start(); $("sayRecallBtn").textContent = "⏹ Stop"; $("recallStatus").textContent = "Listening…"; }
+});
+
+/* ---------------- speech: recognition + synthesis ---------------- */
+function speechSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+
+function makeRecognition(onInterim, onFinal, onEnd, onError) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { onError("Voice input isn't supported in this browser — use Chrome, Edge or Safari, or type instead."); return null; }
+  const rec = new SR();
+  rec.lang = "en-US";
+  rec.continuous = true;
+  rec.interimResults = true;
+  let finalBuf = "";
+  rec.onresult = (e) => {
+    let interim = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalBuf += t + " ";
+      else interim += t;
+    }
+    onInterim(interim);
+  };
+  rec.onerror = (e) => { if (e.error !== "aborted") onError(e.error); };
+  rec.onend = () => { if (finalBuf.trim()) onFinal(finalBuf.trim()); onEnd(); };
+  return rec;
+}
+
+let voices = [];
+function loadVoices() {
+  voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  const sel = $("inVoice");
+  const savedVoice = load(LS.voice, "");
+  sel.innerHTML = "";
+  const en = voices.filter(v => v.lang.startsWith("en"));
+  (en.length ? en : voices).forEach(v => {
+    const o = document.createElement("option");
+    o.value = v.name; o.textContent = v.name + " (" + v.lang + ")";
+    if (v.name === savedVoice) o.selected = true;
+    sel.appendChild(o);
+  });
+  if (!sel.options.length) {
+    const o = document.createElement("option");
+    o.value = ""; o.textContent = "System default";
+    sel.appendChild(o);
+  }
+}
+if (window.speechSynthesis) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function speak(text, onDone) {
+  if (!window.speechSynthesis) { if (onDone) onDone(); return; }
+  speechSynthesis.cancel();
+  const clean = text.replace(/[*_#`>]|\[|\]/g, "").replace(/\s+/g, " ").trim();
+  const u = new SpeechSynthesisUtterance(clean);
+  const vname = load(LS.voice, "");
+  const v = voices.find(x => x.name === vname);
+  if (v) u.voice = v;
+  u.rate = parseFloat(load(LS.rate, "1.0"));
+  u.onend = () => { if (onDone) onDone(); };
+  u.onerror = () => { if (onDone) onDone(); };
+  speechSynthesis.speak(u);
+}
+
+/* ---------------- settings ---------------- */
+$("settingsBtn").addEventListener("click", () => {
+  $("inKey").value = load(LS.key, "");
+  $("passRow").style.display = proxyUrl() ? "block" : "none";
+  $("inPass").value = load(LS.pass, "");
+  $("inModel").value = load(LS.model, "claude-opus-5");
+  $("inRate").value = load(LS.rate, "1.0");
+  $("rateVal").textContent = parseFloat($("inRate").value).toFixed(2).replace(/0$/,"") + "×";
+  loadVoices();
+  $("settingsStatus").textContent = "";
+  $("modalBack").classList.add("open");
+});
+$("closeModal").addEventListener("click", () => $("modalBack").classList.remove("open"));
+$("modalBack").addEventListener("click", (e) => { if (e.target === $("modalBack")) $("modalBack").classList.remove("open"); });
+$("toggleKey").addEventListener("click", () => {
+  const k = $("inKey");
+  k.type = k.type === "password" ? "text" : "password";
+  $("toggleKey").textContent = k.type === "password" ? "Show" : "Hide";
+});
+$("inRate").addEventListener("input", () => {
+  $("rateVal").textContent = parseFloat($("inRate").value).toFixed(2).replace(/0$/,"") + "×";
+});
+$("saveSettings").addEventListener("click", () => {
+  save(LS.key, $("inKey").value.trim());
+  save(LS.pass, $("inPass").value.trim().toUpperCase());
+  save(LS.model, $("inModel").value);
+  if ($("inVoice").value) save(LS.voice, $("inVoice").value);
+  save(LS.rate, $("inRate").value);
+  renderRoleplayGate();
+  $("settingsStatus").textContent = "Saved.";
+  $("settingsStatus").className = "statusline";
+});
+$("testPass").addEventListener("click", async () => {
+  const st = $("settingsStatus");
+  const pass = $("inPass").value.trim().toUpperCase();
+  if (!pass) { st.textContent = "Enter a pass code first."; st.className = "statusline err"; return; }
+  save(LS.pass, pass);
+  renderRoleplayGate();
+  st.textContent = "Checking…"; st.className = "statusline";
+  try {
+    const r = await fetch(proxyUrl() + "/api/pass?pass=" + encodeURIComponent(pass));
+    const out = await r.json();
+    if (out.ok) {
+      const days = Math.max(0, Math.round((out.expires - Date.now()) / 86400000));
+      st.textContent = `✓ ${out.plan} — ${days} day${days === 1 ? "" : "s"} left · ${out.used_today}/${out.per_day} used today.`;
+      st.className = "statusline";
+    } else {
+      st.textContent = "✗ " + (out.error || "Pass not recognized.");
+      st.className = "statusline err";
+    }
+  } catch {
+    st.textContent = "✗ Couldn't reach the practice server — try again.";
+    st.className = "statusline err";
+  }
+});
+$("testKey").addEventListener("click", async () => {
+  const st = $("settingsStatus");
+  const k = $("inKey").value.trim();
+  if (!k) { st.textContent = "Enter a key first."; st.className = "statusline err"; return; }
+  save(LS.key, k);
+  save(LS.model, $("inModel").value);
+  renderRoleplayGate();
+  st.textContent = "Testing…"; st.className = "statusline";
+  try {
+    await callClaude({ system: "Reply with exactly: ok", messages: [{ role: "user", content: "ping" }], maxTokens: 1024, effort: "low" });
+    st.textContent = "✓ Key works."; st.className = "statusline";
+  } catch (e) {
+    st.textContent = "✗ " + e.message; st.className = "statusline err";
+  }
+});
+
+/* ---------------- Claude API ---------------- */
+async function callProxy({ system, messages, schema }) {
+  const resp = await fetch(proxyUrl() + "/api/roleplay", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      pass: load(LS.pass, ""),
+      kind: schema ? "grade" : "roleplay",
+      system, messages,
+      schema: schema || undefined,
+    }),
+  });
+  let out;
+  try { out = await resp.json(); } catch { throw new Error("Practice server error (" + resp.status + ")"); }
+  if (!resp.ok) throw new Error(out.error || ("Practice server error (" + resp.status + ")"));
+  if (out.stop_reason === "refusal") throw new Error("The model declined this request. Try rephrasing.");
+  if (out.stop_reason === "max_tokens") throw new Error("The response hit its token limit and was cut off — try again.");
+  const text = (out.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+  if (!text) throw new Error("Empty response from the model.");
+  return text;
+}
+
+async function callClaude({ system, messages, maxTokens, effort, schema }) {
+  const key = load(LS.key, "");
+  if (!key && load(LS.pass, "") && proxyUrl()) return callProxy({ system, messages, schema });
+  if (!key) throw new Error(proxyUrl() ? "Add an API key or a LobsterClass Pass in Settings." : "No API key set — add one in Settings.");
+  const model = load(LS.model, "claude-opus-5");
+  const body = {
+    model,
+    max_tokens: maxTokens || 2048,
+    system,
+    messages,
+    cache_control: { type: "ephemeral" },
+  };
+  // effort is not supported on Haiku 4.5 — sending it there returns a 400
+  if (effort && model !== "claude-haiku-4-5") body.output_config = Object.assign(body.output_config || {}, { effort });
+  if (schema) body.output_config = Object.assign(body.output_config || {}, {
+    format: { type: "json_schema", schema },
+  });
+  const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!resp.ok) {
+    let msg = "API error (" + resp.status + ")";
+    try {
+      const err = await resp.json();
+      if (err.error && err.error.message) msg = err.error.message;
+    } catch {}
+    if (resp.status === 401) msg = "Invalid API key — check it in Settings.";
+    if (resp.status === 429) msg = "Rate limited — wait a moment and try again.";
+    throw new Error(msg);
+  }
+  const out = await resp.json();
+  if (out.stop_reason === "refusal") throw new Error("The model declined this request. Try rephrasing.");
+  if (out.stop_reason === "max_tokens") throw new Error("The response hit its token limit and was cut off — try again.");
+  const text = (out.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+  if (!text) throw new Error("Empty response from the model.");
+  return text;
+}
+
+/* ---------------- categories ----------------
+   Everything that differs between "sell a product", "ask for a raise",
+   "defend a thesis"… lives in this one config object: Setup copy,
+   Roleplay scenarios/personas, and how the grader judges the session. */
+const AUD = (d, fallback) => d.audience ? d.audience : fallback;
+const CATEGORIES = {
+  pitch: {
+    emoji: "🎯", name: "Sales pitch",
+    tagline: "A pitch, demo, or sales call you need to deliver without notes.",
+    fields: {
+      script:   { label: "Presentation script — the text you need to learn", ph: "Paste your full script here. Separate sections with a blank line — each becomes its own drill in the Learn tab." },
+      context:  { label: "Company / product background (optional — helps the AI play a realistic prospect)", ph: "What you're selling, who your company is, pricing, key differentiators — paste from your website or docs." },
+      audience: { label: "Who will you be presenting to / calling?", ph: "e.g. Operations manager at a mid-size logistics company, skeptical about switching vendors" },
+      worries:  { label: "Objections or questions you're worried about (optional, one per line)", ph: "e.g. It's too expensive\nWe already have a supplier\nWhy should we trust a new company?" },
+    },
+    scenarios: {
+      presentation: { label: "Presentation run-through", open: "greet them and invite them to start",
+        persona: (d) => `You are the audience for a sales presentation${d.audience ? ": " + d.audience : ""}. The presenter (the user) is delivering their pitch to you. Let them present in stretches, but interrupt occasionally the way a real prospect would — clarifying questions, skeptical pushback, "hang on, what does that cost?" moments. React to what they actually say.` },
+      coldcall: { label: "Cold call", open: "answer the phone, busy and guarded",
+        persona: (d) => `You are a busy prospect${d.audience ? ": " + d.audience : ""} who just picked up an unexpected sales call from the user. You were in the middle of something. Open guarded ("Hello? Who is this?"-level energy). Make them earn every extra minute; if they're good, warm up gradually and realistically.` },
+      qa: { label: "Tough Q&A", open: "open with your first pointed question",
+        persona: (d) => `You are ${AUD(d, "a sharp, skeptical decision-maker")} in the Q&A after the user's presentation. You've heard the pitch; now you grill them. Ask pointed questions about price, competitors, proof, risk, and implementation — one at a time, following up when answers are vague.` },
+      pricing: { label: "Pricing pushback", open: "open by saying the price is the sticking point",
+        persona: (d) => `You are ${AUD(d, "the budget owner")} in a follow-up call about price. You like the product but you negotiate hard: anchor low, quote a cheaper competitor, ask what happens if you sign for less, push on contract terms. Concede only against real justification, never against repetition.` },
+    },
+    grader: { coach: "sales coach", labels: ["Script adherence", "Objection handling", "Confidence"],
+      emphasis: "Judge how much of the script's key content was delivered, how objections were handled, and composure." },
+    counterpart: "a skeptical prospect",
+    bank: ["It's too expensive.", "We already have a vendor for this.", "Send me an email and we'll take a look.", "How are you actually different from the big guys?", "We tried something like this before and it flopped.", "Why should we trust a company your size?"],
+  },
+  product: {
+    emoji: "🚗", name: "Product knowledge",
+    tagline: "Showroom or counter sales — know every spec, trim, and price cold.",
+    fields: {
+      script:   { label: "Product knowledge — the specs, prices, and talk tracks you must know cold", ph: "Paste the spec sheet: models, trims, packages, prices, financing options. Separate topics with a blank line — each becomes its own drill." },
+      context:  { label: "Store / brand background (optional)", ph: "Your dealership or store, current offers, what you can and can't discount, competitor products people cross-shop." },
+      audience: { label: "Who walks in?", ph: "e.g. Young family cross-shopping the BMW X3, cares about safety and the monthly payment" },
+      worries:  { label: "Questions or objections you dread (optional, one per line)", ph: "e.g. The competitor has more power for the same price\nCan you do better on the payment?\nWhat's the real invoice price?" },
+    },
+    scenarios: {
+      browser: { label: "Walk-in browser", open: "wander in, say you're just looking",
+        persona: (d) => `You are a walk-in customer${d.audience ? ": " + d.audience : ""} who is "just looking". You have a real need you won't volunteer — make the user earn it with good discovery questions. Warm up if they listen and connect features to what you actually care about; go cold if they lecture specs at you.` },
+      crossshop: { label: "Cross-shopper", open: "mention the competitor's product straight away",
+        persona: (d) => `You are a well-researched customer${d.audience ? ": " + d.audience : ""} who has already test-driven or priced the main competitor. Quote the competitor's specs and price accurately and make the user beat them point by point. If they get a fact wrong or vague, call it out — you've done your homework.` },
+      payment: { label: "Payment negotiator", open: "ask straight away what the monthly payment would be",
+        persona: (d) => `You are a buyer${d.audience ? ": " + d.audience : ""} who only thinks in monthly payment. Push for discounts, trade-in value, lower APR, longer terms. Try to get numbers out of the user fast and pit them against another offer. Only respect firm, clear answers about what's possible.` },
+      expert: { label: "Spec expert", open: "open with a genuinely technical question",
+        persona: (d) => `You are an enthusiast${d.audience ? ": " + d.audience : ""} who knows this product line deeply and is testing whether the user really knows their stuff. Ask precise questions — engine options, package contents, exact figures. Correct them if they're wrong. You buy from people who know more than you.` },
+    },
+    grader: { coach: "retail sales trainer", labels: ["Fact accuracy", "Objection handling", "Confidence"],
+      emphasis: "Check every claim against the pasted product material — flag ANY invented or wrong spec, price, or number as a miss. Reward needs-discovery questions, translating features into benefits the customer cares about, and asking for the sale." },
+    counterpart: "a showroom customer",
+    bank: ["The competitor gives me more for the same price.", "What's your best out-the-door price?", "I need to think about it.", "How is this really different from last year's model?", "What will it be worth on trade-in in three years?", "I've read the reviews \u2014 convince me they're wrong."],
+  },
+  raise: {
+    emoji: "💰", name: "Raise & negotiation",
+    tagline: "Asking for a raise, a promotion, or negotiating an offer.",
+    fields: {
+      script:   { label: "Your case — accomplishments, numbers, market data, and the ask", ph: "Paste your wins (with numbers), your market-rate data, and the exact number you're asking for. Separate points with a blank line — each becomes its own drill." },
+      context:  { label: "Company situation (optional)", ph: "Budget cycle, recent wins or layoffs, how raises usually happen here, what your manager can and can't decide alone." },
+      audience: { label: "Who are you asking?", ph: "e.g. My manager Sam — supportive but cautious, hates surprises, answers to a VP who owns the budget" },
+      worries:  { label: "Pushback you expect (optional, one per line)", ph: "e.g. There's no budget this cycle\nLet's revisit at review time\nEveryone got the same percentage" },
+    },
+    scenarios: {
+      supportive: { label: "Supportive manager", open: "welcome them in and ask what they wanted to talk about",
+        persona: (d) => `You are ${AUD(d, "the user's manager")} in a meeting they requested. You genuinely like their work but you are budget-conscious and answer to your own boss. Ask what they've accomplished, probe their numbers, and concede ground only when they make a strong, evidence-based case with a clear number.` },
+      deflect: { label: "Deflecting manager", open: "be friendly but immediately try to keep the meeting light",
+        persona: (d) => `You are ${AUD(d, "the user's manager")}, conflict-avoidant and deflecting. Use every classic dodge: "this isn't the right time", "let's revisit at review season", "I'll have to check with HR", change the subject, offer vague praise instead of money. Only a persistent, specific, evidence-backed ask — repeated calmly past your deflections — moves you.` },
+      freeze: { label: "Budget freeze", open: "open by mentioning times are tight this quarter",
+        persona: (d) => `You are ${AUD(d, "the user's manager")} operating under a real budget freeze. You cannot easily say yes to base salary, but alternatives exist (bonus, title, scope, equity, a dated review commitment) that you only offer if the user negotiates well instead of accepting the first no. Reward creative, calm negotiation; punish instant surrender or ultimatums.` },
+      offer: { label: "Job-offer counter", open: "call them, excited, with the offer — anchored low",
+        persona: (d) => `You are a recruiter calling the user with a job offer, anchored 10-15% below what the role can pay. Sound thrilled, create urgency ("we'd love an answer by Friday"), ask what their current salary is, and push back on counters — but you have real room and will move for a candidate who negotiates with market data and stays likable.` },
+    },
+    grader: { coach: "negotiation coach", labels: ["Case made", "Pushback handling", "Confidence"],
+      emphasis: "Judge whether the user stated a specific number, cited their evidence (instead of leaving it on the table), resisted the first no, avoided apologetic or hedging language, and never negotiated against themselves." },
+    counterpart: "your manager",
+    bank: ["There's no budget this cycle.", "Let's revisit this at review time.", "Everyone got the same percentage this year.", "You're already at the top of your band.", "Money isn't everything \u2014 think about the growth opportunity here."],
+  },
+  interview: {
+    emoji: "💼", name: "Job interview",
+    tagline: "Behavioral answers, your story, and the questions you fear.",
+    fields: {
+      script:   { label: "Your answers — 'tell me about yourself', STAR stories, key answers", ph: "Paste your 'tell me about yourself', your STAR stories, and the answers you want to nail. Separate answers with a blank line — each becomes its own drill." },
+      context:  { label: "Role & company (optional)", ph: "Job description highlights, company facts, your why-this-company notes." },
+      audience: { label: "Who's interviewing you?", ph: "e.g. Hiring manager for the senior PM role, ex-consultant, known for drilling into metrics" },
+      worries:  { label: "Questions you fear (optional, one per line)", ph: "e.g. Why did you leave after 8 months?\nWhat's your biggest weakness?\nWhat are your salary expectations?" },
+    },
+    scenarios: {
+      screen: { label: "Phone screen", open: "call them, friendly, and ask them to tell you about themselves",
+        persona: (d) => `You are a friendly recruiter doing a 20-minute phone screen${d.audience ? " for: " + d.audience : ""}. Cover the classics: tell me about yourself, why this role, salary expectations, timeline. Warm but evaluating — note rambling, vagueness, or red flags and probe them lightly.` },
+      behavioral: { label: "Behavioral deep-dive", open: "open with your first behavioral question",
+        persona: (d) => `You are ${AUD(d, "a structured behavioral interviewer")}. Ask "tell me about a time…" questions one at a time, then probe: "what was YOUR role exactly?", "what would you do differently?", "what was the measurable result?". Politely refuse to accept hypotheticals or team-credit answers — you want their specific actions.` },
+      skeptical: { label: "Skeptical hiring manager", open: "be cordial but open with the toughest question about their background",
+        persona: (d) => `You are ${AUD(d, "a skeptical hiring manager")} who has doubts about this candidate. Challenge gaps, short stints, and thin metrics directly but professionally. You've been burned by good talkers before — push past polish to substance, and warm up only when answers carry specifics.` },
+      tmay: { label: "'Tell me about yourself' reps", open: "ask them to tell you about themselves",
+        persona: (d) => `You are an interviewer drilling one thing: the user's opening answer. Ask "tell me about yourself". After their answer, give one sharp observation (too long, buried the lead, no thread to this role) in character as a thoughtful interviewer, then ask it again fresh or ask the natural follow-up ("so why here?"). Build them toward a tight ~2-minute answer.` },
+    },
+    grader: { coach: "interview coach", labels: ["Answer quality", "Follow-up handling", "Confidence"],
+      emphasis: "Judge story completeness (situation, task, action, result all present), answer-length discipline (~2 minutes, no rambling), consistency with their pasted material, and how they handled follow-up probes." },
+    counterpart: "an interviewer",
+    bank: ["Why did you leave your last role?", "What's your biggest weakness \u2014 really?", "Why this company and not our competitor?", "What would your last manager say needs improving about you?", "What are your salary expectations?"],
+  },
+  speech: {
+    emoji: "🎤", name: "Speech & talk",
+    tagline: "A toast, keynote, eulogy, or conference talk — delivered, not read.",
+    fields: {
+      script:   { label: "Your speech — word for word", ph: "Paste the full toast, keynote, or talk. Separate sections with a blank line — and know the first 30 seconds cold: that's when nerves peak." },
+      context:  { label: "The occasion (optional)", ph: "Whose wedding / which conference, how long you have, the tone you're going for." },
+      audience: { label: "Who's in the room?", ph: "e.g. 120 wedding guests, mixed ages, half already know the groom's stories" },
+      worries:  { label: "What could throw you off? (optional, one per line)", ph: "e.g. Blanking on the middle section\nA joke landing flat\nQ&A: how is this different from X?" },
+    },
+    scenarios: {
+      run: { label: "Full run-through", open: "welcome them warmly and hand them the floor",
+        persona: (d) => `You are the audience${d.audience ? ": " + d.audience : ""} for the user's speech. Mostly listen — react briefly and naturally between sections ("[laughs]", a murmur, applause) so it feels live. If they stop or blank, wait a beat, then prompt with the smallest possible cue from their script, like a discreet MC. At natural end, react as the room would.` },
+      qa: { label: "Post-talk Q&A", open: "thank them for the talk and ask your first question",
+        persona: (d) => `You are ${AUD(d, "an engaged but sharp audience member")} in the Q&A after the user's talk. Ask real questions: the hard one they hoped nobody would ask, the off-topic one, the two-part one, the "more of a comment" one. One at a time; follow up when answers dodge.` },
+      tough: { label: "Tough crowd", open: "let them start, but be a hard room from the first line",
+        persona: (d) => `You are a distracted, hard-to-win room${d.audience ? ": " + d.audience : ""}. Interject realistic disruptions: a phone goes off, side chatter, "can you speak up?", mild heckling if it's that kind of event. Reward composure and recovery — settle down and engage when the user handles it well and keeps going.` },
+    },
+    grader: { coach: "speaking coach", labels: ["Speech fidelity", "Q&A handling", "Delivery"],
+      emphasis: "Judge fidelity to the speech's beats and key lines (word-perfect where it matters: names, punchlines, numbers), pacing, recovery after skips or interruptions, and how questions were handled." },
+    counterpart: "your audience",
+    bank: ["You have half the time \u2014 what do you cut?", "How does what you just said apply to us specifically?", "Start again from the middle. Go.", "Summarize the whole thing in thirty seconds."],
+  },
+  vc: {
+    emoji: "🚀", name: "Fundraising",
+    tagline: "Pitching investors — narrative plus every number, cold.",
+    fields: {
+      script:   { label: "Pitch narrative + every number they could ask", ph: "Paste your pitch and your metrics: MRR, growth, churn, CAC/LTV, TAM math, round size, use of funds. Separate sections with a blank line — each becomes its own drill." },
+      context:  { label: "Company background (optional)", ph: "Product, traction story, team, competitive landscape — what a prepared investor would already know." },
+      audience: { label: "Which investor?", ph: "e.g. Seed partner at a fintech-focused fund, famous for interrupting, passed on our competitor last year" },
+      worries:  { label: "Questions you dread (optional, one per line)", ph: "e.g. What if Google does this?\nYour CAC math doesn't work\nWhy hasn't this worked for others who tried?" },
+    },
+    scenarios: {
+      rapid: { label: "Rapid-fire interview", open: "start the clock and fire the first question — no pleasantries",
+        persona: (d) => `You are a YC-style rapid-fire interviewer${d.audience ? ": " + d.audience : ""}. Ten minutes, no slides. Short, sharp questions; interrupt any answer over ~30 seconds; jump topics without warning (users, growth, why you, why now, unit economics). You respect crisp numbers and directness, and you visibly lose interest at buzzwords.` },
+      partner: { label: "Partner meeting", open: "welcome them and ask them to walk you through it",
+        persona: (d) => `You are ${AUD(d, "a general partner at a venture fund")} in a full partner meeting. Let them pitch in stretches, then go deep where it hurts: market size math, competition ("what if the incumbent ships this?"), defensibility, team gaps. Skeptical by default, genuinely persuadable by evidence.` },
+      demo: { label: "Demo-day Q&A", open: "the pitch just ended — ask your first question from the crowd",
+        persona: (d) => `You are investors in a demo-day Q&A right after the user's pitch. Rotate personas question to question: the metrics hawk, the friendly angel, the skeptic who arrived mid-pitch and asks something already covered. Fast pace, short questions, occasional follow-up.` },
+      diligence: { label: "Diligence grilling", open: "open your notebook and start with the numbers",
+        persona: (d) => `You are ${AUD(d, "an associate running diligence")} who has studied the user's numbers and is stress-testing them. Recompute things out loud ("so if CAC is X and churn is Y…"), hunt inconsistencies between their claims, and press until each number is defended or admitted soft. Courteous, relentless.` },
+      journalist: { label: "Journalist interview", open: "thank them for making time and ask your first question — friendly, then sharper",
+        persona: (d) => `You are ${AUD(d, "a tech journalist on deadline")} interviewing the user about their company. Mix fair questions with harder ones: a gotcha, a leading question, an interruption, an off-record bait. See whether they land their key messages anyway — and quote-worthy answers earn follow-ups.` },
+    },
+    grader: { coach: "pitch coach", labels: ["Metric accuracy", "Grilling handling", "Composure"],
+      emphasis: "Check every number stated against the pasted material — flag ANY fudged, invented, or inconsistent metric. Reward brevity under interruption, direct answers to direct questions, composure, and whether the user made their ask." },
+    counterpart: "a skeptical investor",
+    bank: ["What if the incumbent just builds this?", "Your CAC math doesn't work \u2014 walk me through it.", "Why are you the team for this?", "What's the moat once others notice?", "Why now?", "How does this become a venture-scale business?"],
+  },
+  exam: {
+    emoji: "🎓", name: "Defense & exam",
+    tagline: "Thesis viva, quals, OSCE stations — your own material, examined.",
+    fields: {
+      script:   { label: "Your material — the answers, checklist, or summary to learn", ph: "Paste your abstract + methods + key findings, or the OSCE checklist / counseling script. Separate topics with a blank line — each becomes its own drill." },
+      context:  { label: "Exam background (optional)", ph: "Your discipline, the exam format and timing, the mark scheme if you have it, known weak spots." },
+      audience: { label: "Who's examining you?", ph: "e.g. Committee: a methods hardliner, a big-picture prof from an adjacent field, a friendly chair" },
+      worries:  { label: "Questions you fear (optional, one per line)", ph: "e.g. Why this method and not X?\nHow does this generalize?\nYour sample size is small" },
+    },
+    scenarios: {
+      committee: { label: "Full committee", open: "convene the committee and invite their opening summary",
+        persona: (d) => `You are a thesis committee${d.audience ? ": " + d.audience : ""}, taking turns as distinct questioners with different styles. Probe methodology, contribution, and limitations; follow up on weak answers; occasionally hand off between committee-member voices ("I'd like to pick up on that…").` },
+      hardliner: { label: "Methods hardliner", open: "skip pleasantries and question their first design choice",
+        persona: (d) => `You are a methodological hardliner examining the user's work. Question every design choice — "why this method and not X?", "what about confounds?", "justify this statistic" — and do not accept appeals to convention or authority. Respect only reasoned, honest answers, including honest "that's a limitation".` },
+      station: { label: "Patient / practical station", open: "be the patient — present your complaint only when greeted",
+        persona: (d) => `You are a standardized patient (or practical-station counterpart) in a timed exam station${d.audience ? " — " + d.audience : ""}. Never volunteer information unasked; answer only what the user actually asks; show a realistic emotional state. If they miss a critical question a real examiner would expect, let the consequence surface naturally.` },
+      warmup: { label: "Friendly examiner", open: "welcome them kindly and start with the classic first question",
+        persona: (d) => `You are a supportive examiner doing a warm-up mock. Ask the standard questions in a kind tone, give the user room to think, and gently flag — in character — when an answer dodged the question.` },
+    },
+    grader: { coach: "academic examiner-turned-coach", labels: ["Content accuracy", "Probe handling", "Clarity"],
+      emphasis: "Judge consistency with the pasted material (flag contradictions), whether questions were answered directly, honesty about limitations versus bluffing, and — if a checklist was provided — which required items were hit or missed." },
+    counterpart: "your examiner",
+    bank: ["Why this method and not the obvious alternative?", "How does this generalize beyond your sample?", "Your sample size is small \u2014 defend it.", "State your contribution in one sentence.", "What result would falsify your conclusion?"],
+  },
+  custom: {
+    emoji: "✨", name: "Custom",
+    tagline: "Any other conversation you need to walk in ready for.",
+    fields: {
+      script:   { label: "The material you need to know cold", ph: "Paste whatever you must internalize — a script, facts, answers, arguments. Separate chunks with a blank line — each becomes its own drill." },
+      context:  { label: "Background (optional)", ph: "Anything the AI should know to play its part realistically." },
+      audience: { label: "Who's on the other side?", ph: "e.g. A thesis committee member / an upset customer / a border-control officer / my future in-laws" },
+      worries:  { label: "The hard questions (optional, one per line)", ph: "One per line — the AI will weave them in." },
+    },
+    scenarios: {
+      convo: { label: "The conversation", open: "open the conversation naturally for whoever you are playing",
+        persona: (d) => `You are ${AUD(d, "the counterpart in the conversation the user is preparing for")}. Play the role implied by the user's material and description, realistically: have your own goals, moods, and constraints; push back where your character would; reward what would genuinely work on them.` },
+      qa: { label: "Tough Q&A", open: "open with your hardest question",
+        persona: (d) => `You are ${AUD(d, "a sharp, skeptical questioner")} interrogating the user on their material. Pointed questions, one at a time, follow-ups when answers are vague, and no letting go of an unanswered question.` },
+      spar: { label: "Sparring partner", open: "ask what they want to work on, then start",
+        persona: (d) => `You are a tough-but-fair sparring partner. Ask the user what they want to practice from their material, then play the most useful counterpart for it, escalating difficulty as they improve. Between exchanges you may briefly note (in character) what landed and what didn't.` },
+    },
+    grader: { coach: "communication coach", labels: ["Material covered", "Pushback handling", "Confidence"],
+      emphasis: "Judge how much of their key material the user actually used, how they handled pushback, and composure." },
+    counterpart: "the other side of your conversation",
+    bank: ["Why should I say yes to this?", "What's in it for me?", "I don't have time for this \u2014 one sentence.", "What are you not telling me?"],
+  },
+};
+function cat() { return CATEGORIES[data.category] || CATEGORIES.pitch; }
+
+/* ---------------- per-category example material ----------------
+   One tap to feel the drills — clearly sample data, compact on purpose. */
+const EXAMPLES = {
+  pitch: {
+    audience: "Owner of a busy neighborhood restaurant, gets 5 sales calls a week, protective of her staff's time",
+    context: "OrderFlow is a tablet ordering system for independent restaurants: $99/month flat, tables order and pay by QR code, kitchen gets a clean ticket queue, tips went up 12% on average across 300 restaurants.",
+    worries: "We're fine with paper tickets\n$99 a month adds up\nMy older regulars won't scan a QR code",
+    script: `THE OPENING
+Thanks for giving me ten minutes during prep. One sentence up front: OrderFlow means your guests order and pay the moment they're ready, your kitchen gets clean tickets, and your servers spend their time serving, not typing. If that sounds useful, I'll show you how it works in the time it takes your espresso machine to warm up.
+
+THE PROBLEM
+Friday night. Every table is full, two servers are out, and the ticket printer jams. Orders are landing in the kitchen out of order, table six has waited twenty minutes to ask for the check, and your best server spends half her shift walking to the terminal and back. Sound familiar?
+
+THE PROOF
+Across three hundred independent restaurants, tables turn eleven minutes faster on average, tips are up twelve percent because servers are present instead of punching screens, and order errors drop by two thirds. One owner told us the QR menu paid for itself the first weekend — in wine sales alone.
+
+THE ASK
+Here's what I'd suggest: we set up one section — just the patio — for two weeks, free. Your staff keeps working exactly as they do now everywhere else. If the patio doesn't outperform the dining room by the end, you never hear from me again. Can we pick a start date?`,
+  },
+  product: {
+    audience: "Young family cross-shopping the BMW X3, cares about safety and the monthly payment",
+    context: "Mercedes-Benz dealership, end-of-quarter push. Example figures for practice — swap in your real sheet.",
+    worries: "The X3 has more power for the same money\nCan you do better on the payment?\nWhat's the invoice price?",
+    script: `GLC 300 BASICS
+The GLC 300 starts at $49,900. Two-liter turbo four, 255 horsepower, 273 pound-feet, 48-volt mild hybrid. Zero to sixty in 6.2 seconds, EPA 23 city and 31 highway. Standard: 11.9-inch center display, blind-spot assist, active brake assist, LED headlamps.
+
+TRIMS AND PACKAGES
+Three lines: base, Exclusive at $53,050, Pinnacle at $55,700. AMG Line adds the body kit and sport suspension for $2,600. The Driver Assistance Package — adaptive cruise, active lane change, evasive steering — is $1,950 and the one families actually use every day. Panorama roof $1,500, Burmester audio $850.
+
+THE MONEY CONVERSATION
+Current national offer: 3.99% APR up to 60 months, or lease from $589 a month, 36 months, $4,500 down, 10k miles a year. Residual on the GLC holds around 58% at three years — that's why the lease beats the X3's by about $40 a month at the same sticker.
+
+AGAINST THE X3
+The X3 30i is quicker on paper by a tenth. What it doesn't have: standard blind-spot at this trim, our residuals, or the cabin — put a child seat in both back rows and feel the difference. If they care about safety, walk them to the crash-avoidance demo before you ever talk price.`,
+  },
+  raise: {
+    audience: "My manager Sam — supportive but cautious, answers to a VP who owns the budget",
+    context: "Annual reviews are in September; budget gets locked in October. Example case for practice.",
+    worries: "There's no budget this cycle\nLet's revisit at review time\nEveryone got the same percentage",
+    script: `THE WINS
+In the last twelve months I shipped the onboarding redesign that cut time-to-first-value from nine days to three, took over the two biggest accounts when Dana left — both renewed, one expanded 40% — and trained the two new hires, who both hit quota their first full quarter.
+
+THE MARKET
+Mid-level customer success managers in our metro are posting at $78K to $92K — I checked twelve current listings and two recruiter conversations. I'm at $71K. I'm not arguing from loyalty; I'm arguing from the number it would cost to replace me.
+
+THE ASK
+I'm asking for $85K — that's mid-band for the work I'm already doing, not a stretch goal. If base truly can't move this cycle, I'm open to talking about a one-time bonus tied to the Q4 renewals plus a written commitment to revisit base in January. What I can't do is leave this conversation with just "later."`,
+  },
+  interview: {
+    audience: "Hiring manager for the senior product manager role, ex-consultant, drills into metrics",
+    context: "Fintech scale-up, Series C, the role owns the payments dashboard. Example answers for practice.",
+    worries: "Why did you leave after 18 months?\nWhat's your biggest weakness?\nWalk me through a product you killed",
+    script: `TELL ME ABOUT YOURSELF
+I'm a product manager who keeps ending up where the numbers are scary. Six years across two companies: at RetailCo I owned checkout and took payment failures from 4.1% to 1.3%, which was worth about $2M a year. At my current company I built the fraud-review queue from scratch — we now clear 90% of flags in under an hour. I'm here because your payments dashboard is the same shape of problem, one order of magnitude bigger, and that's the part of the job I love.
+
+THE CONFLICT STORY
+Situation: engineering wanted to rebuild the rules engine before adding any features; sales had promised three integrations by Q3. Task: I owned the roadmap that couldn't satisfy both. Action: I got both leads in one room, we mapped what the rebuild actually unblocked, and I cut a deal — two integrations on the old engine with hard scope limits, rebuild starts in parallel. I put my name on the risk memo. Result: integrations shipped two weeks late but shipped; the rebuild landed a quarter early because it wasn't fighting the roadmap anymore. What I'd do differently: bring finance in earlier — the deal got approved on revenue math I should have led with.
+
+THE FAILURE STORY
+I once spent four months on a loyalty feature our loudest customers requested and our data quietly said nobody would use. Launch adoption was 3%. I killed it in six weeks, wrote the post-mortem myself, and it changed how I work: loud requests get a usage-data check before they get a roadmap slot. That post-mortem template is still used by every PM at the company.`,
+  },
+  speech: {
+    audience: "120 wedding guests, mixed ages, half know the groom's stories already",
+    context: "Best-man toast for Tom and Priya, aiming for three minutes, glass raise at the end. Example toast for practice.",
+    worries: "Blanking after the camping story\nThe quiet-guy joke landing flat",
+    script: `THE OPENING
+Good evening everyone — for those who don't know me, I'm Alex, Tom's best man, and I've known him since we were eleven. When Tom asked me to do this speech he said, "keep it short, keep it clean, and don't mention Slovenia." So this will be quite short.
+
+THE STORY
+Here's the thing about Tom: he plans everything. Colour-coded spreadsheets, backup routes, a weather app for every country. So when he took Priya camping for their third date, he had the tent, the stove, the two backup stoves. What he didn't plan was the cow. I won't do the full story — Priya tells it better — but I will say this: any woman who watches your entire campsite get trampled and says "same time next weekend?" is not a woman you let go.
+
+THE TURN
+And he didn't. What I've watched these past four years is my most careful friend become brave. Priya, you didn't change him — you unlocked him. He laughs louder. He books flights without spreadsheets now. One spreadsheet. He books flights with one spreadsheet.
+
+THE TOAST
+So — everyone, if you'd stand and raise your glasses. To the planner and the reason plans are worth making. To Tom and Priya!`,
+  },
+  vc: {
+    audience: "Seed partner at a B2B-focused fund, famous for interrupting, passed on our competitor last year",
+    context: "Raising a $2M seed for Freightly, a booking layer for regional trucking. Example pitch for practice.",
+    worries: "What if the incumbent builds this?\nYour CAC math doesn't work\nWhy are you the team?",
+    script: `THE ONE-LINER
+Freightly is instant booking for regional trucking. Shippers book a truck like a Calendly slot; carriers fill empty miles. We take 6% of every load.
+
+THE NUMBERS
+Live eight months. $46K MRR growing 22% month over month, 210 carriers, 38 shippers with a weekly habit. CAC is $410 against $3,800 first-year gross profit per shipper — under a six-week payback. Net revenue retention is 118%. The round: $2M for 18 months of runway to reach $250K MRR.
+
+THE MOAT QUESTION
+The incumbents run on phone calls and fax — their margin lives in the opacity we remove, so building us means cannibalizing themselves. Our defensibility compounds: every load prices the next one better, and carriers keep the app for the backhaul-matching alone. Eleven percent of new signups already come from carrier referrals.
+
+THE TEAM
+I dispatched trucks for six years at my family's carrier — I've made four thousand of the phone calls we're replacing. My co-founder built pricing systems at a freight broker for five. We're not two MBAs with a deck; we're the users, armed.`,
+  },
+  exam: {
+    audience: "Committee: a methods hardliner, a big-picture professor from an adjacent field, a friendly chair",
+    context: "PhD defense, 90 minutes, presentation then open questioning. Example defense summary for practice.",
+    worries: "Why this method and not X?\nYour sample size is small\nHow does this generalize?",
+    script: `THE CONTRIBUTION
+My dissertation shows that peer feedback timing changes what students revise: feedback within 24 hours produces surface edits, while feedback delayed 3 to 5 days produces structural revision. Three studies, 412 students total. The contribution is a timing-dependent model of feedback uptake — the field has treated timing as logistics; I show it's mechanism.
+
+THE METHODS DEFENSE
+Study two is the load-bearing one: a randomized crossover across six course sections, each student experiencing both conditions in counterbalanced order, revision depth coded blind with two raters, kappa 0.81. Why not a pure between-subjects design? Because instructor and cohort effects were swamping the signal in study one — the crossover is the answer to a real threat, not a convenience.
+
+THE LIMITATIONS
+Three I'll name before you do. Undergraduate writing courses at two institutions — generalization to STEM problem sets is conjecture. Revision depth is a proxy for learning; I have transfer data for only one cohort. And the 3-to-5-day window wasn't dose-tested finer than that. Each of these is study one of the next program, not a hole in this one.`,
+  },
+  custom: {
+    audience: "My landlord — friendly but slippery, always says he'll handle it and doesn't",
+    context: "Lease renewal is in six weeks. Rent is $1,850; comparable units in the building listed at $1,700. The bathroom fan has been broken for four months, reported twice. Example scenario for practice.",
+    worries: "He changes the subject to how good the location is\nHe claims other tenants pay more\nHe offers a tiny discount to end the conversation",
+    script: `THE OPENING
+Hi Marco — thanks for making time. Before renewal paperwork goes out, I want to sort two things: the rent number and the repairs. I'd like to leave today with both settled, so neither of us is doing this over voicemail for a month.
+
+THE CASE
+Unit 4B — same layout, one floor down — listed at $1,700 last month. 2A went for $1,720. I've paid on time for three years and you've never had a vacancy day on this apartment. I'm asking to renew at $1,725. That's still above your listed price for an apartment with a working fan, which mine doesn't have.
+
+THE CLOSE
+So here's what I can do: sign a 12-month renewal at $1,725 today, with the fan and the window latch fixed within two weeks, written into the renewal. If the number truly can't move, the repairs happen anyway — they're not a bargaining chip, they're the lease. Which part do you want to start with?`,
+  },
+};
+
+/* ---------------- roleplay ---------------- */
+let rp = null; // active session state
+const DIFFICULTY = {
+  friendly:  "Be receptive and encouraging — raise mild objections, accept good answers easily. Good for a warm-up run.",
+  realistic: "Be a realistic counterpart: neither hostile nor easy. Raise the objections a real person in your role would, and only accept answers that would actually convince them.",
+  tough:     "Be demanding and skeptical. Interrupt more, push back hard on weak or vague answers, stack follow-up objections, and do not accept fluff. Stay professional — tough, not cartoonish.",
+};
+
+let curScenario = "presentation", curDifficulty = "realistic";
+function renderCategoryPills() {
+  const row = $("categoryPills");
+  row.innerHTML = "";
+  const active = CATEGORIES[data.category] ? data.category : "pitch";
+  Object.entries(CATEGORIES).forEach(([id, c]) => {
+    const b = document.createElement("button");
+    b.className = "pill" + (active === id ? " active" : "");
+    b.textContent = c.emoji + " " + c.name;
+    b.title = c.tagline;
+    b.addEventListener("click", () => { data.category = id; save(LS.data, data); applyCategory(); });
+    row.appendChild(b);
+  });
+}
+function applyCategory() {
+  const c = cat();
+  renderCategoryPills();
+  $("catTagline").textContent = c.tagline;
+  $("lblScript").innerHTML = esc(c.fields.script.label) + ' <b style="color:var(--accent)">*</b>';
+  $("inScript").placeholder = c.fields.script.ph;
+  $("lblContext").textContent = c.fields.context.label;
+  $("inContext").placeholder = c.fields.context.ph;
+  $("lblAudience").textContent = c.fields.audience.label;
+  $("inAudience").placeholder = c.fields.audience.ph;
+  $("lblWorries").textContent = c.fields.worries.label;
+  $("inWorries").placeholder = c.fields.worries.ph;
+  if (!c.scenarios[curScenario]) curScenario = Object.keys(c.scenarios)[0];
+  renderScenarioPills();
+}
+function renderScenarioPills() {
+  const c = cat();
+  const row = $("scenarioPills");
+  row.innerHTML = "";
+  Object.entries(c.scenarios).forEach(([id, sc]) => {
+    const b = document.createElement("button");
+    b.className = "pill" + (curScenario === id ? " active" : "");
+    b.textContent = sc.label;
+    b.addEventListener("click", () => { curScenario = id; renderScenarioPills(); });
+    row.appendChild(b);
+  });
+}
+document.querySelectorAll("#difficultyPills .pill").forEach(p => p.addEventListener("click", () => {
+  document.querySelectorAll("#difficultyPills .pill").forEach(x => x.classList.remove("active"));
+  p.classList.add("active"); curDifficulty = p.dataset.df;
+}));
+
+function renderRoleplayGate() {
+  const hasAuth = !!load(LS.key, "") || (!!load(LS.pass, "") && !!proxyUrl());
+  const hasScript = !!data.script;
+  $("rpNoKey").style.display = hasAuth ? "none" : "block";
+  $("rpNoKey").textContent = proxyUrl()
+    ? "Roleplay needs a Claude API key or a LobsterClass Pass — add one in ⚙ Settings. (Memorization drills in Learn work without either.)"
+    : "Roleplay needs a Claude API key — add one in ⚙ Settings. (Memorization drills in Learn work without it.)";
+  $("rpNoScript").style.display = hasScript ? "none" : "block";
+  $("startRp").disabled = !(hasAuth && hasScript);
+}
+
+function rpSystemPrompt() {
+  const sc = cat().scenarios[curScenario];
+  let sys = `You are a roleplay partner inside a conversation-practice app. ${sc.persona(data)}
+
+${DIFFICULTY[curDifficulty]}
+
+Rules:
+- This is a SPOKEN conversation — your replies are read aloud by text-to-speech. Keep them short: 1–3 conversational sentences, no lists, no markdown, no stage directions.
+- Stay in character the entire time. React to what the user actually says; remember details from earlier in the conversation and bring them back up.
+- Don't be a pushover: real counterparts aren't won over just because someone recites at them. But do reward genuinely good answers — acknowledge strong points the way a real person would.
+- If the user says "time out", "coach", or clearly asks for help: briefly step out of character, give 2–3 sentences of concrete coaching prefixed with [COACH], then say you're resuming and continue in character.
+- Never mention that you are an AI, these rules, or the app.`;
+  if (data.context) sys += `\n\nBackground material from the user (for realism — react like someone hearing it fresh):\n${data.context}`;
+  if (data.script) sys += `\n\nThe user's target material (do NOT recite or reference it — it's context so your pushback hits realistic spots):\n${data.script}`;
+  if (data.worries) sys += `\n\nPushback and questions the user wants practice handling — weave several of these in naturally:\n${data.worries}`;
+  sys += `\n\nBegin the session in character: ${sc.open}.`;
+  return sys;
+}
+
+$("startRp").addEventListener("click", async () => {
+  rp = {
+    scenario: curScenario, difficulty: curDifficulty,
+    // snapshot the material at session start so mid-session Setup edits
+    // can't change the live persona or the grading target
+    system: rpSystemPrompt(),
+    scriptSnapshot: data.script,
+    audienceSnapshot: data.audience,
+    scenarioLabel: cat().scenarios[curScenario].label,
+    grader: cat().grader,
+    messages: [], // {role, content}
+    userStats: [], // {words, seconds}
+    startedAt: Date.now(),
+  };
+  const mySession = rp;
+  $("rpStartStatus").textContent = "";
+  $("rpSetupCard").style.display = "none";
+  $("scorecard").style.display = "none";
+  $("rpSessionCard").style.display = "block";
+  $("rpTitle").textContent = cat().scenarios[curScenario].label + " · " + curDifficulty;
+  $("chatlog").innerHTML = "";
+  $("endRp").disabled = true;
+  setRpStatus("Starting…");
+  try {
+    const opening = await callClaude({
+      system: mySession.system,
+      messages: [{ role: "user", content: "[The session begins now. Open the conversation in character.]" }],
+      maxTokens: 8000, effort: "low",
+    });
+    if (rp !== mySession) return; // session was closed while waiting
+    rp.messages.push({ role: "user", content: "[The session begins now. Open the conversation in character.]" });
+    rp.messages.push({ role: "assistant", content: opening });
+    track("roleplay_started");
+    addBubble("ai", opening);
+    setRpStatus("");
+    speak(stripCoach(opening));
+  } catch (e) {
+    if (rp !== mySession) return;
+    $("rpSetupCard").style.display = "block";
+    $("rpSessionCard").style.display = "none";
+    $("rpStartStatus").textContent = "Couldn't start: " + e.message;
+    $("rpStartStatus").className = "statusline err";
+    rp = null;
+  } finally {
+    $("endRp").disabled = false;
+  }
+});
+
+function setRpStatus(msg, isErr) {
+  const el = $("rpStatus");
+  el.textContent = msg || "";
+  el.className = "statusline" + (isErr ? " err" : "");
+}
+function stripCoach(text) { return text.replace(/\[COACH\]/g, "Coach says:"); }
+function addBubble(kind, text) {
+  const log = $("chatlog");
+  if (kind === "ai" && text.includes("[COACH]")) {
+    const div = document.createElement("div");
+    div.className = "msg coach";
+    div.textContent = text.replace(/\[COACH\]/g, "🏋️ Coach: ");
+    log.appendChild(div);
+  } else {
+    const div = document.createElement("div");
+    div.className = "msg " + kind;
+    div.textContent = text;
+    log.appendChild(div);
+  }
+  log.scrollTop = log.scrollHeight;
+}
+
+let sending = false; // gates Send button, Enter key, and mic path together
+async function sendUserTurn(text, spokenSeconds) {
+  if (!rp || sending || !text.trim()) return;
+  sending = true;
+  const mySession = rp;
+  const content = text.trim();
+  addBubble("user", content);
+  rp.messages.push({ role: "user", content });
+  rp.userStats.push({ words: normWords(content).length, seconds: spokenSeconds || null, text: content });
+  $("chatInput").value = "";
+  setRpStatus("Thinking…");
+  $("sendBtn").disabled = true;
+  try {
+    const reply = await callClaude({
+      system: mySession.system,
+      messages: mySession.messages,
+      maxTokens: 8000, effort: "low",
+    });
+    if (rp !== mySession) return; // session ended/graded while waiting
+    rp.messages.push({ role: "assistant", content: reply });
+    addBubble("ai", reply);
+    setRpStatus("");
+    speak(stripCoach(reply));
+  } catch (e) {
+    if (rp === mySession) setRpStatus(e.message, true);
+  } finally {
+    sending = false;
+    $("sendBtn").disabled = false;
+  }
+}
+
+$("sendBtn").addEventListener("click", () => sendUserTurn($("chatInput").value));
+$("chatInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendUserTurn($("chatInput").value); }
+});
+$("rpStopSpeech").addEventListener("click", () => { if (window.speechSynthesis) speechSynthesis.cancel(); });
+
+/* mic in roleplay */
+let rpRec = null, rpRecStart = 0;
+$("micBtn").addEventListener("click", () => {
+  if (rpRec) { rpRec.stop(); return; }
+  if (window.speechSynthesis) speechSynthesis.cancel(); // don't listen while talking
+  rpRec = makeRecognition(
+    (interim) => { $("chatInput").value = interim; },
+    (finalText) => {
+      const secs = (Date.now() - rpRecStart) / 1000;
+      sendUserTurn(finalText, secs);
+    },
+    () => { rpRec = null; $("micBtn").classList.remove("listening"); },
+    (err) => setRpStatus("Mic: " + err + (err === "not-allowed" ? " — allow microphone access for this site." : ""), true)
+  );
+  if (rpRec) {
+    rpRecStart = Date.now();
+    rpRec.start();
+    $("micBtn").classList.add("listening");
+    setRpStatus("Listening — click the mic again when you finish talking.");
+  }
+});
+
+/* ---------------- objection drill (offline) ---------------- */
+let od = null; // { deck: [...], pos, n }
+function odDeck() {
+  const worries = (data.worries || "").split("\n").map(w => w.trim()).filter(Boolean);
+  const pool = worries.concat(cat().bank || []);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool;
+}
+/* Answer bank. Keyed by a normalised form of the objection text so small edits
+   to punctuation or casing in Setup don't orphan an answer. Must stay in sync
+   with ans_key() in tools/build_seed.py. */
+function ansKey(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+function ansGet(q) {
+  const v = (data.answers || {})[ansKey(q)];
+  if (!v) return null;
+  return typeof v === "string" ? { a: v, note: "" } : { a: v.a || "", note: v.note || "" };
+}
+function ansSet(q, text) {
+  if (!data.answers) data.answers = {};
+  const k = ansKey(q), prev = ansGet(q);
+  if (!text.trim()) delete data.answers[k];
+  else data.answers[k] = { a: text.trim(), note: (prev && prev.note) || "", own: true };
+  save(LS.data, data);
+}
+function odResetAnswer() {
+  $("odAnswer").style.display = "none";
+  $("odAnswerEditor").style.display = "none";
+  $("odAnswerStatus").textContent = "";
+  $("odReveal").style.display = "";
+}
+function odRenderAnswer() {
+  const q = od.deck[od.pos], got = ansGet(q);
+  $("odAnswer").style.display = "block";
+  $("odReveal").style.display = "none";
+  $("odAnswerBody").textContent = got ? got.a
+    : "Nothing saved for this one yet — and that's the most useful kind. Write the answer you wish you'd just given, in your own words.";
+  $("odAnswerNote").textContent = got ? got.note : "";
+  $("odAnswerNote").style.display = (got && got.note) ? "block" : "none";
+  $("odAnswerSpeak").style.display = got ? "" : "none";
+  $("odAnswerEdit").textContent = got ? "✏️ Write my own" : "✏️ Write one now";
+}
+function odShow() {
+  if (!od.deck.length) { od.deck = odDeck(); od.pos = 0; }
+  if (od.pos >= od.deck.length) { od.deck = odDeck(); od.pos = 0; } // reshuffle when exhausted
+  const q = od.deck[od.pos];
+  $("odQuestion").textContent = "“" + q + "”";
+  $("odCount").textContent = od.n ? od.n + " answered" : "";
+  odResetAnswer();
+  speak(q);
+}
+$("odStart").addEventListener("click", () => {
+  od = { deck: odDeck(), pos: 0, n: 0 };
+  if (!od.deck.length) { $("odQuestion").textContent = "Add some worries in Setup first — or pick a category."; return; }
+  $("odSetup").style.display = "none";
+  $("odLive").style.display = "block";
+  odShow();
+  track("objection_drill");
+});
+$("odNext").addEventListener("click", () => { if (!od) return; od.n++; od.pos++; odShow(); });
+$("odRepeat").addEventListener("click", () => { if (od) speak(od.deck[od.pos]); });
+$("odReveal").addEventListener("click", () => {
+  if (!od) return;
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  odRenderAnswer();
+  if (!ansGet(od.deck[od.pos])) $("odAnswerEdit").click(); // no answer yet — go straight to writing one
+});
+$("odAnswerSpeak").addEventListener("click", () => {
+  if (!od) return;
+  const got = ansGet(od.deck[od.pos]);
+  if (got) speak(got.a);
+});
+$("odAnswerEdit").addEventListener("click", () => {
+  if (!od) return;
+  const got = ansGet(od.deck[od.pos]);
+  $("odAnswerEditor").style.display = "block";
+  $("odAnswerBox").value = got ? got.a : "";
+  $("odAnswerBox").focus();
+});
+$("odAnswerCancel").addEventListener("click", () => { $("odAnswerEditor").style.display = "none"; });
+$("odAnswerSave").addEventListener("click", () => {
+  if (!od) return;
+  ansSet(od.deck[od.pos], $("odAnswerBox").value);
+  $("odAnswerEditor").style.display = "none";
+  odRenderAnswer();
+  $("odAnswerStatus").textContent = "Saved — say it out loud once before you move on.";
+});
+$("odStop").addEventListener("click", () => {
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  odResetAnswer();
+  $("odQuestion").textContent = "";
+  $("odSetup").style.display = "block";
+  $("odLive").style.display = "none";
+  const n = od ? od.n : 0;
+  od = null;
+  $("odDone").style.display = n ? "block" : "none";
+  $("odDone").textContent = n ? `${n} objection${n === 1 ? "" : "s"} answered cold. The ones that made you pause — hit 💡 next time and write your own answer in, then drill until it comes out without thinking.` : "";
+  $("odStart").textContent = n ? "Drill again" : "Start drilling";
+});
+
+/* ---------------- grading ---------------- */
+const FILLERS = ["um","uh","er","ah","like","you know","kind of","sort of","basically","actually","literally","i mean","so yeah"];
+function localDelivery() {
+  const allText = rp.userStats.map(s => s.text).join(" ").toLowerCase();
+  let fillers = 0;
+  for (const f of FILLERS) {
+    const re = new RegExp("\\b" + f.replace(/ /g, "\\s+") + "\\b", "g");
+    fillers += (allText.match(re) || []).length;
+  }
+  const spoken = rp.userStats.filter(s => s.seconds && s.seconds > 1);
+  let wpm = null;
+  if (spoken.length) {
+    const words = spoken.reduce((a, s) => a + s.words, 0);
+    const secs = spoken.reduce((a, s) => a + s.seconds, 0);
+    if (secs > 5) wpm = Math.round(words / (secs / 60));
+  }
+  return { fillers, wpm, totalWords: rp.userStats.reduce((a, s) => a + s.words, 0) };
+}
+
+const GRADE_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["adherence_score","covered_points","missed_points","objection_score","objection_notes","confidence_score","confidence_notes","top_fixes","overall"],
+  properties: {
+    adherence_score: { type: "integer", description: "0-100: how much of the script's key content the user actually delivered" },
+    covered_points: { type: "array", items: { type: "string" }, description: "key points from the script the user covered" },
+    missed_points: { type: "array", items: { type: "string" }, description: "key points from the script the user missed or fumbled" },
+    objection_score: { type: "integer", description: "0-100: how well the user handled objections and questions" },
+    objection_notes: { type: "string", description: "1-3 sentences on objection handling, citing specific moments" },
+    confidence_score: { type: "integer", description: "0-100: how confident and composed the user came across in their wording" },
+    confidence_notes: { type: "string", description: "1-3 sentences on confidence and delivery, citing specific wording" },
+    top_fixes: { type: "array", items: { type: "string" }, description: "the 3 highest-impact concrete things to do differently next time" },
+    overall: { type: "string", description: "2-3 sentence overall assessment, encouraging but honest" }
+  }
+};
+
+$("endRp").addEventListener("click", async () => {
+  if (!rp) return;
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  if (rpRec) {
+    // detach callbacks first so a pending utterance can't fire a stray
+    // turn into the session we're about to grade
+    rpRec.onresult = null; rpRec.onend = null; rpRec.onerror = null;
+    try { rpRec.stop(); } catch {}
+    rpRec = null;
+    $("micBtn").classList.remove("listening");
+  }
+  const userTurns = rp.messages.filter(m => m.role === "user").length - 1;
+  if (userTurns < 1) {
+    // nothing to grade — just close
+    $("rpSessionCard").style.display = "none";
+    $("rpSetupCard").style.display = "block";
+    rp = null;
+    return;
+  }
+  setRpStatus("Grading…");
+  $("endRp").disabled = true;
+  const transcript = rp.messages.slice(1).map(m =>
+    (m.role === "user" ? "SPEAKER: " : "COUNTERPART: ") + m.content
+  ).join("\n");
+  try {
+    const raw = await callClaude({
+      system: `You are a supportive but honest ${rp.grader.coach}. Grade the practice session below. The SPEAKER is your student; the COUNTERPART was an AI roleplay partner. Judge only the speaker. ${rp.grader.emphasis} Be specific — quote their actual words where useful. Scores: 90+ exceptional, 70-89 solid, 50-69 needs work, below 50 significant gaps.`,
+      messages: [{
+        role: "user",
+        content: `TARGET MATERIAL the speaker was trying to deliver:\n---\n${rp.scriptSnapshot}\n---\n\nSCENARIO: ${rp.scenarioLabel} (difficulty: ${rp.difficulty})\n${rp.audienceSnapshot ? "COUNTERPART: " + rp.audienceSnapshot + "\n" : ""}\nSESSION TRANSCRIPT:\n---\n${transcript}\n---\n\nGrade the speaker on: ${rp.grader.labels.join(", ")}.`
+      }],
+      maxTokens: 16000, effort: "high",
+      schema: GRADE_SCHEMA,
+    });
+    const g = JSON.parse(raw);
+    const d = localDelivery();
+    const sess = {
+      when: new Date().toISOString(),
+      scenario: rp.scenarioLabel,
+      difficulty: rp.difficulty,
+      turns: userTurns,
+      labels: rp.grader.labels,
+      adherence: g.adherence_score,
+      objection: g.objection_score,
+      confidence: g.confidence_score,
+    };
+    sessions.unshift(sess);
+    sessions = sessions.slice(0, 50);
+    save(LS.sessions, sessions);
+    track("session_graded");
+    renderScorecard(g, d);
+  } catch (e) {
+    setRpStatus("Grading failed: " + e.message, true);
+  } finally {
+    $("endRp").disabled = false;
+  }
+});
+
+function scoreColor(v) { return v >= 70 ? "var(--good)" : v >= 50 ? "var(--warn)" : "var(--bad)"; }
+
+function renderScorecard(g, d) {
+  $("rpSessionCard").style.display = "none";
+  $("rpSetupCard").style.display = "block";
+  const L = rp.grader.labels;
+  const card = $("scorecard");
+  card.style.display = "block";
+  const deliveryBits = [];
+  if (d.wpm) deliveryBits.push(`<div class="scoretile"><div class="big">${d.wpm}</div><div class="lbl">words / min spoken (aim ~130–160)</div></div>`);
+  deliveryBits.push(`<div class="scoretile"><div class="big">${d.fillers}</div><div class="lbl">filler words caught («um», «like», …)</div></div>`);
+  card.innerHTML = `
+    <h2>Scorecard</h2>
+    <div class="scoregrid">
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.adherence_score)}">${g.adherence_score}</div><div class="lbl">${esc(L[0])}</div></div>
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.objection_score)}">${g.objection_score}</div><div class="lbl">${esc(L[1])}</div></div>
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.confidence_score)}">${g.confidence_score}</div><div class="lbl">${esc(L[2])}</div></div>
+      ${deliveryBits.join("")}
+    </div>
+    <p>${esc(g.overall)}</p>
+    ${g.covered_points.length ? `<h3 class="tag-good">✓ You covered</h3><ul class="points">${g.covered_points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+    ${g.missed_points.length ? `<h3 class="tag-bad">✗ You missed</h3><ul class="points">${g.missed_points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+    <h3>${esc(L[1])}</h3><p style="font-size:14.5px">${esc(g.objection_notes)}</p>
+    <h3>${esc(L[2])}</h3><p style="font-size:14.5px">${esc(g.confidence_notes)}</p>
+    <h3>Top fixes for next round</h3>
+    <ul class="points">${g.top_fixes.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+      <button class="btn" id="againBtn">Run it again</button>
+      <button class="btn secondary" id="shareCardBtn">📸 Save scorecard</button>
+    </div>
+  `;
+  card.scrollIntoView({ behavior: "smooth" });
+  $("againBtn").addEventListener("click", () => { card.style.display = "none"; $("startRp").click(); });
+  const snap = { g, d, labels: L, scenario: rp.scenarioLabel, difficulty: rp.difficulty };
+  $("shareCardBtn").addEventListener("click", () => { track("scorecard_shared"); shareScorecardImage(snap); });
+  rp = null;
+}
+
+/* ---------------- shareable scorecard image ---------------- */
+const BRAND_ICON = new Image();
+BRAND_ICON.src = "icon.svg"; // preloaded so the share card can draw the real mark
+function scoreHex(v) { return v >= 70 ? "#34d399" : v >= 50 ? "#fbbf24" : "#fb7185"; }
+function wrapCanvasText(ctx, text, x, y, maxW, lineH, maxLines) {
+  const words = String(text).split(/\s+/);
+  let line = "", lines = 0;
+  for (const w of words) {
+    const test = line ? line + " " + w : w;
+    if (ctx.measureText(test).width > maxW && line) {
+      if (lines + 1 >= maxLines) { ctx.fillText(line.replace(/\s+$/, "") + "…", x, y); return y + lineH; }
+      ctx.fillText(line, x, y); y += lineH; lines++; line = w;
+    } else line = test;
+  }
+  if (line) { ctx.fillText(line, x, y); y += lineH; }
+  return y;
+}
+function shareScorecardImage(snap) {
+  // draw content on an oversized canvas, then crop to fit + footer so long
+  // grades never collide with the bottom band
+  const W = 1080, TALL = 2200, M = 70;
+  const big = document.createElement("canvas");
+  big.width = W; big.height = TALL;
+  const bctx = big.getContext("2d");
+  const paint = (ctx, H) => {
+    ctx.fillStyle = "#12101d"; ctx.fillRect(0, 0, W, H);
+    let gl = ctx.createRadialGradient(W * .85, 0, 0, W * .85, 0, 700);
+    gl.addColorStop(0, "rgba(167,139,250,.16)"); gl.addColorStop(1, "rgba(167,139,250,0)");
+    ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+    gl = ctx.createRadialGradient(0, H * .45, 0, 0, H * .45, 600);
+    gl.addColorStop(0, "rgba(34,211,238,.12)"); gl.addColorStop(1, "rgba(34,211,238,0)");
+    ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+  };
+  paint(bctx, TALL);
+  const grad = bctx.createLinearGradient(0, 0, W, 0);
+  grad.addColorStop(0, "#ff3d8f"); grad.addColorStop(.52, "#8b5cf6"); grad.addColorStop(1, "#22d3ee");
+  bctx.fillStyle = grad; bctx.fillRect(0, 0, W, 10);
+  const FONT = '"Avenir Next","Avenir","Segoe UI",system-ui,sans-serif';
+  bctx.textBaseline = "alphabetic";
+  bctx.font = "800 62px " + FONT;
+  let xText = M;
+  try {
+    if (BRAND_ICON.complete && BRAND_ICON.naturalWidth > 0) {
+      const S = 66, y0 = 94;
+      bctx.save();
+      bctx.beginPath(); bctx.roundRect(M, y0, S, S, 15); bctx.clip();
+      bctx.drawImage(BRAND_ICON, M, y0, S, S);
+      bctx.restore();
+      xText = M + S + 18;
+    }
+  } catch {}
+  if (xText === M) { bctx.fillStyle = "#f0eefb"; bctx.fillText("🦞 ", M, 150); xText = M + bctx.measureText("🦞 ").width; }
+  bctx.fillStyle = "#f0eefb"; bctx.fillText("Lobster", xText, 150);
+  const lw = bctx.measureText("Lobster").width;
+  bctx.fillStyle = grad; bctx.fillText("Class", xText + lw, 150);
+  bctx.font = "600 34px " + FONT; bctx.fillStyle = "#a09ac2";
+  bctx.fillText(snap.scenario + " · " + snap.difficulty + " · " + new Date().toLocaleDateString(), M, 210);
+  const scores = [snap.g.adherence_score, snap.g.objection_score, snap.g.confidence_score];
+  const tw = (W - 2 * M - 2 * 24) / 3, th = 240, ty = 265;
+  scores.forEach((v, i) => {
+    const tx = M + i * (tw + 24);
+    bctx.fillStyle = "#1b1830"; bctx.strokeStyle = "#322c52"; bctx.lineWidth = 2;
+    bctx.beginPath(); bctx.roundRect(tx, ty, tw, th, 20); bctx.fill(); bctx.stroke();
+    bctx.fillStyle = scoreHex(v); bctx.font = "800 104px " + FONT;
+    bctx.fillText(String(v), tx + 30, ty + 128);
+    bctx.fillStyle = "#a09ac2"; bctx.font = "600 27px " + FONT;
+    wrapCanvasText(bctx, snap.labels[i], tx + 30, ty + 175, tw - 60, 33, 2);
+  });
+  let y = ty + th + 70;
+  const bits = [];
+  if (snap.d.wpm) bits.push(snap.d.wpm + " words/min");
+  bits.push(snap.d.fillers + " filler words");
+  bctx.fillStyle = "#a09ac2"; bctx.font = "600 32px " + FONT;
+  bctx.fillText(bits.join("   ·   "), M, y); y += 70;
+  bctx.fillStyle = "#f0eefb"; bctx.font = "500 40px " + FONT;
+  y = wrapCanvasText(bctx, snap.g.overall, M, y, W - 2 * M, 56, 6) + 40;
+  bctx.fillStyle = "#ff4d9d"; bctx.font = "700 28px " + FONT;
+  bctx.fillText("TOP FIXES FOR NEXT ROUND", M, y); y += 48;
+  for (const f of snap.g.top_fixes.slice(0, 3)) {
+    bctx.fillStyle = "#ff4d9d"; bctx.font = "500 34px " + FONT;
+    bctx.fillText("•", M, y);
+    bctx.fillStyle = "#d9d4ee";
+    y = wrapCanvasText(bctx, f, M + 36, y, W - 2 * M - 36, 46, 3) + 14;
+  }
+  // compose final canvas: content height + footer band, min 1350 for a consistent look
+  const H = Math.max(1350, Math.min(TALL, Math.round(y + 160)));
+  const cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext("2d");
+  ctx.drawImage(big, 0, 0, W, H, 0, 0, W, H);
+  const grad2 = ctx.createLinearGradient(0, 0, W, 0);
+  grad2.addColorStop(0, "#ff3d8f"); grad2.addColorStop(.52, "#8b5cf6"); grad2.addColorStop(1, "#22d3ee");
+  ctx.fillStyle = grad2; ctx.fillRect(M, H - 120, W - 2 * M, 4);
+  ctx.fillStyle = "#a09ac2"; ctx.font = "600 30px " + FONT;
+  ctx.fillText("lobsterclass.com — rehearse the conversation that matters", M, H - 62);
+  cv.toBlob(async (blob) => {
+    if (!blob) return;
+    const file = new File([blob], "lobsterclass-scorecard.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "My LobsterClass scorecard" }); return; } catch {}
+    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "lobsterclass-scorecard.png";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }, "image/png");
+}
+
+/* ---------------- progress ---------------- */
+function renderProgress() {
+  const secs = sections();
+  const ml = $("masteryList");
+  const summary = $("reviewSummary");
+  if (!secs.length) { ml.innerHTML = '<div class="empty">Save a script in Setup first.</div>'; summary.style.display = "none"; $("reviewGo").style.display = "none"; $("decayHint").style.display = "none"; }
+  else {
+    ml.innerHTML = "";
+    let anyDecay = false;
+    secs.forEach((s, i) => {
+      const m = mstat(s.id);
+      const r = retentionNow(s.id);
+      const chip = document.createElement("button");
+      chip.className = "secchip";
+      chip.style.setProperty("--h", secHue(i, secs.length));
+      chip.title = (m.last && m.due ? (m.due <= Date.now() ? "Due for review — tap to drill" : "Next review " + untilStr(m.due)) : "Drill this section")
+        + (r !== null ? ` · ≈${r}% would survive right now` : "");
+      chip.innerHTML = (m.pct ? chipLabel(s) : esc(s.title) + '<span class="pct">–</span>')
+        + (r !== null ? `<span class="decay"><i style="width:${Math.max(4, r)}%"></i></span>` : "");
+      if (r !== null) anyDecay = true;
+      chip.addEventListener("click", () => {
+        curSection = i;
+        document.querySelector('nav button[data-tab="learn"]').click();
+      });
+      ml.appendChild(chip);
+    });
+    $("decayHint").style.display = anyDecay ? "block" : "none";
+    const due = dueSections();
+    const ready = secs.filter(s => mstat(s.id).streak >= 3).length;
+    const left = daysToEvent();
+    const bits = [];
+    if (left !== null) bits.push(`🗓 <b>${Math.ceil(left)} day${Math.ceil(left) === 1 ? "" : "s"}</b> until the real thing`);
+    bits.push(due.length ? `⏰ <b>${due.length}</b> section${due.length === 1 ? "" : "s"} due for review` : "✓ nothing due right now");
+    if (ready) bits.push(`🏆 <b>${ready}</b> performance-ready`);
+    const cal = load(LS.calib, null);
+    if (cal && cal.n >= 3) bits.push(`🎯 calibration: you predict ~<b>${Math.round(cal.pred / cal.n)}%</b>, you score ~<b>${Math.round(cal.act / cal.n)}%</b>`);
+    summary.innerHTML = bits.join(" · ");
+    summary.style.display = "block";
+    $("reviewGo").style.display = due.length ? "block" : "none";
+  }
+  const sl = $("sessionList");
+  if (!sessions.length) { sl.innerHTML = '<div class="empty">No graded sessions yet.</div>'; return; }
+  sl.innerHTML = sessions.map(s => {
+    const dt = new Date(s.when);
+    const stamp = dt.toLocaleDateString() + " " + dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const L = (s.labels || ["Script", "Objections", "Confidence"]).map(l => l.split(" ")[0].toLowerCase());
+    return `<div class="sessionrow">
+      <span style="color:var(--muted);flex:none">${esc(stamp)}</span>
+      <span style="flex:1">${esc(s.scenario)} · ${esc(s.difficulty)} · ${s.turns} turns</span>
+      <span>${esc(L[0])} <b style="color:${scoreColor(s.adherence)}">${s.adherence}</b></span>
+      <span>${esc(L[1])} <b style="color:${scoreColor(s.objection)}">${s.objection}</b></span>
+      <span>${esc(L[2])} <b style="color:${scoreColor(s.confidence)}">${s.confidence}</b></span>
+    </div>`;
+  }).join("");
+}
+
+$("goReview").addEventListener("click", () => {
+  document.querySelector('nav button[data-tab="learn"]').click();
+  $("smartReview").click();
+});
+
+/* ---------------- performance run mode ----------------
+   Free-recall rehearsal of the whole script: timer vs a ~140wpm estimate,
+   per-section splits, optional spoken interruptions (pressure inoculation),
+   first-letter emergency cues only — the real thing has no script either. */
+let run = null;
+const RUN_WPM = 140;
+const CURVEBALLS = [
+  "Hold on — what does this actually cost?",
+  "Sorry — someone's phone. Keep going.",
+  "Can you go back to the part before this one?",
+  "Wait — how is this different from what we already have?",
+  "You just lost two minutes of your slot. Tighten it up.",
+  "Someone walked in late and looks confused.",
+];
+function fmtClock(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}
+function estMs(text) { return normWords(text).length / RUN_WPM * 60000; }
+
+$("fullRunBtn").addEventListener("click", () => {
+  const secs = sections(); if (!secs.length) return;
+  $("runCard").style.display = "block";
+  $("runSetup").style.display = "block";
+  $("runLive").style.display = "none";
+  $("runDone").style.display = "none";
+  $("runClock").textContent = "0:00";
+  const totalEst = secs.reduce((a, s) => a + estMs(s.text), 0);
+  $("runMeta").textContent = secs.length + " sections · roughly " + fmtClock(totalEst) + " at a natural pace (~140 words/min)";
+  $("runCard").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+$("cbOff").addEventListener("click", () => { $("cbOff").classList.add("active"); $("cbOn").classList.remove("active"); });
+$("cbOn").addEventListener("click", () => { $("cbOn").classList.add("active"); $("cbOff").classList.remove("active"); });
+$("runCancel").addEventListener("click", () => { $("runCard").style.display = "none"; });
+
+function startRun(randomStart) {
+  const secs = sections(); if (!secs.length) return;
+  const startIdx = randomStart ? Math.floor(Math.random() * secs.length) : 0;
+  run = {
+    idxs: secs.map((_, i) => i).slice(startIdx),
+    pos: 0, t0: Date.now(), secT0: Date.now(), splits: [],
+    curve: $("cbOn").classList.contains("active"),
+    timer: setInterval(() => { if (run) $("runClock").textContent = fmtClock(Date.now() - run.t0); }, 500),
+    curveTimer: null,
+  };
+  $("runSetup").style.display = "none";
+  $("runLive").style.display = "block";
+  showRunSection();
+  if (run.curve) scheduleCurve();
+  track("run_started");
+}
+$("runStart").addEventListener("click", () => startRun(false));
+$("runStartRandom").addEventListener("click", () => startRun(true));
+
+function showRunSection() {
+  const secs = sections();
+  const sec = secs[run.idxs[run.pos]];
+  $("runSection").textContent = sec.title;
+  $("runCue").style.display = "none";
+  $("runCue").innerHTML = lettersHtml(sec.text);
+  $("runPeek").textContent = "👀 Peek cues";
+  $("runCurve").style.display = "none";
+  $("runProgress").textContent = "Section " + (run.pos + 1) + " of " + run.idxs.length +
+    " · this one runs ~" + fmtClock(estMs(sec.text)) + " at a natural pace. Say it out loud, then tap Next.";
+}
+$("runPeek").addEventListener("click", () => {
+  const open = $("runCue").style.display !== "none";
+  $("runCue").style.display = open ? "none" : "block";
+  $("runPeek").textContent = open ? "👀 Peek cues" : "🙈 Hide cues";
+});
+$("runNext").addEventListener("click", () => {
+  if (!run) return;
+  const secs = sections();
+  const sec = secs[run.idxs[run.pos]];
+  run.splits.push({ title: sec.title, ms: Date.now() - run.secT0, est: estMs(sec.text) });
+  run.secT0 = Date.now();
+  run.pos++;
+  if (run.pos >= run.idxs.length) endRun(true);
+  else showRunSection();
+});
+$("runEnd").addEventListener("click", () => {
+  if (!run) return;
+  const secs = sections();
+  const sec = secs[run.idxs[run.pos]];
+  if (Date.now() - run.secT0 > 3000) run.splits.push({ title: sec.title + " (partial)", ms: Date.now() - run.secT0, est: estMs(sec.text) });
+  endRun(false);
+});
+
+function scheduleCurve() {
+  run.curveTimer = setTimeout(() => {
+    if (!run) return;
+    const worries = (data.worries || "").split("\n").map(w => w.trim()).filter(Boolean);
+    const pool = CURVEBALLS.concat(worries);
+    const c = pool[Math.floor(Math.random() * pool.length)];
+    $("runCurve").textContent = "😈 " + c;
+    $("runCurve").style.display = "block";
+    speak(c);
+    setTimeout(() => { if (run) $("runCurve").style.display = "none"; }, 12000);
+    scheduleCurve();
+  }, 45000 + Math.random() * 45000);
+}
+
+function endRun(finished) {
+  clearInterval(run.timer);
+  clearTimeout(run.curveTimer);
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  const total = Date.now() - run.t0;
+  const est = run.splits.reduce((a, s) => a + s.est, 0);
+  const rows = run.splits.map(s => {
+    const r = s.est > 2000 ? s.ms / s.est : 1;
+    const flag = r > 1.35 ? ' <span style="color:var(--warn)">slow — is this section solid?</span>' :
+      r < 0.6 ? ' <span style="color:var(--warn)">rushed — did you skip lines?</span>' : "";
+    return `<div class="sessionrow"><span style="flex:1">${esc(s.title)}</span><span><b>${fmtClock(s.ms)}</b> <span style="color:var(--muted)">/ ~${fmtClock(s.est)}</span>${flag}</span></div>`;
+  }).join("");
+  $("runLive").style.display = "none";
+  $("runDone").style.display = "block";
+  $("runDone").innerHTML = `
+    <h3>${finished ? "Full run complete" : "Run ended early"}</h3>
+    <div class="scoregrid">
+      <div class="scoretile"><div class="big">${fmtClock(total)}</div><div class="lbl">your time</div></div>
+      <div class="scoretile"><div class="big">${fmtClock(est)}</div><div class="lbl">natural pace (~140 wpm)</div></div>
+    </div>
+    ${rows}
+    <p class="hint" style="margin-top:10px">Sections that ran long are usually the shaky ones — drill them, and their seams, before the next run. One deliberately disrupted run in the final two days inoculates against surprises.</p>
+    <div style="display:flex; gap:8px; margin-top:8px">
+      <button class="btn" id="runAgain">Run it again</button>
+      <button class="btn ghost" id="runClose">Close</button>
+    </div>`;
+  $("runAgain").addEventListener("click", () => $("fullRunBtn").click());
+  $("runClose").addEventListener("click", () => { $("runCard").style.display = "none"; });
+  track("run_completed");
+  run = null;
+}
+
+/* ---------------- example loader ---------------- */
+$("loadExample").addEventListener("click", () => {
+  const ex = EXAMPLES[data.category] || EXAMPLES.pitch;
+  const existing = $("inScript").value.trim();
+  const isExample = Object.values(EXAMPLES).some(x => x.script.trim() === existing);
+  if (existing && !isExample &&
+      !confirm("Replace what's in the form with the example? Your own material will be overwritten.")) return;
+  $("inScript").value = ex.script;
+  $("inContext").value = ex.context;
+  $("inAudience").value = ex.audience;
+  $("inWorries").value = ex.worries;
+  $("saveSetup").click();
+  track("example_loaded");
+  document.querySelector('nav button[data-tab="learn"]').click();
+});
+
+/* ---------------- local funnel events ----------------
+   Ring buffer in localStorage — no network, no UI. When real analytics
+   land, drain this through the sink instead. */
+function track(e) {
+  try {
+    const buf = load("pp_events", []);
+    buf.push({ e, t: Date.now() });
+    save("pp_events", buf.slice(-500));
+  } catch {}
+}
+
+/* ---------------- walk-practice prompt ---------------- */
+$("walkPrompt").addEventListener("click", async () => {
+  const st = $("setupStatus");
+  const c = cat();
+  const script = $("inScript").value.trim();
+  if (!script) { st.textContent = "Paste your material first — the walk prompt is built from it."; st.className = "statusline err"; return; }
+  const worries = $("inWorries").value.trim();
+  const context = $("inContext").value.trim();
+  const lines = [
+    "Copy everything below this line into a new chat in the Claude mobile app, then switch to voice mode and practice hands-free on your walk.",
+    "------------------------------------------------------------", "",
+    "You are my practice partner. I'm on a walk, practicing out loud by voice. Keep every reply SHORT and conversational — one to three sentences — because everything you say is spoken aloud. No lists, no markdown.",
+    "", "Start by asking me which mode I want. Two modes:", "",
+    'MODE 1 — RECITE AND CHECK. I say "check me on [section name]", then recite that section from memory. Compare it to the material below and tell me briefly what I missed or got wrong — key points and numbers first, wording second. All numbers must be exact. Then have me redo only the parts I missed.',
+    "",
+    `MODE 2 — ROLEPLAY. You play ${$("inAudience").value.trim() || c.counterpart}. I practice; you push back the way the real person would${worries ? ", using the pushback list below plus your own" : ""}. Don't be a pushover — only accept what would genuinely convince them — but acknowledge strong moments. If I say "time out", step out of character, coach me in two or three sentences, then resume. When I say "how did I do", grade me honestly: what I covered, what I missed, how I handled pushback, and my top three fixes.`,
+  ];
+  const worryList = worries.split("\n").map(w => w.trim()).filter(Boolean);
+  if (worries) lines.push("", "PUSHBACK TO USE:", ...worryList.map(w => "- " + w));
+  const prepared = worryList.map(w => [w, ansGet(w)]).filter(([, a]) => a && a.a);
+  if (prepared.length) {
+    lines.push("",
+      "MY PREPARED ANSWERS — these are what I'm trying to be able to say from memory. Do NOT read them to me during a roleplay. Afterwards, tell me how close I got to my own prepared answer and what I dropped.",
+      ...prepared.map(([w, a]) => `- THEY SAY: ${w}\n  I SHOULD SAY: ${a.a}`));
+  }
+  if (context) lines.push("", "BACKGROUND:", context);
+  lines.push("", "THE MATERIAL I'M LEARNING:", "", script);
+  try {
+    await navigator.clipboard.writeText(lines.join("\n"));
+    track("walk_prompt_copied");
+    st.textContent = "Walk prompt copied — paste it into a new Claude chat and switch to voice mode.";
+    st.className = "statusline";
+  } catch {
+    $("importArea").style.display = "block";
+    $("importBox").value = lines.join("\n");
+    $("importBox").select();
+    st.textContent = "Clipboard was blocked — copy the prompt below manually.";
+    st.className = "statusline";
+  }
+});
+
+/* ---------------- init ---------------- */
+renderRoleplayGate();
+applyCategory();
+
+// First run in a fresh browser: pull saved material from seed.json (served
+// alongside the app) so the user doesn't have to re-paste per browser.
+(async function importSeed() {
+  try {
+    const r = await fetch("seed.json", { cache: "no-store" });
+    if (!r.ok) return;
+    const seed = await r.json();
+    if (!seed || !seed.script) return;
+    // Material was already loaded by an earlier version of the app. Top up the
+    // answer bank if the seed's is newer, but never clobber an answer the user
+    // wrote themselves (ansSet marks those `own`).
+    if (data.script) {
+      const sv = seed.answersVersion || 0;
+      if (!seed.answers || typeof seed.answers !== "object") return;
+      if (sv <= (data.answersVersion || 0)) return;
+      const merged = Object.assign({}, seed.answers);
+      for (const [k, v] of Object.entries(data.answers || {})) if (v && v.own) merged[k] = v;
+      data.answers = merged;
+      data.answersVersion = sv;
+      save(LS.data, data);
+      return;
+    }
+    data = {
+      script: seed.script,
+      context: seed.context || "",
+      audience: seed.audience || "",
+      worries: seed.worries || "",
+      event: seed.event || "",
+      category: (seed.category && CATEGORIES[seed.category]) ? seed.category : "pitch",
+      answers: (seed.answers && typeof seed.answers === "object") ? seed.answers : {},
+      answersVersion: seed.answersVersion || 0,
+    };
+    save(LS.data, data);
+    $("inScript").value = data.script;
+    $("inContext").value = data.context;
+    $("inAudience").value = data.audience;
+    $("inWorries").value = data.worries;
+    $("inEvent").value = data.event;
+    applyCategory();
+    $("setupStatus").textContent = "Loaded your saved material — " + sections().length + " sections ready in Learn.";
+    $("setupStatus").className = "statusline";
+    renderRoleplayGate();
+  } catch {}
+})();
+
+/* Marketing-site links only exist on the deployed layout, where the app lives at
+   /app.html and the landing page is at /. On the local dev server the app IS the
+   root, so linking to "/" would just reload the app. */
+if (location.pathname.endsWith("/app.html")) $("siteLinks").style.display = "block";
+
+/* ---------------- PWA install ---------------- */
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+let installEvt = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  installEvt = e;
+  $("installRow").style.display = "block";
+});
+$("installBtn").addEventListener("click", async () => {
+  if (!installEvt) return;
+  installEvt.prompt();
+  try { await installEvt.userChoice; } catch {}
+  installEvt = null;
+  $("installRow").style.display = "none";
+  track("install_prompted");
+});
+window.addEventListener("appinstalled", () => { $("installRow").style.display = "none"; });
+</script>
+</body>
+</html>
