@@ -95,7 +95,8 @@
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
     background: var(--grad);
   }
-  header h1 { font-size: 21px; margin: 0; font-weight: 800; letter-spacing: -.02em; }
+  header h1 { font-size: 21px; margin: 0; font-weight: 800; letter-spacing: -.02em; display: flex; align-items: center; gap: 9px; }
+  header h1 .mark { width: 1.5em; height: 1.5em; border-radius: 22%; }
   header h1 em {
     font-style: normal;
     background: var(--grad-text);
@@ -175,6 +176,12 @@
     box-shadow: inset 0 0 0 1px hsl(var(--h, 320) 75% 42%), 0 2px 12px hsl(var(--h, 320) 75% 45% / .35);
   }
   .secchip .pct { font-size: 11.5px; opacity: .85; font-weight: 700; }
+  .secchip { position: relative; overflow: hidden; }
+  .secchip .decay {
+    position: absolute; left: 8px; right: 8px; bottom: 2.5px; height: 3px;
+    border-radius: 2px; background: hsl(var(--h, 320) 70% 50% / .18);
+  }
+  .secchip .decay i { display: block; height: 100%; border-radius: 2px; background: hsl(var(--h, 320) 80% 55%); }
   .practicebox {
     background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
     padding: 18px 20px; margin-top: 12px; font-size: 16px; line-height: 1.85; white-space: pre-wrap;
@@ -309,7 +316,7 @@
 <body>
 
 <header>
-  <h1><span aria-hidden="true">🦞</span> Lobster<em>Class</em></h1>
+  <h1><img src="icon.svg" alt="" class="mark"><span>Lobster<em>Class</em></span></h1>
   <nav aria-label="App sections">
     <button data-tab="setup" class="active">Setup</button>
     <button data-tab="learn">Learn</button>
@@ -340,9 +347,10 @@
       <input type="date" id="inEvent">
       <label for="inWorries" id="lblWorries">Objections or questions you're worried about (optional, one per line)</label>
       <textarea id="inWorries" rows="3" placeholder="e.g. It's too expensive&#10;We already have a supplier&#10;Why should we trust a new company?"></textarea>
-      <div style="margin-top:16px">
+      <div style="margin-top:16px; display:flex; gap:8px; align-items:center; flex-wrap:wrap">
         <button class="btn" id="saveSetup">Save material</button>
-        <span class="statusline" id="setupStatus" aria-live="polite" style="display:inline-block;margin-left:10px"></span>
+        <button class="btn secondary" id="loadExample" title="Fill the form with sample material for this category so you can feel the drills — swap in your own any time">✨ Try an example</button>
+        <span class="statusline" id="setupStatus" aria-live="polite"></span>
       </div>
       <h3>Practice on a walk</h3>
       <p class="hint">Hands-free rehearsal counts double: saying it aloud while moving is one of the best-evidenced ways to make lines stick. Copy a ready-made voice prompt, paste it into a new chat in the Claude app, and switch to voice mode.</p>
@@ -367,8 +375,9 @@
       <p class="hint">Work through each section. Read it, then squeeze the text away step by step until you can recall it cold. No API key needed here.</p>
       <div id="learnEmpty" class="empty">Nothing to drill yet — open the <b>Setup</b> tab, paste your script, and hit <b>Save material</b>. Your sections will appear here.</div>
       <div id="learnUI" style="display:none">
-        <div style="display:flex; align-items:baseline; gap:12px; flex-wrap:wrap">
+        <div style="display:flex; align-items:baseline; gap:8px; flex-wrap:wrap">
           <h3 style="margin-right:auto">Sections</h3>
+          <button class="btn small secondary" id="fullRunBtn" style="display:none">⏱ Full run</button>
           <button class="btn small" id="smartReview" style="display:none">▶ Smart review</button>
         </div>
         <div class="sectionlist" id="sectionList"></div>
@@ -390,7 +399,14 @@
         <div class="practicebox" id="practiceBox"></div>
         <div id="recallUI" style="display:none; margin-top:12px">
           <textarea id="recallInput" rows="5" placeholder="Type this section from memory…"></textarea>
-          <div style="margin-top:8px; display:flex; gap:8px; align-items:center">
+          <div style="margin-top:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+            <select id="predictSel" style="width:auto; padding:8px 10px" title="Guess before you check — learners' predictions are famously off, and seeing yours drift teaches you when you're actually ready">
+              <option value="">Predict…</option>
+              <option value="40">&lt;50%</option>
+              <option value="60">50–70%</option>
+              <option value="80">70–90%</option>
+              <option value="95">90%+</option>
+            </select>
             <button class="btn" id="checkRecall">Check</button>
             <button class="btn secondary" id="sayRecallBtn" style="display:none">🎤 Speak instead</button>
             <button class="btn secondary" id="nextReviewBtn" style="display:none">Next section →</button>
@@ -399,6 +415,39 @@
           <div class="statusline" id="recallStatus" aria-live="polite"></div>
         </div>
       </div>
+    </div>
+    <div class="card" id="runCard" style="display:none">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+        <h2 style="flex:1; margin:0" id="runTitle">Full run</h2>
+        <span class="scorebadge" id="runClock" style="font-variant-numeric:tabular-nums">0:00</span>
+      </div>
+      <p class="hint" id="runMeta"></p>
+      <div id="runSetup">
+        <p class="hint">Deliver the whole thing out loud, standing if you can. Tap <b>Next section</b> as you finish each part — you'll get split times at the end. The real thing is free recall: no reading, only emergency cues.</p>
+        <div class="pillrow">
+          <button class="pill active" data-cb="off" id="cbOff">No curveballs</button>
+          <button class="pill" data-cb="on" id="cbOn" title="The app will interrupt you out loud at random moments — practicing under mild stress inoculates against choking">😈 Curveballs</button>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn" id="runStart">Start from the top</button>
+          <button class="btn secondary" id="runStartRandom" title="Middles fail first — practice recovering from anywhere">🎲 Random start</button>
+          <button class="btn ghost" id="runCancel">Back</button>
+        </div>
+      </div>
+      <div id="runLive" style="display:none">
+        <div class="practicebox" style="min-height:120px">
+          <div id="runSection" style="font-weight:800; font-size:19px"></div>
+          <div id="runCue" style="display:none; margin-top:10px; line-height:1.9"></div>
+          <div id="runCurve" style="display:none; margin-top:10px; color:var(--warn); font-weight:600"></div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px">
+          <button class="btn" id="runNext">Next section →</button>
+          <button class="btn secondary" id="runPeek">👀 Peek cues</button>
+          <button class="btn ghost" id="runEnd">End run</button>
+        </div>
+        <p class="hint" id="runProgress" style="margin-top:10px"></p>
+      </div>
+      <div id="runDone" style="display:none"></div>
     </div>
   </section>
 
@@ -420,6 +469,24 @@
         </div>
         <button class="btn" id="startRp">Start session</button>
         <div class="statusline" id="rpStartStatus" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="card" id="odCard">
+      <h2>⚡ Objection drill <span style="font-size:12px; font-weight:600; color:var(--muted)">no API key needed</span></h2>
+      <p class="hint">The app fires the hard questions at you — out loud — and you answer out loud, cold. Your own worry list is in the deck. Answering under a little pressure is what inoculates against freezing at the real thing.</p>
+      <div id="odSetup">
+        <p class="hint" id="odDone" style="display:none"></p>
+        <button class="btn secondary" id="odStart">Start drilling</button>
+      </div>
+      <div id="odLive" style="display:none">
+        <div class="practicebox" style="min-height:90px; font-size:18px; font-weight:600" id="odQuestion"></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; align-items:center">
+          <button class="btn" id="odNext">Answered — next</button>
+          <button class="btn secondary small" id="odRepeat">🔊 Say it again</button>
+          <button class="btn ghost" id="odStop">End</button>
+          <span class="statusline" id="odCount"></span>
+        </div>
       </div>
     </div>
 
@@ -448,6 +515,7 @@
       <h2>Memorization progress</h2>
       <p class="hint" id="reviewSummary" style="display:none"></p>
       <div id="masteryList" class="sectionlist"><div class="empty">Nothing yet — run some drills in Learn.</div></div>
+      <p class="hint" id="decayHint" style="display:none">The bar under each section estimates what you'd recall if the real thing were <i>right now</i> — it fades between reviews. Fading isn't failure: recalling at the dip is exactly what makes it stick.</p>
       <div id="reviewGo" style="display:none; margin-top:12px"><button class="btn small" id="goReview">▶ Review what's due</button></div>
     </div>
     <div class="card">
@@ -456,7 +524,10 @@
     </div>
   </section>
 
-  <footer class="note">Everything is stored locally in your browser. Your script and API key never leave this machine except in direct calls to the Claude API.</footer>
+  <footer class="note">
+    <div id="installRow" style="display:none; margin-bottom:10px"><button class="btn small secondary" id="installBtn">📱 Install as an app</button></div>
+    Everything is stored locally in your browser. Your script and API key never leave this machine except in direct calls to the Claude API.
+  </footer>
 </main>
 
 <!-- ============ SETTINGS MODAL ============ -->
@@ -469,6 +540,14 @@
       <button class="btn secondary small" id="toggleKey">Show</button>
     </div>
     <p class="hint" style="margin-top:6px">Get one at console.anthropic.com → API keys. Stored only in this browser's localStorage. Needed for Roleplay + grading; Learn drills work without it.</p>
+    <div id="passRow" style="display:none">
+      <label for="inPass">LobsterClass Pass — hosted roleplay, no API key needed</label>
+      <div class="keyrow">
+        <input type="text" id="inPass" placeholder="LC-XXXXX-XXXXX-XXXXX-XXXXX" autocomplete="off" spellcheck="false">
+        <button class="btn secondary small" id="testPass">Check</button>
+      </div>
+      <p class="hint" style="margin-top:6px">Your API key (if set) is used first; the pass covers you when you don't have one.</p>
+    </div>
     <label for="inModel">Model</label>
     <select id="inModel">
       <option value="claude-opus-5">Claude Opus 5 — best roleplay (default)</option>
@@ -499,7 +578,12 @@
 const LS = {
   data: "pp_data", key: "pp_key", model: "pp_model",
   voice: "pp_voice", rate: "pp_rate", mastery: "pp_mastery", sessions: "pp_sessions",
+  calib: "pp_calib", pass: "pp_pass", proxy: "pp_proxy",
 };
+// Hosted passes: set to the deployed Worker URL (e.g. "https://lobsterclass-proxy.<you>.workers.dev")
+// to enable the pass-code path. Empty = feature hidden, app behaves as before.
+const PROXY_URL = "";
+function proxyUrl() { return load(LS.proxy, "") || PROXY_URL; }
 const $ = (id) => document.getElementById(id);
 const esc = (s) => s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 
@@ -552,6 +636,7 @@ $("saveSetup").addEventListener("click", () => {
   for (const k of Object.keys(mastery)) if (!valid.has(k)) delete mastery[k];
   save(LS.mastery, mastery);
   renderRoleplayGate();
+  track("material_saved");
   st.textContent = "Saved — " + sections().length + " section(s) ready in Learn."; st.className = "statusline";
 });
 
@@ -677,6 +762,15 @@ function dueSections() {
   const now = Date.now();
   return sections().filter(s => { const m = mstat(s.id); return m.last && m.due && m.due <= now; });
 }
+/* Estimated retention right now: exponential decay (Ebbinghaus) with
+   stability growing by box, scaled by the best score actually reached. */
+const BOX_STABILITY = [0.5, 1, 2.5, 5, 9, 16]; // days
+function retentionNow(id) {
+  const m = mstat(id);
+  if (!m.last || !m.pct) return null;
+  const S = BOX_STABILITY[m.box] * DAY;
+  return Math.round(m.pct * Math.exp(-(Date.now() - m.last) / S));
+}
 function untilStr(ts) {
   const h = (ts - Date.now()) / 3600000;
   if (h <= 0) return "now";
@@ -726,6 +820,7 @@ function renderChips() {
     list.appendChild(chip);
   });
   const due = dueSections();
+  $("fullRunBtn").style.display = secs.length >= 2 ? "inline-block" : "none";
   const btn = $("smartReview");
   btn.style.display = secs.length ? "inline-block" : "none";
   btn.textContent = due.length ? `▶ Review due (${due.length})` : "▶ Smart review";
@@ -814,6 +909,8 @@ function renderPractice() {
   $("recallStatus").textContent = "";
   $("recallInput").value = "";
   $("nextReviewBtn").style.display = "none";
+  $("predictSel").value = "";
+  $("predictSel").style.display = curMode === "seams" ? "none" : "";
   recallUI.style.display = (curMode === "type" || curMode === "say" || curMode === "seams") ? "block" : "none";
   $("sayRecallBtn").style.display = ((curMode === "say" || curMode === "seams") && speechSupported()) ? "inline-block" : "none";
 
@@ -824,12 +921,7 @@ function renderPractice() {
     const cue = prev ? "…" + lastSentence(prev.text) : "You're on. Deliver your opening.";
     box.innerHTML = `<span style="color:var(--muted)">${esc(cue)}</span>\n\n<span style="color:var(--muted);font-style:italic;font-size:13.5px">→ That's your cue. Recall how “${esc(sec.title)}” begins (the first ~20 words), then check.</span>`;
   } else if (curMode === "letters") {
-    box.innerHTML = sec.text.split("\n").map(line =>
-      line.split(/\s+/).filter(Boolean).map(w => {
-        const m = w.match(/^([^\p{L}\p{N}]*)([\p{L}\p{N}])(.*)$/u);
-        return m ? esc(m[1] + m[2]) + "·" : esc(w);
-      }).join("  ")
-    ).join("\n");
+    box.innerHTML = lettersHtml(sec.text);
   } else if (curMode === "blanks") {
     const words = sec.text.split(/(\s+)/);
     // rotate which words hide as reps accumulate, so the blank positions
@@ -851,6 +943,15 @@ function renderPractice() {
   } else {
     box.innerHTML = `<span style="color:var(--muted);font-style:italic">“${esc(sec.title)}” — recall it from memory below, then check.</span>`;
   }
+}
+
+function lettersHtml(text) {
+  return text.split("\n").map(line =>
+    line.split(/\s+/).filter(Boolean).map(w => {
+      const m = w.match(/^([^\p{L}\p{N}]*)([\p{L}\p{N}])(.*)$/u);
+      return m ? esc(m[1] + m[2]) + "·" : esc(w);
+    }).join("  ")
+  ).join("\n");
 }
 
 function lastSentence(text) {
@@ -923,13 +1024,26 @@ $("checkRecall").addEventListener("click", () => {
   $("practiceBox").innerHTML = html;
   $("recallScore").textContent = pct + "%";
   const m = recordRecall(sec.id, pct);
+  track("drill_checked");
   renderChips(); // update pct/⏰/🏆 badges without touching the diff view
   markRecommendedMode();
+  let calibNote = "";
+  if ($("predictSel").value) {
+    const pred = parseInt($("predictSel").value, 10);
+    const diff = pct - pred;
+    calibNote = diff > 12 ? `Predicted ~${pred}%, got ${pct}% — better than you felt. ` :
+      diff < -12 ? `Predicted ~${pred}%, got ${pct}% — fluency isn't recall; the gap is normal. ` :
+      `Predicted ~${pred}%, got ${pct}% — well calibrated. `;
+    const cal = load(LS.calib, { n: 0, pred: 0, act: 0 });
+    cal.n++; cal.pred += pred; cal.act += pct;
+    save(LS.calib, cal);
+  }
   let msg = pct >= 90 ? (m.streak >= 3 ? `Word-perfect — ${m.streak} clean recalls in a row. This one's performance-ready. 🏆` :
       `Excellent — clean recall${m.streak > 1 ? " #" + m.streak : ""}. Next review ${untilStr(m.due)}.`) :
     pct >= 70 ? "Good — red words are the ones you missed. One more pass, then come back " + untilStr(m.due) + "." :
     "Keep going — red words are the ones you missed. Re-read, then try again.";
   if (lastRecallSameDay) msg = `Nailed it again (${m.streak} in a row) — but a second pass today adds little. Due again ${untilStr(m.due)}: the gap, and tonight's sleep, are what make it stick.`;
+  msg = calibNote + msg;
   if (reviewQueue.length) msg += ` · ${reviewQueue.length} section(s) left in this review.`;
   $("recallStatus").textContent = msg;
   $("nextReviewBtn").style.display = reviewQueue.length ? "inline-block" : "none";
@@ -1021,6 +1135,8 @@ function speak(text, onDone) {
 /* ---------------- settings ---------------- */
 $("settingsBtn").addEventListener("click", () => {
   $("inKey").value = load(LS.key, "");
+  $("passRow").style.display = proxyUrl() ? "block" : "none";
+  $("inPass").value = load(LS.pass, "");
   $("inModel").value = load(LS.model, "claude-opus-5");
   $("inRate").value = load(LS.rate, "1.0");
   $("rateVal").textContent = parseFloat($("inRate").value).toFixed(2).replace(/0$/,"") + "×";
@@ -1040,12 +1156,36 @@ $("inRate").addEventListener("input", () => {
 });
 $("saveSettings").addEventListener("click", () => {
   save(LS.key, $("inKey").value.trim());
+  save(LS.pass, $("inPass").value.trim().toUpperCase());
   save(LS.model, $("inModel").value);
   if ($("inVoice").value) save(LS.voice, $("inVoice").value);
   save(LS.rate, $("inRate").value);
   renderRoleplayGate();
   $("settingsStatus").textContent = "Saved.";
   $("settingsStatus").className = "statusline";
+});
+$("testPass").addEventListener("click", async () => {
+  const st = $("settingsStatus");
+  const pass = $("inPass").value.trim().toUpperCase();
+  if (!pass) { st.textContent = "Enter a pass code first."; st.className = "statusline err"; return; }
+  save(LS.pass, pass);
+  renderRoleplayGate();
+  st.textContent = "Checking…"; st.className = "statusline";
+  try {
+    const r = await fetch(proxyUrl() + "/api/pass?pass=" + encodeURIComponent(pass));
+    const out = await r.json();
+    if (out.ok) {
+      const days = Math.max(0, Math.round((out.expires - Date.now()) / 86400000));
+      st.textContent = `✓ ${out.plan} — ${days} day${days === 1 ? "" : "s"} left · ${out.used_today}/${out.per_day} used today.`;
+      st.className = "statusline";
+    } else {
+      st.textContent = "✗ " + (out.error || "Pass not recognized.");
+      st.className = "statusline err";
+    }
+  } catch {
+    st.textContent = "✗ Couldn't reach the practice server — try again.";
+    st.className = "statusline err";
+  }
 });
 $("testKey").addEventListener("click", async () => {
   const st = $("settingsStatus");
@@ -1064,9 +1204,31 @@ $("testKey").addEventListener("click", async () => {
 });
 
 /* ---------------- Claude API ---------------- */
+async function callProxy({ system, messages, schema }) {
+  const resp = await fetch(proxyUrl() + "/api/roleplay", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      pass: load(LS.pass, ""),
+      kind: schema ? "grade" : "roleplay",
+      system, messages,
+      schema: schema || undefined,
+    }),
+  });
+  let out;
+  try { out = await resp.json(); } catch { throw new Error("Practice server error (" + resp.status + ")"); }
+  if (!resp.ok) throw new Error(out.error || ("Practice server error (" + resp.status + ")"));
+  if (out.stop_reason === "refusal") throw new Error("The model declined this request. Try rephrasing.");
+  if (out.stop_reason === "max_tokens") throw new Error("The response hit its token limit and was cut off — try again.");
+  const text = (out.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+  if (!text) throw new Error("Empty response from the model.");
+  return text;
+}
+
 async function callClaude({ system, messages, maxTokens, effort, schema }) {
   const key = load(LS.key, "");
-  if (!key) throw new Error("No API key set — add one in Settings.");
+  if (!key && load(LS.pass, "") && proxyUrl()) return callProxy({ system, messages, schema });
+  if (!key) throw new Error(proxyUrl() ? "Add an API key or a LobsterClass Pass in Settings." : "No API key set — add one in Settings.");
   const model = load(LS.model, "claude-opus-5");
   const body = {
     model,
@@ -1136,6 +1298,7 @@ const CATEGORIES = {
     grader: { coach: "sales coach", labels: ["Script adherence", "Objection handling", "Confidence"],
       emphasis: "Judge how much of the script's key content was delivered, how objections were handled, and composure." },
     counterpart: "a skeptical prospect",
+    bank: ["It's too expensive.", "We already have a vendor for this.", "Send me an email and we'll take a look.", "How are you actually different from the big guys?", "We tried something like this before and it flopped.", "Why should we trust a company your size?"],
   },
   product: {
     emoji: "🚗", name: "Product knowledge",
@@ -1159,6 +1322,7 @@ const CATEGORIES = {
     grader: { coach: "retail sales trainer", labels: ["Fact accuracy", "Objection handling", "Confidence"],
       emphasis: "Check every claim against the pasted product material — flag ANY invented or wrong spec, price, or number as a miss. Reward needs-discovery questions, translating features into benefits the customer cares about, and asking for the sale." },
     counterpart: "a showroom customer",
+    bank: ["The competitor gives me more for the same price.", "What's your best out-the-door price?", "I need to think about it.", "How is this really different from last year's model?", "What will it be worth on trade-in in three years?", "I've read the reviews \u2014 convince me they're wrong."],
   },
   raise: {
     emoji: "💰", name: "Raise & negotiation",
@@ -1182,6 +1346,7 @@ const CATEGORIES = {
     grader: { coach: "negotiation coach", labels: ["Case made", "Pushback handling", "Confidence"],
       emphasis: "Judge whether the user stated a specific number, cited their evidence (instead of leaving it on the table), resisted the first no, avoided apologetic or hedging language, and never negotiated against themselves." },
     counterpart: "your manager",
+    bank: ["There's no budget this cycle.", "Let's revisit this at review time.", "Everyone got the same percentage this year.", "You're already at the top of your band.", "Money isn't everything \u2014 think about the growth opportunity here."],
   },
   interview: {
     emoji: "💼", name: "Job interview",
@@ -1205,6 +1370,7 @@ const CATEGORIES = {
     grader: { coach: "interview coach", labels: ["Answer quality", "Follow-up handling", "Confidence"],
       emphasis: "Judge story completeness (situation, task, action, result all present), answer-length discipline (~2 minutes, no rambling), consistency with their pasted material, and how they handled follow-up probes." },
     counterpart: "an interviewer",
+    bank: ["Why did you leave your last role?", "What's your biggest weakness \u2014 really?", "Why this company and not our competitor?", "What would your last manager say needs improving about you?", "What are your salary expectations?"],
   },
   speech: {
     emoji: "🎤", name: "Speech & talk",
@@ -1226,6 +1392,7 @@ const CATEGORIES = {
     grader: { coach: "speaking coach", labels: ["Speech fidelity", "Q&A handling", "Delivery"],
       emphasis: "Judge fidelity to the speech's beats and key lines (word-perfect where it matters: names, punchlines, numbers), pacing, recovery after skips or interruptions, and how questions were handled." },
     counterpart: "your audience",
+    bank: ["You have half the time \u2014 what do you cut?", "How does what you just said apply to us specifically?", "Start again from the middle. Go.", "Summarize the whole thing in thirty seconds."],
   },
   vc: {
     emoji: "🚀", name: "Fundraising",
@@ -1251,6 +1418,7 @@ const CATEGORIES = {
     grader: { coach: "pitch coach", labels: ["Metric accuracy", "Grilling handling", "Composure"],
       emphasis: "Check every number stated against the pasted material — flag ANY fudged, invented, or inconsistent metric. Reward brevity under interruption, direct answers to direct questions, composure, and whether the user made their ask." },
     counterpart: "a skeptical investor",
+    bank: ["What if the incumbent just builds this?", "Your CAC math doesn't work \u2014 walk me through it.", "Why are you the team for this?", "What's the moat once others notice?", "Why now?", "How does this become a venture-scale business?"],
   },
   exam: {
     emoji: "🎓", name: "Defense & exam",
@@ -1274,6 +1442,7 @@ const CATEGORIES = {
     grader: { coach: "academic examiner-turned-coach", labels: ["Content accuracy", "Probe handling", "Clarity"],
       emphasis: "Judge consistency with the pasted material (flag contradictions), whether questions were answered directly, honesty about limitations versus bluffing, and — if a checklist was provided — which required items were hit or missed." },
     counterpart: "your examiner",
+    bank: ["Why this method and not the obvious alternative?", "How does this generalize beyond your sample?", "Your sample size is small \u2014 defend it.", "State your contribution in one sentence.", "What result would falsify your conclusion?"],
   },
   custom: {
     emoji: "✨", name: "Custom",
@@ -1295,9 +1464,131 @@ const CATEGORIES = {
     grader: { coach: "communication coach", labels: ["Material covered", "Pushback handling", "Confidence"],
       emphasis: "Judge how much of their key material the user actually used, how they handled pushback, and composure." },
     counterpart: "the other side of your conversation",
+    bank: ["Why should I say yes to this?", "What's in it for me?", "I don't have time for this \u2014 one sentence.", "What are you not telling me?"],
   },
 };
 function cat() { return CATEGORIES[data.category] || CATEGORIES.pitch; }
+
+/* ---------------- per-category example material ----------------
+   One tap to feel the drills — clearly sample data, compact on purpose. */
+const EXAMPLES = {
+  pitch: {
+    audience: "Owner of a busy neighborhood restaurant, gets 5 sales calls a week, protective of her staff's time",
+    context: "OrderFlow is a tablet ordering system for independent restaurants: $99/month flat, tables order and pay by QR code, kitchen gets a clean ticket queue, tips went up 12% on average across 300 restaurants.",
+    worries: "We're fine with paper tickets\n$99 a month adds up\nMy older regulars won't scan a QR code",
+    script: `THE OPENING
+Thanks for giving me ten minutes during prep. One sentence up front: OrderFlow means your guests order and pay the moment they're ready, your kitchen gets clean tickets, and your servers spend their time serving, not typing. If that sounds useful, I'll show you how it works in the time it takes your espresso machine to warm up.
+
+THE PROBLEM
+Friday night. Every table is full, two servers are out, and the ticket printer jams. Orders are landing in the kitchen out of order, table six has waited twenty minutes to ask for the check, and your best server spends half her shift walking to the terminal and back. Sound familiar?
+
+THE PROOF
+Across three hundred independent restaurants, tables turn eleven minutes faster on average, tips are up twelve percent because servers are present instead of punching screens, and order errors drop by two thirds. One owner told us the QR menu paid for itself the first weekend — in wine sales alone.
+
+THE ASK
+Here's what I'd suggest: we set up one section — just the patio — for two weeks, free. Your staff keeps working exactly as they do now everywhere else. If the patio doesn't outperform the dining room by the end, you never hear from me again. Can we pick a start date?`,
+  },
+  product: {
+    audience: "Young family cross-shopping the BMW X3, cares about safety and the monthly payment",
+    context: "Mercedes-Benz dealership, end-of-quarter push. Example figures for practice — swap in your real sheet.",
+    worries: "The X3 has more power for the same money\nCan you do better on the payment?\nWhat's the invoice price?",
+    script: `GLC 300 BASICS
+The GLC 300 starts at $49,900. Two-liter turbo four, 255 horsepower, 273 pound-feet, 48-volt mild hybrid. Zero to sixty in 6.2 seconds, EPA 23 city and 31 highway. Standard: 11.9-inch center display, blind-spot assist, active brake assist, LED headlamps.
+
+TRIMS AND PACKAGES
+Three lines: base, Exclusive at $53,050, Pinnacle at $55,700. AMG Line adds the body kit and sport suspension for $2,600. The Driver Assistance Package — adaptive cruise, active lane change, evasive steering — is $1,950 and the one families actually use every day. Panorama roof $1,500, Burmester audio $850.
+
+THE MONEY CONVERSATION
+Current national offer: 3.99% APR up to 60 months, or lease from $589 a month, 36 months, $4,500 down, 10k miles a year. Residual on the GLC holds around 58% at three years — that's why the lease beats the X3's by about $40 a month at the same sticker.
+
+AGAINST THE X3
+The X3 30i is quicker on paper by a tenth. What it doesn't have: standard blind-spot at this trim, our residuals, or the cabin — put a child seat in both back rows and feel the difference. If they care about safety, walk them to the crash-avoidance demo before you ever talk price.`,
+  },
+  raise: {
+    audience: "My manager Sam — supportive but cautious, answers to a VP who owns the budget",
+    context: "Annual reviews are in September; budget gets locked in October. Example case for practice.",
+    worries: "There's no budget this cycle\nLet's revisit at review time\nEveryone got the same percentage",
+    script: `THE WINS
+In the last twelve months I shipped the onboarding redesign that cut time-to-first-value from nine days to three, took over the two biggest accounts when Dana left — both renewed, one expanded 40% — and trained the two new hires, who both hit quota their first full quarter.
+
+THE MARKET
+Mid-level customer success managers in our metro are posting at $78K to $92K — I checked twelve current listings and two recruiter conversations. I'm at $71K. I'm not arguing from loyalty; I'm arguing from the number it would cost to replace me.
+
+THE ASK
+I'm asking for $85K — that's mid-band for the work I'm already doing, not a stretch goal. If base truly can't move this cycle, I'm open to talking about a one-time bonus tied to the Q4 renewals plus a written commitment to revisit base in January. What I can't do is leave this conversation with just "later."`,
+  },
+  interview: {
+    audience: "Hiring manager for the senior product manager role, ex-consultant, drills into metrics",
+    context: "Fintech scale-up, Series C, the role owns the payments dashboard. Example answers for practice.",
+    worries: "Why did you leave after 18 months?\nWhat's your biggest weakness?\nWalk me through a product you killed",
+    script: `TELL ME ABOUT YOURSELF
+I'm a product manager who keeps ending up where the numbers are scary. Six years across two companies: at RetailCo I owned checkout and took payment failures from 4.1% to 1.3%, which was worth about $2M a year. At my current company I built the fraud-review queue from scratch — we now clear 90% of flags in under an hour. I'm here because your payments dashboard is the same shape of problem, one order of magnitude bigger, and that's the part of the job I love.
+
+THE CONFLICT STORY
+Situation: engineering wanted to rebuild the rules engine before adding any features; sales had promised three integrations by Q3. Task: I owned the roadmap that couldn't satisfy both. Action: I got both leads in one room, we mapped what the rebuild actually unblocked, and I cut a deal — two integrations on the old engine with hard scope limits, rebuild starts in parallel. I put my name on the risk memo. Result: integrations shipped two weeks late but shipped; the rebuild landed a quarter early because it wasn't fighting the roadmap anymore. What I'd do differently: bring finance in earlier — the deal got approved on revenue math I should have led with.
+
+THE FAILURE STORY
+I once spent four months on a loyalty feature our loudest customers requested and our data quietly said nobody would use. Launch adoption was 3%. I killed it in six weeks, wrote the post-mortem myself, and it changed how I work: loud requests get a usage-data check before they get a roadmap slot. That post-mortem template is still used by every PM at the company.`,
+  },
+  speech: {
+    audience: "120 wedding guests, mixed ages, half know the groom's stories already",
+    context: "Best-man toast for Tom and Priya, aiming for three minutes, glass raise at the end. Example toast for practice.",
+    worries: "Blanking after the camping story\nThe quiet-guy joke landing flat",
+    script: `THE OPENING
+Good evening everyone — for those who don't know me, I'm Alex, Tom's best man, and I've known him since we were eleven. When Tom asked me to do this speech he said, "keep it short, keep it clean, and don't mention Slovenia." So this will be quite short.
+
+THE STORY
+Here's the thing about Tom: he plans everything. Colour-coded spreadsheets, backup routes, a weather app for every country. So when he took Priya camping for their third date, he had the tent, the stove, the two backup stoves. What he didn't plan was the cow. I won't do the full story — Priya tells it better — but I will say this: any woman who watches your entire campsite get trampled and says "same time next weekend?" is not a woman you let go.
+
+THE TURN
+And he didn't. What I've watched these past four years is my most careful friend become brave. Priya, you didn't change him — you unlocked him. He laughs louder. He books flights without spreadsheets now. One spreadsheet. He books flights with one spreadsheet.
+
+THE TOAST
+So — everyone, if you'd stand and raise your glasses. To the planner and the reason plans are worth making. To Tom and Priya!`,
+  },
+  vc: {
+    audience: "Seed partner at a B2B-focused fund, famous for interrupting, passed on our competitor last year",
+    context: "Raising a $2M seed for Freightly, a booking layer for regional trucking. Example pitch for practice.",
+    worries: "What if the incumbent builds this?\nYour CAC math doesn't work\nWhy are you the team?",
+    script: `THE ONE-LINER
+Freightly is instant booking for regional trucking. Shippers book a truck like a Calendly slot; carriers fill empty miles. We take 6% of every load.
+
+THE NUMBERS
+Live eight months. $46K MRR growing 22% month over month, 210 carriers, 38 shippers with a weekly habit. CAC is $410 against $3,800 first-year gross profit per shipper — under a six-week payback. Net revenue retention is 118%. The round: $2M for 18 months of runway to reach $250K MRR.
+
+THE MOAT QUESTION
+The incumbents run on phone calls and fax — their margin lives in the opacity we remove, so building us means cannibalizing themselves. Our defensibility compounds: every load prices the next one better, and carriers keep the app for the backhaul-matching alone. Eleven percent of new signups already come from carrier referrals.
+
+THE TEAM
+I dispatched trucks for six years at my family's carrier — I've made four thousand of the phone calls we're replacing. My co-founder built pricing systems at a freight broker for five. We're not two MBAs with a deck; we're the users, armed.`,
+  },
+  exam: {
+    audience: "Committee: a methods hardliner, a big-picture professor from an adjacent field, a friendly chair",
+    context: "PhD defense, 90 minutes, presentation then open questioning. Example defense summary for practice.",
+    worries: "Why this method and not X?\nYour sample size is small\nHow does this generalize?",
+    script: `THE CONTRIBUTION
+My dissertation shows that peer feedback timing changes what students revise: feedback within 24 hours produces surface edits, while feedback delayed 3 to 5 days produces structural revision. Three studies, 412 students total. The contribution is a timing-dependent model of feedback uptake — the field has treated timing as logistics; I show it's mechanism.
+
+THE METHODS DEFENSE
+Study two is the load-bearing one: a randomized crossover across six course sections, each student experiencing both conditions in counterbalanced order, revision depth coded blind with two raters, kappa 0.81. Why not a pure between-subjects design? Because instructor and cohort effects were swamping the signal in study one — the crossover is the answer to a real threat, not a convenience.
+
+THE LIMITATIONS
+Three I'll name before you do. Undergraduate writing courses at two institutions — generalization to STEM problem sets is conjecture. Revision depth is a proxy for learning; I have transfer data for only one cohort. And the 3-to-5-day window wasn't dose-tested finer than that. Each of these is study one of the next program, not a hole in this one.`,
+  },
+  custom: {
+    audience: "My landlord — friendly but slippery, always says he'll handle it and doesn't",
+    context: "Lease renewal is in six weeks. Rent is $1,850; comparable units in the building listed at $1,700. The bathroom fan has been broken for four months, reported twice. Example scenario for practice.",
+    worries: "He changes the subject to how good the location is\nHe claims other tenants pay more\nHe offers a tiny discount to end the conversation",
+    script: `THE OPENING
+Hi Marco — thanks for making time. Before renewal paperwork goes out, I want to sort two things: the rent number and the repairs. I'd like to leave today with both settled, so neither of us is doing this over voicemail for a month.
+
+THE CASE
+Unit 4B — same layout, one floor down — listed at $1,700 last month. 2A went for $1,720. I've paid on time for three years and you've never had a vacancy day on this apartment. I'm asking to renew at $1,725. That's still above your listed price for an apartment with a working fan, which mine doesn't have.
+
+THE CLOSE
+So here's what I can do: sign a 12-month renewal at $1,725 today, with the fan and the window latch fixed within two weeks, written into the renewal. If the number truly can't move, the repairs happen anyway — they're not a bargaining chip, they're the lease. Which part do you want to start with?`,
+  },
+};
 
 /* ---------------- roleplay ---------------- */
 let rp = null; // active session state
@@ -1354,11 +1645,14 @@ document.querySelectorAll("#difficultyPills .pill").forEach(p => p.addEventListe
 }));
 
 function renderRoleplayGate() {
-  const hasKey = !!load(LS.key, "");
+  const hasAuth = !!load(LS.key, "") || (!!load(LS.pass, "") && !!proxyUrl());
   const hasScript = !!data.script;
-  $("rpNoKey").style.display = hasKey ? "none" : "block";
+  $("rpNoKey").style.display = hasAuth ? "none" : "block";
+  $("rpNoKey").textContent = proxyUrl()
+    ? "Roleplay needs a Claude API key or a LobsterClass Pass — add one in ⚙ Settings. (Memorization drills in Learn work without either.)"
+    : "Roleplay needs a Claude API key — add one in ⚙ Settings. (Memorization drills in Learn work without it.)";
   $("rpNoScript").style.display = hasScript ? "none" : "block";
-  $("startRp").disabled = !(hasKey && hasScript);
+  $("startRp").disabled = !(hasAuth && hasScript);
 }
 
 function rpSystemPrompt() {
@@ -1412,6 +1706,7 @@ $("startRp").addEventListener("click", async () => {
     if (rp !== mySession) return; // session was closed while waiting
     rp.messages.push({ role: "user", content: "[The session begins now. Open the conversation in character.]" });
     rp.messages.push({ role: "assistant", content: opening });
+    track("roleplay_started");
     addBubble("ai", opening);
     setRpStatus("");
     speak(stripCoach(opening));
@@ -1508,6 +1803,47 @@ $("micBtn").addEventListener("click", () => {
   }
 });
 
+/* ---------------- objection drill (offline) ---------------- */
+let od = null; // { deck: [...], pos, n }
+function odDeck() {
+  const worries = (data.worries || "").split("\n").map(w => w.trim()).filter(Boolean);
+  const pool = worries.concat(cat().bank || []);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool;
+}
+function odShow() {
+  if (!od.deck.length) { od.deck = odDeck(); od.pos = 0; }
+  if (od.pos >= od.deck.length) { od.deck = odDeck(); od.pos = 0; } // reshuffle when exhausted
+  const q = od.deck[od.pos];
+  $("odQuestion").textContent = "“" + q + "”";
+  $("odCount").textContent = od.n ? od.n + " answered" : "";
+  speak(q);
+}
+$("odStart").addEventListener("click", () => {
+  od = { deck: odDeck(), pos: 0, n: 0 };
+  if (!od.deck.length) { $("odQuestion").textContent = "Add some worries in Setup first — or pick a category."; return; }
+  $("odSetup").style.display = "none";
+  $("odLive").style.display = "block";
+  odShow();
+  track("objection_drill");
+});
+$("odNext").addEventListener("click", () => { if (!od) return; od.n++; od.pos++; odShow(); });
+$("odRepeat").addEventListener("click", () => { if (od) speak(od.deck[od.pos]); });
+$("odStop").addEventListener("click", () => {
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  $("odQuestion").textContent = "";
+  $("odSetup").style.display = "block";
+  $("odLive").style.display = "none";
+  const n = od ? od.n : 0;
+  od = null;
+  $("odDone").style.display = n ? "block" : "none";
+  $("odDone").textContent = n ? `${n} objection${n === 1 ? "" : "s"} answered cold. The ones that made you pause — write your best answer into your material, then drill it.` : "";
+  $("odStart").textContent = n ? "Drill again" : "Start drilling";
+});
+
 /* ---------------- grading ---------------- */
 const FILLERS = ["um","uh","er","ah","like","you know","kind of","sort of","basically","actually","literally","i mean","so yeah"];
 function localDelivery() {
@@ -1593,6 +1929,7 @@ $("endRp").addEventListener("click", async () => {
     sessions.unshift(sess);
     sessions = sessions.slice(0, 50);
     save(LS.sessions, sessions);
+    track("session_graded");
     renderScorecard(g, d);
   } catch (e) {
     setRpStatus("Grading failed: " + e.message, true);
@@ -1627,11 +1964,125 @@ function renderScorecard(g, d) {
     <h3>${esc(L[2])}</h3><p style="font-size:14.5px">${esc(g.confidence_notes)}</p>
     <h3>Top fixes for next round</h3>
     <ul class="points">${g.top_fixes.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
-    <button class="btn" id="againBtn" style="margin-top:8px">Run it again</button>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+      <button class="btn" id="againBtn">Run it again</button>
+      <button class="btn secondary" id="shareCardBtn">📸 Save scorecard</button>
+    </div>
   `;
   card.scrollIntoView({ behavior: "smooth" });
   $("againBtn").addEventListener("click", () => { card.style.display = "none"; $("startRp").click(); });
+  const snap = { g, d, labels: L, scenario: rp.scenarioLabel, difficulty: rp.difficulty };
+  $("shareCardBtn").addEventListener("click", () => { track("scorecard_shared"); shareScorecardImage(snap); });
   rp = null;
+}
+
+/* ---------------- shareable scorecard image ---------------- */
+const BRAND_ICON = new Image();
+BRAND_ICON.src = "icon.svg"; // preloaded so the share card can draw the real mark
+function scoreHex(v) { return v >= 70 ? "#34d399" : v >= 50 ? "#fbbf24" : "#fb7185"; }
+function wrapCanvasText(ctx, text, x, y, maxW, lineH, maxLines) {
+  const words = String(text).split(/\s+/);
+  let line = "", lines = 0;
+  for (const w of words) {
+    const test = line ? line + " " + w : w;
+    if (ctx.measureText(test).width > maxW && line) {
+      if (lines + 1 >= maxLines) { ctx.fillText(line.replace(/\s+$/, "") + "…", x, y); return y + lineH; }
+      ctx.fillText(line, x, y); y += lineH; lines++; line = w;
+    } else line = test;
+  }
+  if (line) { ctx.fillText(line, x, y); y += lineH; }
+  return y;
+}
+function shareScorecardImage(snap) {
+  // draw content on an oversized canvas, then crop to fit + footer so long
+  // grades never collide with the bottom band
+  const W = 1080, TALL = 2200, M = 70;
+  const big = document.createElement("canvas");
+  big.width = W; big.height = TALL;
+  const bctx = big.getContext("2d");
+  const paint = (ctx, H) => {
+    ctx.fillStyle = "#12101d"; ctx.fillRect(0, 0, W, H);
+    let gl = ctx.createRadialGradient(W * .85, 0, 0, W * .85, 0, 700);
+    gl.addColorStop(0, "rgba(167,139,250,.16)"); gl.addColorStop(1, "rgba(167,139,250,0)");
+    ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+    gl = ctx.createRadialGradient(0, H * .45, 0, 0, H * .45, 600);
+    gl.addColorStop(0, "rgba(34,211,238,.12)"); gl.addColorStop(1, "rgba(34,211,238,0)");
+    ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+  };
+  paint(bctx, TALL);
+  const grad = bctx.createLinearGradient(0, 0, W, 0);
+  grad.addColorStop(0, "#ff3d8f"); grad.addColorStop(.52, "#8b5cf6"); grad.addColorStop(1, "#22d3ee");
+  bctx.fillStyle = grad; bctx.fillRect(0, 0, W, 10);
+  const FONT = '"Avenir Next","Avenir","Segoe UI",system-ui,sans-serif';
+  bctx.textBaseline = "alphabetic";
+  bctx.font = "800 62px " + FONT;
+  let xText = M;
+  try {
+    if (BRAND_ICON.complete && BRAND_ICON.naturalWidth > 0) {
+      const S = 66, y0 = 94;
+      bctx.save();
+      bctx.beginPath(); bctx.roundRect(M, y0, S, S, 15); bctx.clip();
+      bctx.drawImage(BRAND_ICON, M, y0, S, S);
+      bctx.restore();
+      xText = M + S + 18;
+    }
+  } catch {}
+  if (xText === M) { bctx.fillStyle = "#f0eefb"; bctx.fillText("🦞 ", M, 150); xText = M + bctx.measureText("🦞 ").width; }
+  bctx.fillStyle = "#f0eefb"; bctx.fillText("Lobster", xText, 150);
+  const lw = bctx.measureText("Lobster").width;
+  bctx.fillStyle = grad; bctx.fillText("Class", xText + lw, 150);
+  bctx.font = "600 34px " + FONT; bctx.fillStyle = "#a09ac2";
+  bctx.fillText(snap.scenario + " · " + snap.difficulty + " · " + new Date().toLocaleDateString(), M, 210);
+  const scores = [snap.g.adherence_score, snap.g.objection_score, snap.g.confidence_score];
+  const tw = (W - 2 * M - 2 * 24) / 3, th = 240, ty = 265;
+  scores.forEach((v, i) => {
+    const tx = M + i * (tw + 24);
+    bctx.fillStyle = "#1b1830"; bctx.strokeStyle = "#322c52"; bctx.lineWidth = 2;
+    bctx.beginPath(); bctx.roundRect(tx, ty, tw, th, 20); bctx.fill(); bctx.stroke();
+    bctx.fillStyle = scoreHex(v); bctx.font = "800 104px " + FONT;
+    bctx.fillText(String(v), tx + 30, ty + 128);
+    bctx.fillStyle = "#a09ac2"; bctx.font = "600 27px " + FONT;
+    wrapCanvasText(bctx, snap.labels[i], tx + 30, ty + 175, tw - 60, 33, 2);
+  });
+  let y = ty + th + 70;
+  const bits = [];
+  if (snap.d.wpm) bits.push(snap.d.wpm + " words/min");
+  bits.push(snap.d.fillers + " filler words");
+  bctx.fillStyle = "#a09ac2"; bctx.font = "600 32px " + FONT;
+  bctx.fillText(bits.join("   ·   "), M, y); y += 70;
+  bctx.fillStyle = "#f0eefb"; bctx.font = "500 40px " + FONT;
+  y = wrapCanvasText(bctx, snap.g.overall, M, y, W - 2 * M, 56, 6) + 40;
+  bctx.fillStyle = "#ff4d9d"; bctx.font = "700 28px " + FONT;
+  bctx.fillText("TOP FIXES FOR NEXT ROUND", M, y); y += 48;
+  for (const f of snap.g.top_fixes.slice(0, 3)) {
+    bctx.fillStyle = "#ff4d9d"; bctx.font = "500 34px " + FONT;
+    bctx.fillText("•", M, y);
+    bctx.fillStyle = "#d9d4ee";
+    y = wrapCanvasText(bctx, f, M + 36, y, W - 2 * M - 36, 46, 3) + 14;
+  }
+  // compose final canvas: content height + footer band, min 1350 for a consistent look
+  const H = Math.max(1350, Math.min(TALL, Math.round(y + 160)));
+  const cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext("2d");
+  ctx.drawImage(big, 0, 0, W, H, 0, 0, W, H);
+  const grad2 = ctx.createLinearGradient(0, 0, W, 0);
+  grad2.addColorStop(0, "#ff3d8f"); grad2.addColorStop(.52, "#8b5cf6"); grad2.addColorStop(1, "#22d3ee");
+  ctx.fillStyle = grad2; ctx.fillRect(M, H - 120, W - 2 * M, 4);
+  ctx.fillStyle = "#a09ac2"; ctx.font = "600 30px " + FONT;
+  ctx.fillText("lobsterclass.com — rehearse the conversation that matters", M, H - 62);
+  cv.toBlob(async (blob) => {
+    if (!blob) return;
+    const file = new File([blob], "lobsterclass-scorecard.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: "My LobsterClass scorecard" }); return; } catch {}
+    }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "lobsterclass-scorecard.png";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  }, "image/png");
 }
 
 /* ---------------- progress ---------------- */
@@ -1639,22 +2090,28 @@ function renderProgress() {
   const secs = sections();
   const ml = $("masteryList");
   const summary = $("reviewSummary");
-  if (!secs.length) { ml.innerHTML = '<div class="empty">Save a script in Setup first.</div>'; summary.style.display = "none"; $("reviewGo").style.display = "none"; }
+  if (!secs.length) { ml.innerHTML = '<div class="empty">Save a script in Setup first.</div>'; summary.style.display = "none"; $("reviewGo").style.display = "none"; $("decayHint").style.display = "none"; }
   else {
     ml.innerHTML = "";
+    let anyDecay = false;
     secs.forEach((s, i) => {
       const m = mstat(s.id);
+      const r = retentionNow(s.id);
       const chip = document.createElement("button");
       chip.className = "secchip";
       chip.style.setProperty("--h", secHue(i, secs.length));
-      chip.title = m.last && m.due ? (m.due <= Date.now() ? "Due for review — tap to drill" : "Next review " + untilStr(m.due)) : "Drill this section";
-      chip.innerHTML = m.pct ? chipLabel(s) : esc(s.title) + '<span class="pct">–</span>';
+      chip.title = (m.last && m.due ? (m.due <= Date.now() ? "Due for review — tap to drill" : "Next review " + untilStr(m.due)) : "Drill this section")
+        + (r !== null ? ` · ≈${r}% would survive right now` : "");
+      chip.innerHTML = (m.pct ? chipLabel(s) : esc(s.title) + '<span class="pct">–</span>')
+        + (r !== null ? `<span class="decay"><i style="width:${Math.max(4, r)}%"></i></span>` : "");
+      if (r !== null) anyDecay = true;
       chip.addEventListener("click", () => {
         curSection = i;
         document.querySelector('nav button[data-tab="learn"]').click();
       });
       ml.appendChild(chip);
     });
+    $("decayHint").style.display = anyDecay ? "block" : "none";
     const due = dueSections();
     const ready = secs.filter(s => mstat(s.id).streak >= 3).length;
     const left = daysToEvent();
@@ -1662,6 +2119,8 @@ function renderProgress() {
     if (left !== null) bits.push(`🗓 <b>${Math.ceil(left)} day${Math.ceil(left) === 1 ? "" : "s"}</b> until the real thing`);
     bits.push(due.length ? `⏰ <b>${due.length}</b> section${due.length === 1 ? "" : "s"} due for review` : "✓ nothing due right now");
     if (ready) bits.push(`🏆 <b>${ready}</b> performance-ready`);
+    const cal = load(LS.calib, null);
+    if (cal && cal.n >= 3) bits.push(`🎯 calibration: you predict ~<b>${Math.round(cal.pred / cal.n)}%</b>, you score ~<b>${Math.round(cal.act / cal.n)}%</b>`);
     summary.innerHTML = bits.join(" · ");
     summary.style.display = "block";
     $("reviewGo").style.display = due.length ? "block" : "none";
@@ -1687,6 +2146,167 @@ $("goReview").addEventListener("click", () => {
   $("smartReview").click();
 });
 
+/* ---------------- performance run mode ----------------
+   Free-recall rehearsal of the whole script: timer vs a ~140wpm estimate,
+   per-section splits, optional spoken interruptions (pressure inoculation),
+   first-letter emergency cues only — the real thing has no script either. */
+let run = null;
+const RUN_WPM = 140;
+const CURVEBALLS = [
+  "Hold on — what does this actually cost?",
+  "Sorry — someone's phone. Keep going.",
+  "Can you go back to the part before this one?",
+  "Wait — how is this different from what we already have?",
+  "You just lost two minutes of your slot. Tighten it up.",
+  "Someone walked in late and looks confused.",
+];
+function fmtClock(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}
+function estMs(text) { return normWords(text).length / RUN_WPM * 60000; }
+
+$("fullRunBtn").addEventListener("click", () => {
+  const secs = sections(); if (!secs.length) return;
+  $("runCard").style.display = "block";
+  $("runSetup").style.display = "block";
+  $("runLive").style.display = "none";
+  $("runDone").style.display = "none";
+  $("runClock").textContent = "0:00";
+  const totalEst = secs.reduce((a, s) => a + estMs(s.text), 0);
+  $("runMeta").textContent = secs.length + " sections · roughly " + fmtClock(totalEst) + " at a natural pace (~140 words/min)";
+  $("runCard").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+$("cbOff").addEventListener("click", () => { $("cbOff").classList.add("active"); $("cbOn").classList.remove("active"); });
+$("cbOn").addEventListener("click", () => { $("cbOn").classList.add("active"); $("cbOff").classList.remove("active"); });
+$("runCancel").addEventListener("click", () => { $("runCard").style.display = "none"; });
+
+function startRun(randomStart) {
+  const secs = sections(); if (!secs.length) return;
+  const startIdx = randomStart ? Math.floor(Math.random() * secs.length) : 0;
+  run = {
+    idxs: secs.map((_, i) => i).slice(startIdx),
+    pos: 0, t0: Date.now(), secT0: Date.now(), splits: [],
+    curve: $("cbOn").classList.contains("active"),
+    timer: setInterval(() => { if (run) $("runClock").textContent = fmtClock(Date.now() - run.t0); }, 500),
+    curveTimer: null,
+  };
+  $("runSetup").style.display = "none";
+  $("runLive").style.display = "block";
+  showRunSection();
+  if (run.curve) scheduleCurve();
+  track("run_started");
+}
+$("runStart").addEventListener("click", () => startRun(false));
+$("runStartRandom").addEventListener("click", () => startRun(true));
+
+function showRunSection() {
+  const secs = sections();
+  const sec = secs[run.idxs[run.pos]];
+  $("runSection").textContent = sec.title;
+  $("runCue").style.display = "none";
+  $("runCue").innerHTML = lettersHtml(sec.text);
+  $("runPeek").textContent = "👀 Peek cues";
+  $("runCurve").style.display = "none";
+  $("runProgress").textContent = "Section " + (run.pos + 1) + " of " + run.idxs.length +
+    " · this one runs ~" + fmtClock(estMs(sec.text)) + " at a natural pace. Say it out loud, then tap Next.";
+}
+$("runPeek").addEventListener("click", () => {
+  const open = $("runCue").style.display !== "none";
+  $("runCue").style.display = open ? "none" : "block";
+  $("runPeek").textContent = open ? "👀 Peek cues" : "🙈 Hide cues";
+});
+$("runNext").addEventListener("click", () => {
+  if (!run) return;
+  const secs = sections();
+  const sec = secs[run.idxs[run.pos]];
+  run.splits.push({ title: sec.title, ms: Date.now() - run.secT0, est: estMs(sec.text) });
+  run.secT0 = Date.now();
+  run.pos++;
+  if (run.pos >= run.idxs.length) endRun(true);
+  else showRunSection();
+});
+$("runEnd").addEventListener("click", () => {
+  if (!run) return;
+  const secs = sections();
+  const sec = secs[run.idxs[run.pos]];
+  if (Date.now() - run.secT0 > 3000) run.splits.push({ title: sec.title + " (partial)", ms: Date.now() - run.secT0, est: estMs(sec.text) });
+  endRun(false);
+});
+
+function scheduleCurve() {
+  run.curveTimer = setTimeout(() => {
+    if (!run) return;
+    const worries = (data.worries || "").split("\n").map(w => w.trim()).filter(Boolean);
+    const pool = CURVEBALLS.concat(worries);
+    const c = pool[Math.floor(Math.random() * pool.length)];
+    $("runCurve").textContent = "😈 " + c;
+    $("runCurve").style.display = "block";
+    speak(c);
+    setTimeout(() => { if (run) $("runCurve").style.display = "none"; }, 12000);
+    scheduleCurve();
+  }, 45000 + Math.random() * 45000);
+}
+
+function endRun(finished) {
+  clearInterval(run.timer);
+  clearTimeout(run.curveTimer);
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  const total = Date.now() - run.t0;
+  const est = run.splits.reduce((a, s) => a + s.est, 0);
+  const rows = run.splits.map(s => {
+    const r = s.est > 2000 ? s.ms / s.est : 1;
+    const flag = r > 1.35 ? ' <span style="color:var(--warn)">slow — is this section solid?</span>' :
+      r < 0.6 ? ' <span style="color:var(--warn)">rushed — did you skip lines?</span>' : "";
+    return `<div class="sessionrow"><span style="flex:1">${esc(s.title)}</span><span><b>${fmtClock(s.ms)}</b> <span style="color:var(--muted)">/ ~${fmtClock(s.est)}</span>${flag}</span></div>`;
+  }).join("");
+  $("runLive").style.display = "none";
+  $("runDone").style.display = "block";
+  $("runDone").innerHTML = `
+    <h3>${finished ? "Full run complete" : "Run ended early"}</h3>
+    <div class="scoregrid">
+      <div class="scoretile"><div class="big">${fmtClock(total)}</div><div class="lbl">your time</div></div>
+      <div class="scoretile"><div class="big">${fmtClock(est)}</div><div class="lbl">natural pace (~140 wpm)</div></div>
+    </div>
+    ${rows}
+    <p class="hint" style="margin-top:10px">Sections that ran long are usually the shaky ones — drill them, and their seams, before the next run. One deliberately disrupted run in the final two days inoculates against surprises.</p>
+    <div style="display:flex; gap:8px; margin-top:8px">
+      <button class="btn" id="runAgain">Run it again</button>
+      <button class="btn ghost" id="runClose">Close</button>
+    </div>`;
+  $("runAgain").addEventListener("click", () => $("fullRunBtn").click());
+  $("runClose").addEventListener("click", () => { $("runCard").style.display = "none"; });
+  track("run_completed");
+  run = null;
+}
+
+/* ---------------- example loader ---------------- */
+$("loadExample").addEventListener("click", () => {
+  const ex = EXAMPLES[data.category] || EXAMPLES.pitch;
+  const existing = $("inScript").value.trim();
+  const isExample = Object.values(EXAMPLES).some(x => x.script.trim() === existing);
+  if (existing && !isExample &&
+      !confirm("Replace what's in the form with the example? Your own material will be overwritten.")) return;
+  $("inScript").value = ex.script;
+  $("inContext").value = ex.context;
+  $("inAudience").value = ex.audience;
+  $("inWorries").value = ex.worries;
+  $("saveSetup").click();
+  track("example_loaded");
+  document.querySelector('nav button[data-tab="learn"]').click();
+});
+
+/* ---------------- local funnel events ----------------
+   Ring buffer in localStorage — no network, no UI. When real analytics
+   land, drain this through the sink instead. */
+function track(e) {
+  try {
+    const buf = load("pp_events", []);
+    buf.push({ e, t: Date.now() });
+    save("pp_events", buf.slice(-500));
+  } catch {}
+}
+
 /* ---------------- walk-practice prompt ---------------- */
 $("walkPrompt").addEventListener("click", async () => {
   const st = $("setupStatus");
@@ -1709,6 +2329,7 @@ $("walkPrompt").addEventListener("click", async () => {
   lines.push("", "THE MATERIAL I'M LEARNING:", "", script);
   try {
     await navigator.clipboard.writeText(lines.join("\n"));
+    track("walk_prompt_copied");
     st.textContent = "Walk prompt copied — paste it into a new Claude chat and switch to voice mode.";
     st.className = "statusline";
   } catch {
@@ -1758,6 +2379,21 @@ applyCategory();
 if ("serviceWorker" in navigator && location.protocol === "https:") {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
+let installEvt = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  installEvt = e;
+  $("installRow").style.display = "block";
+});
+$("installBtn").addEventListener("click", async () => {
+  if (!installEvt) return;
+  installEvt.prompt();
+  try { await installEvt.userChoice; } catch {}
+  installEvt = null;
+  $("installRow").style.display = "none";
+  track("install_prompted");
+});
+window.addEventListener("appinstalled", () => { $("installRow").style.display = "none"; });
 </script>
 </body>
 </html>

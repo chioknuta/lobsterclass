@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /pass.html
+
+Sitemap: https://lobsterclass.com/sitemap.xml
