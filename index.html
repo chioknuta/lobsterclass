@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LobsterClass — practice your presentation</title>
+<meta name="description" content="LobsterClass — memorize and rehearse your presentation with drills and AI roleplay.">
+<meta name="theme-color" content="#12101d" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f5fb">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LobsterClass">
+<style>
+  :root {
+    --bg: #f6f5fb;
+    --surface: #ffffff;
+    --surface2: #eeecf7;
+    --text: #191531;
+    --muted: #6d6790;
+    --accent: #e02e8a;
+    --accent2: #7c3aed;
+    --accent3: #06b6d4;
+    --accent-soft: #fbe3f1;
+    --good: #0ea371;
+    --good-soft: #d9f3e8;
+    --bad: #e11d48;
+    --bad-soft: #fbdde5;
+    --warn: #d97706;
+    --border: #e2def0;
+    --grad: linear-gradient(115deg, #ff3d8f, #8b5cf6 52%, #22d3ee);
+    --glow1: rgba(139, 92, 246, .10);
+    --glow2: rgba(34, 211, 238, .10);
+    --radius: 14px;
+    --shadow: 0 2px 6px rgba(38, 22, 68, .06), 0 10px 30px rgba(38, 22, 68, .07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12101d;
+      --surface: #1b1830;
+      --surface2: #262143;
+      --text: #f0eefb;
+      --muted: #a09ac2;
+      --accent: #ff4d9d;
+      --accent2: #a78bfa;
+      --accent3: #22d3ee;
+      --accent-soft: #3b1f42;
+      --good: #34d399;
+      --good-soft: #14352a;
+      --bad: #fb7185;
+      --bad-soft: #41202b;
+      --warn: #fbbf24;
+      --border: #322c52;
+      --grad: linear-gradient(115deg, #ff4d9d, #a78bfa 52%, #22d3ee);
+      --glow1: rgba(167, 139, 250, .14);
+      --glow2: rgba(34, 211, 238, .12);
+      --shadow: 0 2px 8px rgba(0, 0, 0, .45);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(900px 500px at 85% -10%, var(--glow1), transparent 60%),
+      radial-gradient(700px 420px at -10% 25%, var(--glow2), transparent 60%),
+      var(--bg);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: "Avenir Next", "Avenir", "Segoe UI", system-ui, -apple-system, sans-serif;
+    font-size: 15.5px; line-height: 1.55;
+  }
+  button, input, textarea, select { font-family: inherit; font-size: 15px; color: inherit; }
+  header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 13px 22px; border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    position: sticky; top: 0; z-index: 20;
+  }
+  header h1 { font-size: 21px; margin: 0; font-weight: 800; letter-spacing: -.02em; }
+  header h1 em {
+    font-style: normal;
+    background: var(--grad);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  nav { display: flex; gap: 4px; margin-left: 18px; flex-wrap: wrap; }
+  nav button {
+    border: none; background: none; padding: 8px 15px; border-radius: 999px;
+    cursor: pointer; color: var(--muted); font-size: 14.5px; font-weight: 600;
+  }
+  nav button.active { background: var(--accent-soft); color: var(--accent); }
+  nav button:hover:not(.active) { background: var(--surface2); }
+  #settingsBtn {
+    margin-left: auto; border: 1px solid var(--border); background: var(--surface);
+    border-radius: 999px; padding: 7px 14px; cursor: pointer; color: var(--muted); font-weight: 600;
+  }
+  main { max-width: 880px; margin: 0 auto; padding: 26px 20px 80px; }
+  .tab { display: none; }
+  .tab.active { display: block; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px; margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  h2 { font-size: 19px; margin: 0 0 6px; font-weight: 800; letter-spacing: -.015em; }
+  h3 { font-size: 14px; margin: 18px 0 6px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+  p.hint { color: var(--muted); font-size: 13.5px; margin: 2px 0 14px; }
+  label { display: block; font-size: 13.5px; font-weight: 600; color: var(--muted); margin: 14px 0 4px; }
+  textarea, input[type=text], input[type=password], select {
+    width: 100%; padding: 10px 13px; border: 1px solid var(--border);
+    border-radius: 10px; background: var(--bg); resize: vertical;
+  }
+  textarea:focus, input:focus, select:focus { outline: 2px solid var(--accent2); outline-offset: 1px; border-color: transparent; }
+  .btn {
+    display: inline-block; border: none; background: var(--grad); color: #fff;
+    padding: 10px 20px; border-radius: 999px; cursor: pointer; font-size: 15px; font-weight: 700;
+    box-shadow: 0 3px 12px rgba(139, 92, 246, .35);
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+  .btn.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); font-weight: 600; box-shadow: none; }
+  .btn.small { padding: 6px 14px; font-size: 13px; }
+  .btn.danger { background: var(--bad); box-shadow: 0 3px 12px rgba(225, 29, 72, .3); }
+  .pillrow { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 14px; }
+  .pill {
+    border: 1px solid var(--border); background: var(--surface); border-radius: 999px;
+    padding: 7px 15px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--muted);
+  }
+  .pill:hover { background: var(--surface2); }
+  .pill.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 2px 10px color-mix(in srgb, var(--accent) 45%, transparent); }
+  .sectionlist { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+  /* technicolor section chips — each section carries its own hue via --h */
+  #sectionList, #masteryList { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+  .secchip {
+    border: 1px solid hsl(var(--h, 320) 70% 55% / .45);
+    background: hsl(var(--h, 320) 80% 55% / .10);
+    border-radius: 999px; padding: 7px 15px; cursor: pointer;
+    font-size: 13.5px; font-weight: 700; color: var(--text);
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .secchip:hover { background: hsl(var(--h, 320) 80% 55% / .22); }
+  .secchip.active {
+    background: hsl(var(--h, 320) 82% 50%); border-color: transparent; color: #fff;
+    box-shadow: 0 2px 12px hsl(var(--h, 320) 82% 50% / .45);
+  }
+  .secchip .pct { font-size: 11.5px; opacity: .85; font-weight: 700; }
+  .sectionrow {
+    display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+    border: 1px solid var(--border); border-radius: 10px; cursor: pointer; background: var(--surface);
+  }
+  .sectionrow.active { border-color: var(--accent); background: var(--accent-soft); }
+  .sectionrow .name { flex: 1; font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .meter { width: 90px; height: 7px; border-radius: 4px; background: var(--surface2); overflow: hidden; flex: none; }
+  .meter i { display: block; height: 100%; background: var(--grad); border-radius: 4px; }
+  .practicebox {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; margin-top: 12px; font-size: 16px; line-height: 1.85; white-space: pre-wrap;
+  }
+  .blank {
+    display: inline-block; min-width: 3ch; border-bottom: 2px solid var(--accent);
+    color: transparent; cursor: pointer; border-radius: 4px; background: var(--accent-soft);
+    user-select: none; text-align: center;
+  }
+  .blank.revealed { color: var(--text); background: none; border-bottom-color: transparent; cursor: default; }
+  .w-hit { color: var(--good); }
+  .w-miss { color: var(--bad); background: var(--bad-soft); border-radius: 4px; padding: 0 2px; }
+  .scorebadge {
+    font-size: 30px; font-weight: 800;
+    background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  /* chat */
+  #chatlog { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; max-height: 46vh; overflow-y: auto; padding-right: 4px; }
+  .msg { max-width: 82%; padding: 10px 15px; border-radius: 16px; font-size: 14.5px; }
+  .msg.user { align-self: flex-end; background: var(--accent-soft); border-bottom-right-radius: 5px; }
+  .msg.ai { align-self: flex-start; background: var(--surface2); border-bottom-left-radius: 5px; }
+  .msg.coach { align-self: center; background: var(--good-soft); font-size: 13.5px; font-style: italic; }
+  .chatcontrols { display: flex; gap: 8px; align-items: flex-end; }
+  .chatcontrols textarea { flex: 1; min-height: 44px; max-height: 120px; }
+  #micBtn {
+    width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--surface); cursor: pointer; font-size: 22px; flex: none;
+  }
+  #micBtn.listening { background: var(--bad); border-color: var(--bad); animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(225,29,72,.4);} 50% { box-shadow: 0 0 0 12px rgba(225,29,72,0);} }
+  .statusline { font-size: 13px; color: var(--muted); min-height: 18px; margin-top: 6px; }
+  .statusline.err { color: var(--bad); }
+  /* scorecard */
+  .scoregrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 14px 0; }
+  .scoretile { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .scoretile .big { font-size: 27px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .scoretile .lbl { font-size: 12px; font-weight: 600; color: var(--muted); }
+  ul.points { margin: 4px 0 10px; padding-left: 20px; font-size: 14px; }
+  ul.points li { margin: 3px 0; }
+  .tag-good { color: var(--good); }
+  .tag-bad { color: var(--bad); }
+  /* modal */
+  #modalBack {
+    display: none; position: fixed; inset: 0; background: rgba(15, 10, 30, .55); z-index: 50;
+    align-items: flex-start; justify-content: center; padding: 60px 16px;
+  }
+  #modalBack.open { display: flex; }
+  #modal { background: var(--surface); border-radius: var(--radius); max-width: 520px; width: 100%; padding: 22px 24px; box-shadow: var(--shadow); max-height: calc(100vh - 90px); overflow-y: auto; }
+  .keyrow { display: flex; gap: 8px; }
+  .keyrow input { flex: 1; }
+  .notice { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin: 10px 0; }
+  .sessionrow { border-bottom: 1px solid var(--border); padding: 10px 2px; display: flex; gap: 12px; align-items: baseline; font-size: 14px; }
+  .sessionrow:last-child { border-bottom: none; }
+  .empty { color: var(--muted); font-style: italic; font-size: 14px; }
+  footer.note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  button:focus-visible { outline: 2px solid var(--accent2); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🦞 Lobster<em>Class</em></h1>
+  <nav>
+    <button data-tab="setup" class="active">Setup</button>
+    <button data-tab="learn">Learn</button>
+    <button data-tab="roleplay">Roleplay</button>
+    <button data-tab="progress">Progress</button>
+  </nav>
+  <button id="settingsBtn">⚙ Settings</button>
+</header>
+
+<main>
+
+  <!-- ============ SETUP ============ -->
+  <section class="tab active" id="tab-setup">
+    <div class="card">
+      <h2>Your material</h2>
+      <p class="hint">Paste your presentation script and any background. The Learn tab works fully offline; Roleplay and grading need an API key (⚙ Settings).</p>
+      <label for="inScript">Presentation script — the text you need to learn <b style="color:var(--accent)">*</b></label>
+      <textarea id="inScript" rows="12" placeholder="Paste your full script here. Separate sections with a blank line — each becomes its own drill in the Learn tab."></textarea>
+      <label for="inContext">Company / product background (optional — helps the AI play a realistic prospect)</label>
+      <textarea id="inContext" rows="5" placeholder="What you're selling, who your company is, pricing, key differentiators — paste from your website or docs."></textarea>
+      <label for="inAudience">Who will you be presenting to / calling?</label>
+      <input type="text" id="inAudience" placeholder="e.g. Operations manager at a mid-size logistics company, skeptical about switching vendors">
+      <label for="inWorries">Objections or questions you're worried about (optional, one per line)</label>
+      <textarea id="inWorries" rows="3" placeholder="e.g. It's too expensive&#10;We already have a supplier&#10;Why should we trust a new company?"></textarea>
+      <div style="margin-top:16px">
+        <button class="btn" id="saveSetup">Save material</button>
+        <span class="statusline" id="setupStatus" style="display:inline-block;margin-left:10px"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEARN ============ -->
+  <section class="tab" id="tab-learn">
+    <div class="card">
+      <h2>Memorize it</h2>
+      <p class="hint">Work through each section. Read it, then squeeze the text away step by step until you can recall it cold. No API key needed here.</p>
+      <div id="learnEmpty" class="empty">Save your script in Setup first.</div>
+      <div id="learnUI" style="display:none">
+        <h3>Sections</h3>
+        <div class="sectionlist" id="sectionList"></div>
+        <h3>Drill mode</h3>
+        <div class="pillrow" id="modePills">
+          <button class="pill active" data-mode="read">Read</button>
+          <button class="pill" data-mode="blanks">Blanks</button>
+          <button class="pill" data-mode="letters">First letters</button>
+          <button class="pill" data-mode="type">Type it</button>
+          <button class="pill" data-mode="say">Say it</button>
+        </div>
+        <div class="practicebox" id="practiceBox"></div>
+        <div id="recallUI" style="display:none; margin-top:12px">
+          <textarea id="recallInput" rows="5" placeholder="Type this section from memory…"></textarea>
+          <div style="margin-top:8px; display:flex; gap:8px; align-items:center">
+            <button class="btn" id="checkRecall">Check</button>
+            <button class="btn secondary" id="sayRecallBtn" style="display:none">🎤 Speak instead</button>
+            <span id="recallScore" class="scorebadge"></span>
+          </div>
+          <div class="statusline" id="recallStatus"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ROLEPLAY ============ -->
+  <section class="tab" id="tab-roleplay">
+    <div class="card" id="rpSetupCard">
+      <h2>Roleplay</h2>
+      <p class="hint">The AI plays the other side — out loud. You speak (or type), it pushes back with realistic objections. End the session to get a graded scorecard.</p>
+      <div id="rpNoKey" class="notice" style="display:none">Roleplay needs a Claude API key — add one in ⚙ Settings. (Memorization drills in Learn work without it.)</div>
+      <div id="rpNoScript" class="empty" style="display:none">Save your script in Setup first.</div>
+      <div id="rpConfig">
+        <h3>Scenario</h3>
+        <div class="pillrow" id="scenarioPills">
+          <button class="pill active" data-sc="presentation">Presentation run-through</button>
+          <button class="pill" data-sc="coldcall">Cold call</button>
+          <button class="pill" data-sc="qa">Tough Q&amp;A</button>
+          <button class="pill" data-sc="raise">Raise negotiation</button>
+        </div>
+        <h3>How tough should they be?</h3>
+        <div class="pillrow" id="difficultyPills">
+          <button class="pill" data-df="friendly">Friendly</button>
+          <button class="pill active" data-df="realistic">Realistic</button>
+          <button class="pill" data-df="tough">Tough</button>
+        </div>
+        <button class="btn" id="startRp">Start session</button>
+        <div class="statusline" id="rpStartStatus"></div>
+      </div>
+    </div>
+
+    <div class="card" id="rpSessionCard" style="display:none">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <h2 id="rpTitle" style="flex:1">Session</h2>
+        <button class="btn small secondary" id="rpStopSpeech">🔇 Stop voice</button>
+        <button class="btn small danger" id="endRp">End &amp; grade</button>
+      </div>
+      <div id="chatlog"></div>
+      <div class="chatcontrols">
+        <button id="micBtn" title="Click to speak">🎤</button>
+        <textarea id="chatInput" placeholder="Speak with the mic, or type here…"></textarea>
+        <button class="btn" id="sendBtn">Send</button>
+      </div>
+      <div class="statusline" id="rpStatus"></div>
+      <p class="hint" style="margin-top:8px">Say “time out” for quick coaching without ending the session.</p>
+    </div>
+
+    <div class="card" id="scorecard" style="display:none"></div>
+  </section>
+
+  <!-- ============ PROGRESS ============ -->
+  <section class="tab" id="tab-progress">
+    <div class="card">
+      <h2>Memorization progress</h2>
+      <div id="masteryList" class="sectionlist"><div class="empty">Nothing yet — run some drills in Learn.</div></div>
+    </div>
+    <div class="card">
+      <h2>Roleplay sessions</h2>
+      <div id="sessionList"><div class="empty">No graded sessions yet.</div></div>
+    </div>
+  </section>
+
+  <footer class="note">Everything is stored locally in your browser. Your script and API key never leave this machine except in direct calls to the Claude API.</footer>
+</main>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div id="modalBack">
+  <div id="modal">
+    <h2>Settings</h2>
+    <label for="inKey">Claude API key</label>
+    <div class="keyrow">
+      <input type="password" id="inKey" placeholder="sk-ant-…" autocomplete="off">
+      <button class="btn secondary small" id="toggleKey">Show</button>
+    </div>
+    <p class="hint" style="margin-top:6px">Get one at console.anthropic.com → API keys. Stored only in this browser's localStorage. Needed for Roleplay + grading; Learn drills work without it.</p>
+    <label for="inModel">Model</label>
+    <select id="inModel">
+      <option value="claude-opus-5">Claude Opus 5 — best roleplay (default)</option>
+      <option value="claude-sonnet-5">Claude Sonnet 5 — faster, cheaper</option>
+      <option value="claude-haiku-4-5">Claude Haiku 4.5 — fastest, cheapest</option>
+    </select>
+    <label for="inVoice">AI voice</label>
+    <select id="inVoice"></select>
+    <label for="inRate">Speech speed: <span id="rateVal">1.0×</span></label>
+    <input type="range" id="inRate" min="0.7" max="1.4" step="0.05" value="1.0" style="width:100%">
+    <div style="margin-top:18px; display:flex; gap:8px;">
+      <button class="btn" id="saveSettings">Save</button>
+      <button class="btn secondary" id="testKey">Test key</button>
+      <button class="btn secondary" id="closeModal" style="margin-left:auto">Close</button>
+    </div>
+    <div class="statusline" id="settingsStatus"></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ============================================================
+   LobsterClass — single-file practice app (lobsterclass.com).
+   Learn tab: fully offline memorization drills.
+   Roleplay tab: Claude API (user-supplied key) + browser speech.
+   ============================================================ */
+
+const LS = {
+  data: "pp_data", key: "pp_key", model: "pp_model",
+  voice: "pp_voice", rate: "pp_rate", mastery: "pp_mastery", sessions: "pp_sessions",
+};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+function load(k, fallback) {
+  try { const v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); }
+  catch { return fallback; }
+}
+function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+let data = load(LS.data, { script: "", context: "", audience: "", worries: "" });
+let mastery = load(LS.mastery, {});
+let sessions = load(LS.sessions, []);
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll("nav button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("nav button").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    $("tab-" + b.dataset.tab).classList.add("active");
+    if (b.dataset.tab === "learn") renderLearn();
+    if (b.dataset.tab === "roleplay") renderRoleplayGate();
+    if (b.dataset.tab === "progress") renderProgress();
+  });
+});
+
+/* ---------------- setup ---------------- */
+$("inScript").value = data.script;
+$("inContext").value = data.context;
+$("inAudience").value = data.audience;
+$("inWorries").value = data.worries;
+
+$("saveSetup").addEventListener("click", () => {
+  const st = $("setupStatus");
+  const script = $("inScript").value.trim();
+  if (!script) { st.textContent = "Add your script text first — nothing was saved."; st.className = "statusline err"; return; }
+  data = {
+    script,
+    context: $("inContext").value.trim(),
+    audience: $("inAudience").value.trim(),
+    worries: $("inWorries").value.trim(),
+  };
+  save(LS.data, data);
+  // drop mastery entries for sections that no longer exist
+  const valid = new Set(sections().map(s => s.id));
+  for (const k of Object.keys(mastery)) if (!valid.has(k)) delete mastery[k];
+  save(LS.mastery, mastery);
+  renderRoleplayGate();
+  st.textContent = "Saved — " + sections().length + " section(s) ready in Learn."; st.className = "statusline";
+});
+
+/* ---------------- sections ---------------- */
+function hashStr(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function secHue(i, n) { return Math.round(320 + i * 360 / n) % 360; }
+function sections() {
+  if (!data.script) return [];
+  return data.script.split(/\n\s*\n+/).map(s => s.trim()).filter(Boolean).map((text, i) => {
+    const firstLine = text.split("\n")[0].trim();
+    const title = firstLine.length <= 60 ? firstLine : "Section " + (i + 1);
+    // id is a content hash so mastery survives script edits that keep a section unchanged
+    return { id: "h" + hashStr(text), title, text };
+  });
+}
+
+/* ---------------- learn tab ---------------- */
+let curSection = 0;
+let curMode = "read";
+
+function renderLearn() {
+  const secs = sections();
+  $("learnEmpty").style.display = secs.length ? "none" : "block";
+  $("learnUI").style.display = secs.length ? "block" : "none";
+  if (!secs.length) return;
+  if (curSection >= secs.length) curSection = 0;
+  const list = $("sectionList");
+  list.innerHTML = "";
+  secs.forEach((s, i) => {
+    const chip = document.createElement("button");
+    chip.className = "secchip" + (i === curSection ? " active" : "");
+    chip.style.setProperty("--h", secHue(i, secs.length));
+    const pct = mastery[s.id];
+    chip.innerHTML = esc(s.title) + (pct ? `<span class="pct">${pct}%</span>` : "");
+    chip.addEventListener("click", () => { curSection = i; renderLearn(); });
+    list.appendChild(chip);
+  });
+  renderPractice();
+}
+
+document.querySelectorAll("#modePills .pill").forEach(p => {
+  p.addEventListener("click", () => {
+    document.querySelectorAll("#modePills .pill").forEach(x => x.classList.remove("active"));
+    p.classList.add("active");
+    curMode = p.dataset.mode;
+    renderPractice();
+  });
+});
+
+function renderPractice() {
+  const secs = sections();
+  if (!secs.length) return;
+  const sec = secs[curSection];
+  const box = $("practiceBox");
+  const recallUI = $("recallUI");
+  $("recallScore").textContent = "";
+  $("recallStatus").textContent = "";
+  $("recallInput").value = "";
+  recallUI.style.display = (curMode === "type" || curMode === "say") ? "block" : "none";
+  $("sayRecallBtn").style.display = (curMode === "say" && speechSupported()) ? "inline-block" : "none";
+
+  if (curMode === "read") {
+    box.innerHTML = esc(sec.text);
+  } else if (curMode === "letters") {
+    box.innerHTML = sec.text.split("\n").map(line =>
+      line.split(/\s+/).filter(Boolean).map(w => {
+        const m = w.match(/^([^\p{L}\p{N}]*)([\p{L}\p{N}])(.*)$/u);
+        return m ? esc(m[1] + m[2]) + "·" : esc(w);
+      }).join("  ")
+    ).join("\n");
+  } else if (curMode === "blanks") {
+    const words = sec.text.split(/(\s+)/);
+    let wi = 0;
+    box.innerHTML = words.map(tok => {
+      if (/^\s+$/.test(tok) || !tok) return esc(tok);
+      wi++;
+      if (wi % 3 === 0 && /\w/.test(tok)) {
+        return `<span class="blank" data-w="${esc(tok)}">${esc(tok)}</span>`;
+      }
+      return esc(tok);
+    }).join("");
+    box.querySelectorAll(".blank").forEach(b => b.addEventListener("click", () => b.classList.add("revealed")));
+  } else {
+    box.innerHTML = `<span style="color:var(--muted);font-style:italic">“${esc(sec.title)}” — recall it from memory below, then check.</span>`;
+  }
+}
+
+/* word-level diff via LCS */
+function normWords(text) {
+  return text.toLowerCase().replace(/[’‘]/g, "'")
+    .replace(/[^\p{L}\p{N}\s']/gu, " ").split(/\s+/).filter(Boolean);
+}
+function lcsMatchFlags(target, attempt) {
+  const n = target.length, m = attempt.length;
+  if (n === 0) return { flags: [], matched: 0 };
+  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--)
+    for (let j = m - 1; j >= 0; j--)
+      dp[i][j] = target[i] === attempt[j] ? dp[i+1][j+1] + 1 : Math.max(dp[i+1][j], dp[i][j+1]);
+  const flags = new Array(n).fill(false);
+  let i = 0, j = 0, matched = 0;
+  while (i < n && j < m) {
+    if (target[i] === attempt[j]) { flags[i] = true; matched++; i++; j++; }
+    else if (dp[i+1][j] >= dp[i][j+1]) i++;
+    else j++;
+  }
+  return { flags, matched };
+}
+function gradeRecall(sec, attemptText) {
+  const target = normWords(sec.text);
+  const attempt = normWords(attemptText);
+  const { flags, matched } = lcsMatchFlags(target, attempt);
+  const pct = target.length ? Math.round(100 * matched / target.length) : 0;
+  // render original with hits/misses — consume one flag per *normalized* sub-word
+  // so hyphenated or apostrophe words stay aligned with the grading tokenization
+  const words = sec.text.split(/(\s+)/);
+  let fi = 0;
+  const html = words.map(tok => {
+    if (/^\s+$/.test(tok) || !tok) return esc(tok);
+    const sub = normWords(tok);
+    if (!sub.length) return esc(tok);
+    const ok = flags.slice(fi, fi + sub.length).every(Boolean);
+    fi += sub.length;
+    return `<span class="${ok ? "w-hit" : "w-miss"}">${esc(tok)}</span>`;
+  }).join("");
+  return { pct, html };
+}
+
+$("checkRecall").addEventListener("click", () => {
+  const secs = sections(); if (!secs.length) return;
+  const sec = secs[curSection];
+  const attempt = $("recallInput").value.trim();
+  if (!attempt) { $("recallStatus").textContent = "Type (or speak) your attempt first."; return; }
+  const { pct, html } = gradeRecall(sec, attempt);
+  $("practiceBox").innerHTML = html;
+  $("recallScore").textContent = pct + "%";
+  if (pct > (mastery[sec.id] || 0)) {
+    mastery[sec.id] = pct; save(LS.mastery, mastery);
+    const chip = $("sectionList").children[curSection];
+    if (chip) {
+      let pctEl = chip.querySelector(".pct");
+      if (!pctEl) {
+        pctEl = document.createElement("span");
+        pctEl.className = "pct";
+        chip.appendChild(pctEl);
+      }
+      pctEl.textContent = pct + "%";
+    }
+  }
+  $("recallStatus").textContent = pct >= 90 ? "Excellent — basically word-perfect." :
+    pct >= 70 ? "Good — red words are the ones you missed." :
+    "Keep going — red words are the ones you missed. Re-read, then try again.";
+});
+
+/* speak-your-recall */
+let recallRec = null;
+$("sayRecallBtn").addEventListener("click", () => {
+  if (recallRec) { recallRec.stop(); return; }
+  recallRec = makeRecognition(
+    (interim) => { $("recallStatus").textContent = "Listening… " + interim; },
+    (finalText) => {
+      $("recallInput").value = ($("recallInput").value + " " + finalText).trim();
+      $("recallStatus").textContent = "Captured. Press Check (or speak again to add more).";
+    },
+    () => { recallRec = null; $("sayRecallBtn").textContent = "🎤 Speak instead"; },
+    (err) => { $("recallStatus").textContent = "Mic error: " + err; }
+  );
+  if (recallRec) { recallRec.start(); $("sayRecallBtn").textContent = "⏹ Stop"; $("recallStatus").textContent = "Listening…"; }
+});
+
+/* ---------------- speech: recognition + synthesis ---------------- */
+function speechSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+
+function makeRecognition(onInterim, onFinal, onEnd, onError) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { onError("Voice input isn't supported in this browser — use Chrome, Edge or Safari, or type instead."); return null; }
+  const rec = new SR();
+  rec.lang = "en-US";
+  rec.continuous = true;
+  rec.interimResults = true;
+  let finalBuf = "";
+  rec.onresult = (e) => {
+    let interim = "";
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalBuf += t + " ";
+      else interim += t;
+    }
+    onInterim(interim);
+  };
+  rec.onerror = (e) => { if (e.error !== "aborted") onError(e.error); };
+  rec.onend = () => { if (finalBuf.trim()) onFinal(finalBuf.trim()); onEnd(); };
+  return rec;
+}
+
+let voices = [];
+function loadVoices() {
+  voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  const sel = $("inVoice");
+  const savedVoice = load(LS.voice, "");
+  sel.innerHTML = "";
+  const en = voices.filter(v => v.lang.startsWith("en"));
+  (en.length ? en : voices).forEach(v => {
+    const o = document.createElement("option");
+    o.value = v.name; o.textContent = v.name + " (" + v.lang + ")";
+    if (v.name === savedVoice) o.selected = true;
+    sel.appendChild(o);
+  });
+  if (!sel.options.length) {
+    const o = document.createElement("option");
+    o.value = ""; o.textContent = "System default";
+    sel.appendChild(o);
+  }
+}
+if (window.speechSynthesis) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function speak(text, onDone) {
+  if (!window.speechSynthesis) { if (onDone) onDone(); return; }
+  speechSynthesis.cancel();
+  const clean = text.replace(/[*_#`>]|\[|\]/g, "").replace(/\s+/g, " ").trim();
+  const u = new SpeechSynthesisUtterance(clean);
+  const vname = load(LS.voice, "");
+  const v = voices.find(x => x.name === vname);
+  if (v) u.voice = v;
+  u.rate = parseFloat(load(LS.rate, "1.0"));
+  u.onend = () => { if (onDone) onDone(); };
+  u.onerror = () => { if (onDone) onDone(); };
+  speechSynthesis.speak(u);
+}
+
+/* ---------------- settings ---------------- */
+$("settingsBtn").addEventListener("click", () => {
+  $("inKey").value = load(LS.key, "");
+  $("inModel").value = load(LS.model, "claude-opus-5");
+  $("inRate").value = load(LS.rate, "1.0");
+  $("rateVal").textContent = parseFloat($("inRate").value).toFixed(2).replace(/0$/,"") + "×";
+  loadVoices();
+  $("settingsStatus").textContent = "";
+  $("modalBack").classList.add("open");
+});
+$("closeModal").addEventListener("click", () => $("modalBack").classList.remove("open"));
+$("modalBack").addEventListener("click", (e) => { if (e.target === $("modalBack")) $("modalBack").classList.remove("open"); });
+$("toggleKey").addEventListener("click", () => {
+  const k = $("inKey");
+  k.type = k.type === "password" ? "text" : "password";
+  $("toggleKey").textContent = k.type === "password" ? "Show" : "Hide";
+});
+$("inRate").addEventListener("input", () => {
+  $("rateVal").textContent = parseFloat($("inRate").value).toFixed(2).replace(/0$/,"") + "×";
+});
+$("saveSettings").addEventListener("click", () => {
+  save(LS.key, $("inKey").value.trim());
+  save(LS.model, $("inModel").value);
+  if ($("inVoice").value) save(LS.voice, $("inVoice").value);
+  save(LS.rate, $("inRate").value);
+  renderRoleplayGate();
+  $("settingsStatus").textContent = "Saved.";
+  $("settingsStatus").className = "statusline";
+});
+$("testKey").addEventListener("click", async () => {
+  const st = $("settingsStatus");
+  const k = $("inKey").value.trim();
+  if (!k) { st.textContent = "Enter a key first."; st.className = "statusline err"; return; }
+  save(LS.key, k);
+  save(LS.model, $("inModel").value);
+  renderRoleplayGate();
+  st.textContent = "Testing…"; st.className = "statusline";
+  try {
+    await callClaude({ system: "Reply with exactly: ok", messages: [{ role: "user", content: "ping" }], maxTokens: 1024, effort: "low" });
+    st.textContent = "✓ Key works."; st.className = "statusline";
+  } catch (e) {
+    st.textContent = "✗ " + e.message; st.className = "statusline err";
+  }
+});
+
+/* ---------------- Claude API ---------------- */
+async function callClaude({ system, messages, maxTokens, effort, schema }) {
+  const key = load(LS.key, "");
+  if (!key) throw new Error("No API key set — add one in Settings.");
+  const model = load(LS.model, "claude-opus-5");
+  const body = {
+    model,
+    max_tokens: maxTokens || 2048,
+    system,
+    messages,
+    cache_control: { type: "ephemeral" },
+  };
+  // effort is not supported on Haiku 4.5 — sending it there returns a 400
+  if (effort && model !== "claude-haiku-4-5") body.output_config = Object.assign(body.output_config || {}, { effort });
+  if (schema) body.output_config = Object.assign(body.output_config || {}, {
+    format: { type: "json_schema", schema },
+  });
+  const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!resp.ok) {
+    let msg = "API error (" + resp.status + ")";
+    try {
+      const err = await resp.json();
+      if (err.error && err.error.message) msg = err.error.message;
+    } catch {}
+    if (resp.status === 401) msg = "Invalid API key — check it in Settings.";
+    if (resp.status === 429) msg = "Rate limited — wait a moment and try again.";
+    throw new Error(msg);
+  }
+  const out = await resp.json();
+  if (out.stop_reason === "refusal") throw new Error("The model declined this request. Try rephrasing.");
+  if (out.stop_reason === "max_tokens") throw new Error("The response hit its token limit and was cut off — try again.");
+  const text = (out.content || []).filter(b => b.type === "text").map(b => b.text).join("");
+  if (!text) throw new Error("Empty response from the model.");
+  return text;
+}
+
+/* ---------------- roleplay ---------------- */
+let rp = null; // active session state
+
+const SCENARIOS = {
+  presentation: {
+    label: "Presentation run-through",
+    persona: (d) => `You are the audience for a sales presentation${d.audience ? ": " + d.audience : ""}. The presenter (the user) is delivering their pitch to you. Let them present in stretches, but interrupt occasionally the way a real prospect would — clarifying questions, skeptical pushback, "hang on, what does that cost?" moments. React to what they actually say.`,
+  },
+  coldcall: {
+    label: "Cold call",
+    persona: (d) => `You are a busy prospect${d.audience ? ": " + d.audience : ""} who just picked up an unexpected sales call from the user. You were in the middle of something. Open guarded ("Hello? Who is this?"-level energy). Make them earn every extra minute; if they're good, warm up gradually and realistically.`,
+  },
+  qa: {
+    label: "Tough Q&A",
+    persona: (d) => `You are ${d.audience ? d.audience : "a sharp, skeptical decision-maker"} in the Q&A after the user's presentation. You've heard the pitch; now you grill them. Ask pointed questions about price, competitors, proof, risk, and implementation — one at a time, following up when answers are vague.`,
+  },
+  raise: {
+    label: "Raise negotiation",
+    persona: (d) => `You are the user's manager in a meeting they requested to discuss a raise. Be professionally warm but budget-conscious: ask what they've accomplished, push back with typical manager objections (budget cycles, "let's revisit at review time", comparisons to peers), and only concede ground when they make a strong, evidence-based case.`,
+  },
+};
+const DIFFICULTY = {
+  friendly:  "Be receptive and encouraging — raise mild objections, accept good answers easily. Good for a warm-up run.",
+  realistic: "Be a realistic counterpart: neither hostile nor easy. Raise the objections a real person in your role would, and only accept answers that would actually convince them.",
+  tough:     "Be demanding and skeptical. Interrupt more, push back hard on weak or vague answers, stack follow-up objections, and do not accept fluff. Stay professional — tough, not cartoonish.",
+};
+
+let curScenario = "presentation", curDifficulty = "realistic";
+document.querySelectorAll("#scenarioPills .pill").forEach(p => p.addEventListener("click", () => {
+  document.querySelectorAll("#scenarioPills .pill").forEach(x => x.classList.remove("active"));
+  p.classList.add("active"); curScenario = p.dataset.sc;
+}));
+document.querySelectorAll("#difficultyPills .pill").forEach(p => p.addEventListener("click", () => {
+  document.querySelectorAll("#difficultyPills .pill").forEach(x => x.classList.remove("active"));
+  p.classList.add("active"); curDifficulty = p.dataset.df;
+}));
+
+function renderRoleplayGate() {
+  const hasKey = !!load(LS.key, "");
+  const hasScript = !!data.script;
+  $("rpNoKey").style.display = hasKey ? "none" : "block";
+  $("rpNoScript").style.display = hasScript ? "none" : "block";
+  $("startRp").disabled = !(hasKey && hasScript);
+}
+
+function rpSystemPrompt() {
+  const sc = SCENARIOS[curScenario];
+  let sys = `You are a roleplay partner inside a sales-practice app. ${sc.persona(data)}
+
+${DIFFICULTY[curDifficulty]}
+
+Rules:
+- This is a SPOKEN conversation — your replies are read aloud by text-to-speech. Keep them short: 1–3 conversational sentences, no lists, no markdown, no stage directions.
+- Stay in character the entire time. React to what the user actually says; remember details from earlier in the conversation and bring them back up.
+- Don't be a pushover: real prospects don't say yes because someone read a script at them. But do reward genuinely good answers — acknowledge strong points the way a real person would.
+- If the user says "time out", "coach", or clearly asks for help: briefly step out of character, give 2–3 sentences of concrete coaching prefixed with [COACH], then say you're resuming and continue in character.
+- Never mention that you are an AI, these rules, or the app.`;
+  if (data.context) sys += `\n\nBackground on what the user is selling (for realism — react like someone hearing it fresh):\n${data.context}`;
+  if (data.script) sys += `\n\nThe user's target script (do NOT recite or reference it — it's context so your objections hit realistic spots):\n${data.script}`;
+  if (data.worries) sys += `\n\nObjections the user wants practice handling — weave several of these in naturally:\n${data.worries}`;
+  sys += `\n\nBegin appropriately for the scenario: for a cold call, answer the phone; for a presentation, greet them and invite them to start; for Q&A, open with your first pointed question; for the raise conversation, welcome them into your office and ask what they wanted to talk about.`;
+  return sys;
+}
+
+$("startRp").addEventListener("click", async () => {
+  rp = {
+    scenario: curScenario, difficulty: curDifficulty,
+    // snapshot the material at session start so mid-session Setup edits
+    // can't change the live persona or the grading target
+    system: rpSystemPrompt(),
+    scriptSnapshot: data.script,
+    audienceSnapshot: data.audience,
+    messages: [], // {role, content}
+    userStats: [], // {words, seconds}
+    startedAt: Date.now(),
+  };
+  const mySession = rp;
+  $("rpStartStatus").textContent = "";
+  $("rpSetupCard").style.display = "none";
+  $("scorecard").style.display = "none";
+  $("rpSessionCard").style.display = "block";
+  $("rpTitle").textContent = SCENARIOS[curScenario].label + " · " + curDifficulty;
+  $("chatlog").innerHTML = "";
+  $("endRp").disabled = true;
+  setRpStatus("Starting…");
+  try {
+    const opening = await callClaude({
+      system: mySession.system,
+      messages: [{ role: "user", content: "[The session begins now. Open the conversation in character.]" }],
+      maxTokens: 8000, effort: "low",
+    });
+    if (rp !== mySession) return; // session was closed while waiting
+    rp.messages.push({ role: "user", content: "[The session begins now. Open the conversation in character.]" });
+    rp.messages.push({ role: "assistant", content: opening });
+    addBubble("ai", opening);
+    setRpStatus("");
+    speak(stripCoach(opening));
+  } catch (e) {
+    if (rp !== mySession) return;
+    $("rpSetupCard").style.display = "block";
+    $("rpSessionCard").style.display = "none";
+    $("rpStartStatus").textContent = "Couldn't start: " + e.message;
+    $("rpStartStatus").className = "statusline err";
+    rp = null;
+  } finally {
+    $("endRp").disabled = false;
+  }
+});
+
+function setRpStatus(msg, isErr) {
+  const el = $("rpStatus");
+  el.textContent = msg || "";
+  el.className = "statusline" + (isErr ? " err" : "");
+}
+function stripCoach(text) { return text.replace(/\[COACH\]/g, "Coach says:"); }
+function addBubble(kind, text) {
+  const log = $("chatlog");
+  if (kind === "ai" && text.includes("[COACH]")) {
+    const div = document.createElement("div");
+    div.className = "msg coach";
+    div.textContent = text.replace(/\[COACH\]/g, "🏋️ Coach: ");
+    log.appendChild(div);
+  } else {
+    const div = document.createElement("div");
+    div.className = "msg " + kind;
+    div.textContent = text;
+    log.appendChild(div);
+  }
+  log.scrollTop = log.scrollHeight;
+}
+
+let sending = false; // gates Send button, Enter key, and mic path together
+async function sendUserTurn(text, spokenSeconds) {
+  if (!rp || sending || !text.trim()) return;
+  sending = true;
+  const mySession = rp;
+  const content = text.trim();
+  addBubble("user", content);
+  rp.messages.push({ role: "user", content });
+  rp.userStats.push({ words: normWords(content).length, seconds: spokenSeconds || null, text: content });
+  $("chatInput").value = "";
+  setRpStatus("Thinking…");
+  $("sendBtn").disabled = true;
+  try {
+    const reply = await callClaude({
+      system: mySession.system,
+      messages: mySession.messages,
+      maxTokens: 8000, effort: "low",
+    });
+    if (rp !== mySession) return; // session ended/graded while waiting
+    rp.messages.push({ role: "assistant", content: reply });
+    addBubble("ai", reply);
+    setRpStatus("");
+    speak(stripCoach(reply));
+  } catch (e) {
+    if (rp === mySession) setRpStatus(e.message, true);
+  } finally {
+    sending = false;
+    $("sendBtn").disabled = false;
+  }
+}
+
+$("sendBtn").addEventListener("click", () => sendUserTurn($("chatInput").value));
+$("chatInput").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendUserTurn($("chatInput").value); }
+});
+$("rpStopSpeech").addEventListener("click", () => { if (window.speechSynthesis) speechSynthesis.cancel(); });
+
+/* mic in roleplay */
+let rpRec = null, rpRecStart = 0;
+$("micBtn").addEventListener("click", () => {
+  if (rpRec) { rpRec.stop(); return; }
+  if (window.speechSynthesis) speechSynthesis.cancel(); // don't listen while talking
+  rpRec = makeRecognition(
+    (interim) => { $("chatInput").value = interim; },
+    (finalText) => {
+      const secs = (Date.now() - rpRecStart) / 1000;
+      sendUserTurn(finalText, secs);
+    },
+    () => { rpRec = null; $("micBtn").classList.remove("listening"); },
+    (err) => setRpStatus("Mic: " + err + (err === "not-allowed" ? " — allow microphone access for this site." : ""), true)
+  );
+  if (rpRec) {
+    rpRecStart = Date.now();
+    rpRec.start();
+    $("micBtn").classList.add("listening");
+    setRpStatus("Listening — click the mic again when you finish talking.");
+  }
+});
+
+/* ---------------- grading ---------------- */
+const FILLERS = ["um","uh","er","ah","like","you know","kind of","sort of","basically","actually","literally","i mean","so yeah"];
+function localDelivery() {
+  const allText = rp.userStats.map(s => s.text).join(" ").toLowerCase();
+  let fillers = 0;
+  for (const f of FILLERS) {
+    const re = new RegExp("\\b" + f.replace(/ /g, "\\s+") + "\\b", "g");
+    fillers += (allText.match(re) || []).length;
+  }
+  const spoken = rp.userStats.filter(s => s.seconds && s.seconds > 1);
+  let wpm = null;
+  if (spoken.length) {
+    const words = spoken.reduce((a, s) => a + s.words, 0);
+    const secs = spoken.reduce((a, s) => a + s.seconds, 0);
+    if (secs > 5) wpm = Math.round(words / (secs / 60));
+  }
+  return { fillers, wpm, totalWords: rp.userStats.reduce((a, s) => a + s.words, 0) };
+}
+
+const GRADE_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["adherence_score","covered_points","missed_points","objection_score","objection_notes","confidence_score","confidence_notes","top_fixes","overall"],
+  properties: {
+    adherence_score: { type: "integer", description: "0-100: how much of the script's key content the user actually delivered" },
+    covered_points: { type: "array", items: { type: "string" }, description: "key points from the script the user covered" },
+    missed_points: { type: "array", items: { type: "string" }, description: "key points from the script the user missed or fumbled" },
+    objection_score: { type: "integer", description: "0-100: how well the user handled objections and questions" },
+    objection_notes: { type: "string", description: "1-3 sentences on objection handling, citing specific moments" },
+    confidence_score: { type: "integer", description: "0-100: how confident and composed the user came across in their wording" },
+    confidence_notes: { type: "string", description: "1-3 sentences on confidence and delivery, citing specific wording" },
+    top_fixes: { type: "array", items: { type: "string" }, description: "the 3 highest-impact concrete things to do differently next time" },
+    overall: { type: "string", description: "2-3 sentence overall assessment, encouraging but honest" }
+  }
+};
+
+$("endRp").addEventListener("click", async () => {
+  if (!rp) return;
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  if (rpRec) {
+    // detach callbacks first so a pending utterance can't fire a stray
+    // turn into the session we're about to grade
+    rpRec.onresult = null; rpRec.onend = null; rpRec.onerror = null;
+    try { rpRec.stop(); } catch {}
+    rpRec = null;
+    $("micBtn").classList.remove("listening");
+  }
+  const userTurns = rp.messages.filter(m => m.role === "user").length - 1;
+  if (userTurns < 1) {
+    // nothing to grade — just close
+    $("rpSessionCard").style.display = "none";
+    $("rpSetupCard").style.display = "block";
+    rp = null;
+    return;
+  }
+  setRpStatus("Grading…");
+  $("endRp").disabled = true;
+  const transcript = rp.messages.slice(1).map(m =>
+    (m.role === "user" ? "PRESENTER: " : "COUNTERPART: ") + m.content
+  ).join("\n");
+  try {
+    const raw = await callClaude({
+      system: "You are a supportive but honest sales coach. Grade the practice session below. The PRESENTER is your student; the COUNTERPART was an AI roleplay partner. Judge only the presenter. Be specific — quote their actual words where useful. Scores: 90+ exceptional, 70-89 solid, 50-69 needs work, below 50 significant gaps.",
+      messages: [{
+        role: "user",
+        content: `TARGET SCRIPT the presenter was trying to deliver:\n---\n${rp.scriptSnapshot}\n---\n\nSCENARIO: ${SCENARIOS[rp.scenario].label} (difficulty: ${rp.difficulty})\n${rp.audienceSnapshot ? "AUDIENCE: " + rp.audienceSnapshot + "\n" : ""}\nSESSION TRANSCRIPT:\n---\n${transcript}\n---\n\nGrade the presenter.`
+      }],
+      maxTokens: 16000, effort: "high",
+      schema: GRADE_SCHEMA,
+    });
+    const g = JSON.parse(raw);
+    const d = localDelivery();
+    const sess = {
+      when: new Date().toISOString(),
+      scenario: SCENARIOS[rp.scenario].label,
+      difficulty: rp.difficulty,
+      turns: userTurns,
+      adherence: g.adherence_score,
+      objection: g.objection_score,
+      confidence: g.confidence_score,
+    };
+    sessions.unshift(sess);
+    sessions = sessions.slice(0, 50);
+    save(LS.sessions, sessions);
+    renderScorecard(g, d);
+  } catch (e) {
+    setRpStatus("Grading failed: " + e.message, true);
+  } finally {
+    $("endRp").disabled = false;
+  }
+});
+
+function scoreColor(v) { return v >= 70 ? "var(--good)" : v >= 50 ? "var(--warn)" : "var(--bad)"; }
+
+function renderScorecard(g, d) {
+  $("rpSessionCard").style.display = "none";
+  $("rpSetupCard").style.display = "block";
+  const card = $("scorecard");
+  card.style.display = "block";
+  const deliveryBits = [];
+  if (d.wpm) deliveryBits.push(`<div class="scoretile"><div class="big">${d.wpm}</div><div class="lbl">words / min spoken (aim ~130–160)</div></div>`);
+  deliveryBits.push(`<div class="scoretile"><div class="big">${d.fillers}</div><div class="lbl">filler words caught («um», «like», …)</div></div>`);
+  card.innerHTML = `
+    <h2>Scorecard</h2>
+    <div class="scoregrid">
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.adherence_score)}">${g.adherence_score}</div><div class="lbl">Script adherence</div></div>
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.objection_score)}">${g.objection_score}</div><div class="lbl">Objection handling</div></div>
+      <div class="scoretile"><div class="big" style="color:${scoreColor(g.confidence_score)}">${g.confidence_score}</div><div class="lbl">Confidence</div></div>
+      ${deliveryBits.join("")}
+    </div>
+    <p>${esc(g.overall)}</p>
+    ${g.covered_points.length ? `<h3 class="tag-good">✓ You covered</h3><ul class="points">${g.covered_points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+    ${g.missed_points.length ? `<h3 class="tag-bad">✗ You missed</h3><ul class="points">${g.missed_points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+    <h3>Objection handling</h3><p style="font-size:14.5px">${esc(g.objection_notes)}</p>
+    <h3>Confidence</h3><p style="font-size:14.5px">${esc(g.confidence_notes)}</p>
+    <h3>Top fixes for next round</h3>
+    <ul class="points">${g.top_fixes.map(p => `<li>${esc(p)}</li>`).join("")}</ul>
+    <button class="btn" id="againBtn" style="margin-top:8px">Run it again</button>
+  `;
+  card.scrollIntoView({ behavior: "smooth" });
+  $("againBtn").addEventListener("click", () => { card.style.display = "none"; $("startRp").click(); });
+  rp = null;
+}
+
+/* ---------------- progress ---------------- */
+function renderProgress() {
+  const secs = sections();
+  const ml = $("masteryList");
+  if (!secs.length) { ml.innerHTML = '<div class="empty">Save a script in Setup first.</div>'; }
+  else {
+    ml.innerHTML = "";
+    secs.forEach((s, i) => {
+      const pct = mastery[s.id];
+      const chip = document.createElement("button");
+      chip.className = "secchip";
+      chip.style.setProperty("--h", secHue(i, secs.length));
+      chip.title = "Drill this section";
+      chip.innerHTML = esc(s.title) + `<span class="pct">${pct ? pct + "%" : "–"}</span>`;
+      chip.addEventListener("click", () => {
+        curSection = i;
+        document.querySelector('nav button[data-tab="learn"]').click();
+      });
+      ml.appendChild(chip);
+    });
+  }
+  const sl = $("sessionList");
+  if (!sessions.length) { sl.innerHTML = '<div class="empty">No graded sessions yet.</div>'; return; }
+  sl.innerHTML = sessions.map(s => {
+    const dt = new Date(s.when);
+    const stamp = dt.toLocaleDateString() + " " + dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return `<div class="sessionrow">
+      <span style="color:var(--muted);flex:none">${esc(stamp)}</span>
+      <span style="flex:1">${esc(s.scenario)} · ${esc(s.difficulty)} · ${s.turns} turns</span>
+      <span>script <b style="color:${scoreColor(s.adherence)}">${s.adherence}</b></span>
+      <span>objections <b style="color:${scoreColor(s.objection)}">${s.objection}</b></span>
+      <span>confidence <b style="color:${scoreColor(s.confidence)}">${s.confidence}</b></span>
+    </div>`;
+  }).join("");
+}
+
+/* ---------------- init ---------------- */
+renderRoleplayGate();
+
+// First run in a fresh browser: pull saved material from seed.json (served
+// alongside the app) so the user doesn't have to re-paste per browser.
+(async function importSeed() {
+  if (data.script) return;
+  try {
+    const r = await fetch("seed.json", { cache: "no-store" });
+    if (!r.ok) return;
+    const seed = await r.json();
+    if (!seed || !seed.script) return;
+    data = {
+      script: seed.script,
+      context: seed.context || "",
+      audience: seed.audience || "",
+      worries: seed.worries || "",
+    };
+    save(LS.data, data);
+    $("inScript").value = data.script;
+    $("inContext").value = data.context;
+    $("inAudience").value = data.audience;
+    $("inWorries").value = data.worries;
+    $("setupStatus").textContent = "Loaded your saved material — " + sections().length + " sections ready in Learn.";
+    $("setupStatus").className = "statusline";
+    renderRoleplayGate();
+  } catch {}
+})();
+
+/* ---------------- PWA install ---------------- */
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+</body>
+</html>
