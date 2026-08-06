@@ -1,11 +1,45 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="lg" gradientUnits="userSpaceOnUse" x1="256" y1="100" x2="256" y2="436">
       <stop offset="0" stop-color="#ff3d8f"/>
-      <stop offset=".52" stop-color="#8b5cf6"/>
+      <stop offset="0.5" stop-color="#8b5cf6"/>
       <stop offset="1" stop-color="#22d3ee"/>
     </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.62">
+      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect width="512" height="512" rx="104" fill="url(#g)"/>
-  <text x="256" y="316" font-size="288" text-anchor="middle" font-family="'Apple Color Emoji','Segoe UI Emoji',sans-serif">🦞</text>
+
+  <!-- background -->
+  <rect width="512" height="512" rx="104" fill="#12101d"/>
+  <rect width="512" height="512" rx="104" fill="url(#glow)"/>
+  <rect x="8" y="8" width="496" height="496" rx="96" fill="none" stroke="url(#lg)" stroke-width="2" opacity="0.35"/>
+
+  <!-- lobster mark: two pincer claws, capsule body, fan tail -->
+  <g transform="translate(0,-12)">
+    <!-- left claw: circle with wedge notch (pincer) opening up-inward -->
+    <path fill="url(#lg)" d="M163 163 L163 103 A60 60 0 1 0 210.3 126.1 Z"/>
+    <!-- right claw (mirror) -->
+    <path fill="url(#lg)" d="M349 163 L349 103 A60 60 0 1 1 301.7 126.1 Z"/>
+
+    <!-- arms joining claws to body -->
+    <path d="M178 206 L232 248" stroke="url(#lg)" stroke-width="40" stroke-linecap="round" fill="none"/>
+    <path d="M334 206 L280 248" stroke="url(#lg)" stroke-width="40" stroke-linecap="round" fill="none"/>
+
+    <!-- body capsule -->
+    <rect x="214" y="210" width="84" height="164" rx="42" fill="url(#lg)"/>
+
+    <!-- fan tail -->
+    <path fill="url(#lg)" d="M226 336
+      C210 372 196 394 184 410
+      C176 419 180 428 192 429.5
+      C212 432 230 433.5 246 433.5
+      L256 421
+      L266 433.5
+      C282 433.5 300 432 320 429.5
+      C332 428 336 419 328 410
+      C316 394 302 372 286 336
+      Z"/>
+  </g>
 </svg>
