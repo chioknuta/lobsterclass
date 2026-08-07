@@ -1,5 +1,5 @@
 /* LobsterClass service worker — offline support + install */
-const CACHE = "lobsterclass-v6";
+const CACHE = "lobsterclass-v7";
 // "index.html" is the app on localhost and the landing page on the deployed site;
 // "app.html" only exists on the deployed site. Added individually so one missing
 // entry can't fail the whole install the way cache.addAll() would.

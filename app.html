@@ -758,15 +758,45 @@ function mstat(id) {
   if (typeof m === "number") return { pct: m, box: 0, streak: 0, last: null, due: null, reps: 0, dayKey: null };
   return m || { pct: 0, box: 0, streak: 0, last: null, due: null, reps: 0, dayKey: null };
 }
+/* Two different questions. daysToEvent() is for the countdown: how long until
+   the real thing. reviewDeadline() is for scheduling: when practice has to be
+   finished, which is 18:00 the evening before, so a night's sleep does the
+   consolidating (Mazza 2016). Scheduling against the evening before is also the
+   only way to guarantee we never put a review *after* the event — Setup only
+   captures the event's date, never its time, so a 10am pitch and an 8pm toast
+   look identical from here. */
+function eventTs() {
+  return data.event ? new Date(data.event + "T20:00").getTime() : null;
+}
 function daysToEvent() {
-  if (!data.event) return null;
-  const d = (new Date(data.event + "T20:00").getTime() - Date.now()) / DAY;
+  const ts = eventTs();
+  if (ts === null) return null;
+  const d = (ts - Date.now()) / DAY;
   return d > 0 ? d : null;
+}
+function reviewDeadline() {
+  return data.event ? new Date(data.event + "T18:00").getTime() - DAY : null;
+}
+function daysToDeadline() {
+  const dl = reviewDeadline();
+  if (dl === null) return null;
+  const d = (dl - Date.now()) / DAY;
+  return d > 0 ? d : null;
+}
+/* Best-ever score is what the mastery chips show, but it's the wrong input for
+   anything that asks "how well do you know this *now*" — a section you have
+   since failed twice would keep its 95% and keep being served the hardest
+   drill, which is exactly the weak-retrieval case the cue ladder exists to
+   avoid. curPct() is the most recent evidence, falling back to best-ever for
+   records written before lastPct existed. */
+function curPct(m) {
+  return (m.lastPct === undefined || m.lastPct === null) ? m.pct : m.lastPct;
 }
 let lastRecallSameDay = false; // set by recordRecall, read by the status copy
 function recordRecall(id, pct) {
   const m = mstat(id);
   m.pct = Math.max(m.pct, pct);
+  m.lastPct = pct;
   m.reps = (m.reps || 0) + 1;
   const today = new Date().toDateString();
   lastRecallSameDay = false;
@@ -781,14 +811,15 @@ function recordRecall(id, pct) {
   else { m.box = Math.max(0, m.box - 1); m.streak = 0; }
   m.last = Date.now();
   if (!lastRecallSameDay) {
-    const left = daysToEvent();
+    const left = daysToDeadline();
     const squeeze = left === null ? 1 : Math.min(1, Math.max(0.12, left / 14));
     let gap = Math.max(DAY / 8, BOX_IVL[m.box] * squeeze);
     if (left !== null) {
       // Cepeda et al. 2008: optimal gap ≈ 10-30% of the time remaining
       gap = Math.min(gap, Math.max(DAY / 8, 0.3 * left * DAY));
-      // final-48h rule: the last review lands the evening before, never the morning of
-      const eve = new Date(data.event + "T18:00").getTime();
+      // the last review lands on the deadline itself — the evening before —
+      // rather than spilling into the morning of
+      const eve = reviewDeadline();
       if (m.last < eve && m.last + gap > eve) gap = eve - m.last;
     }
     m.due = m.last + gap;
@@ -807,7 +838,7 @@ function retentionNow(id) {
   const m = mstat(id);
   if (!m.last || !m.pct) return null;
   const S = BOX_STABILITY[m.box] * DAY;
-  return Math.round(m.pct * Math.exp(-(Date.now() - m.last) / S));
+  return Math.round(curPct(m) * Math.exp(-(Date.now() - m.last) / S));
 }
 function untilStr(ts) {
   const h = (ts - Date.now()) / 3600000;
@@ -822,10 +853,11 @@ function untilStr(ts) {
 function recommendedDrill(id) {
   const m = mstat(id);
   if (!m.last && !m.pct) return { mode: "read", dn: 3 };
-  if (m.pct < 40) return { mode: "blanks", dn: 3 };
-  if (m.pct < 60) return { mode: "blanks", dn: 2 };
-  if (m.pct < 75) return { mode: "blanks", dn: 1 };
-  if (m.pct < 90) return { mode: "letters", dn: 1 };
+  const p = curPct(m);
+  if (p < 40) return { mode: "blanks", dn: 3 };
+  if (p < 60) return { mode: "blanks", dn: 2 };
+  if (p < 75) return { mode: "blanks", dn: 1 };
+  if (p < 90) return { mode: "letters", dn: 1 };
   if (m.streak >= 1) return { mode: "say", dn: 1 };
   return { mode: "type", dn: 1 };
 }
@@ -914,7 +946,7 @@ $("smartReview").addEventListener("click", () => {
   const secs = sections(); if (!secs.length) return;
   const due = dueSections();
   const pool = due.length ? due
-    : [...secs].sort((a, b) => mstat(a.id).pct - mstat(b.id).pct).slice(0, Math.min(3, secs.length));
+    : [...secs].sort((a, b) => curPct(mstat(a.id)) - curPct(mstat(b.id))).slice(0, Math.min(3, secs.length));
   reviewQueue = pool.map(s => s.id);
   for (let i = reviewQueue.length - 1; i > 0; i--) { // shuffle = interleaving
     const j = Math.floor(Math.random() * (i + 1));
